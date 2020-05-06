@@ -2,7 +2,9 @@ package com.josephbleau.game.entity.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.*;
 import com.josephbleau.game.control.Controllable;
 import com.josephbleau.game.entity.Entity;
 import com.josephbleau.game.entity.stage.Stage;
@@ -25,8 +27,20 @@ public class Player extends Entity implements Controllable {
     /** The maximum x-velocity that can be reached via controller inputs while in the air. **/
     private float maximumNaturalAirSpeed = 5;
 
+    private Circle shield;
+
+    private Color shieldColor;
+
+    private boolean shielded = false;
+
+    private float shieldSize = 1.0f;
+
     public Player(Stage stage) {
         this.getRects().add(new Rectangle(0, 0, 20, 60));
+
+        this.shield = new Circle(10, 30, 30);
+
+        this.shieldColor = new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f);
 
         this.stage = stage;
 
@@ -37,8 +51,12 @@ public class Player extends Entity implements Controllable {
 
     @Override
     public void handleInput() {
+        this.shielded = false;
         if (grounded) {
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                this.xVel = 0;
+                this.shielded = true;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 this.xVel = -maximumNaturalGroundSpeed;
             } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 this.xVel = maximumNaturalGroundSpeed;
@@ -48,6 +66,7 @@ public class Player extends Entity implements Controllable {
 
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 this.grounded = false;
+                this.shielded = false;
                 this.yVel += 40;
             }
         }
@@ -72,6 +91,12 @@ public class Player extends Entity implements Controllable {
             this.yVel = Math.max(maximumNaturalDownwardVelocity, this.yVel - this.stage.getGravity());
         }
 
+        if (this.shielded) {
+            this.shieldSize = MathUtils.clamp(this.shieldSize - .07f * delta, 0, 1);
+        } else {
+            this.shieldSize = MathUtils.clamp(this.shieldSize + .2f * delta, 0, 1);
+        }
+
         super.update(delta);
     }
 
@@ -84,21 +109,21 @@ public class Player extends Entity implements Controllable {
 
             Entity us = null;
             Entity them = null;
-            Rectangle ourRect = null;
-            Rectangle theirRect = null;
+            Shape2D ourShape = null;
+            Shape2D theirShape = null;
 
             if (collissionEvent.entity1 == this) {
                 us = collissionEvent.entity1;
-                ourRect = collissionEvent.rectangle1;
+                ourShape = collissionEvent.shape1;
                 them = collissionEvent.entity2;
-                theirRect = collissionEvent.rectangle2;
+                theirShape = collissionEvent.shape2;
             }
 
             if (collissionEvent.entity2 == this) {
                 us = collissionEvent.entity2;
-                ourRect = collissionEvent.rectangle2;
+                ourShape = collissionEvent.shape2;
                 them = collissionEvent.entity1;
-                theirRect = collissionEvent.rectangle1;
+                theirShape = collissionEvent.shape1;
             }
 
             if (them == this.stage) {
@@ -106,8 +131,8 @@ public class Player extends Entity implements Controllable {
                 boolean falling = yVel < 0;
 
                 /* Reset our x/y to be the x/y of the top of the rect that we collided with (so x, y+height) */
-                if (falling) {
-                    this.yPos = theirRect.y + theirRect.height;
+                if (falling && theirShape instanceof Rectangle) {
+                    this.yPos = ((Rectangle)theirShape).y + ((Rectangle)theirShape).height;
                 }
 
                 this.grounded = true;
@@ -120,5 +145,31 @@ public class Player extends Entity implements Controllable {
                 spawn(400, 400);
             }
         }
+    }
+
+    @Override
+    public void render(ShapeRenderer shapeRenderer) {
+        super.render(shapeRenderer);
+
+        if (this.shielded) {
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(shieldColor);
+            shapeRenderer.circle(this.xPos + shield.x, this.yPos + shield.y, this.shieldSize * shield.radius);
+            shapeRenderer.end();
+        }
+    }
+
+    @Override
+    public CollissionEvent intersects(Entity otherEntity) {
+        if (shielded) {
+            Circle translatedCircle = new Circle(this.xPos + shield.x, this.yPos + shield.y, shield.radius);
+            for (Rectangle otherRect : otherEntity.getTranslatedRects()) {
+                if (Intersector.overlaps(translatedCircle, otherRect)) {
+                    return new CollissionEvent(this, translatedCircle, otherEntity, otherRect);
+                }
+            }
+        }
+
+        return super.intersects(otherEntity);
     }
 }
