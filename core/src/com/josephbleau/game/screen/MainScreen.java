@@ -7,11 +7,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.josephbleau.game.entity.Entity;
-import com.josephbleau.game.entity.Player;
+import com.josephbleau.game.entity.player.Player;
 import com.josephbleau.game.entity.stage.Stage;
 import com.josephbleau.game.entity.stage.TestStage;
 import com.josephbleau.game.event.EventHandler;
 import com.josephbleau.game.event.events.CollissionEvent;
+import com.josephbleau.game.event.events.DeathEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,9 @@ public class MainScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        /* Input Loop */
+        player.handleInput();
+
         /* Update Loop: All entities will run their physics calculations here. */
         for (Entity entity : entities) {
             entity.update(Gdx.graphics.getDeltaTime());
@@ -60,19 +64,30 @@ public class MainScreen implements Screen {
 
         /* Outcome Loop: Collisions and interactions will be resolved here. */
         for (Entity outerEntity : entities) {
+            if (!this.stage.inBounds(outerEntity)) {
+                DeathEvent deathEvent = new DeathEvent(outerEntity);
+                this.eventHandler.publish(deathEvent);
+            }
+
             for (Entity innerEntity : entities) {
                 if (outerEntity == innerEntity) {
                     continue;
                 }
 
-                if (innerEntity.isCollidable() && outerEntity.isCollidable() && outerEntity.intersects(innerEntity)) {
-                    this.eventHandler.publish(new CollissionEvent(outerEntity, innerEntity));
+                if (innerEntity.isCollidable() && outerEntity.isCollidable()) {
+                    CollissionEvent collissionEvent = outerEntity.intersects(innerEntity);
+
+                    if (collissionEvent != null) {
+                        this.eventHandler.publish(collissionEvent);
+                    }
                 }
             }
         }
 
         /* Render Loop **/
         this.shapeRenderer.setProjectionMatrix(this.camera.combined);
+
+        this.stage.render(this.shapeRenderer);
 
         for (Entity entity : entities) {
             entity.render(this.shapeRenderer);

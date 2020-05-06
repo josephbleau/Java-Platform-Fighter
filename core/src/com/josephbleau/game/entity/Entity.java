@@ -3,7 +3,6 @@ package com.josephbleau.game.entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.josephbleau.game.entity.stage.Stage;
 import com.josephbleau.game.event.EventListener;
 import com.josephbleau.game.event.EventPublisher;
 import com.josephbleau.game.event.events.CollissionEvent;
@@ -17,8 +16,24 @@ import java.util.List;
  * other interactive element. It has various properties that affect the way the game interprets, renders, and updates them.
  */
 public class Entity implements EventListener, EventPublisher {
-    /** Origin is used as a way to translate the entire group of rectangles **/
-    private Rectangle origin;
+
+    /** Current x position **/
+    protected float xPos;
+
+    /** Current y position **/
+    protected float yPos;
+
+    /** Current x velocity **/
+    protected float xVel;
+
+    /** Current y velocity **/
+    protected float yVel;
+
+    /** The last x location before the most recent update tick **/
+    private float xPrevPos;
+
+    /** The last y location before the most recent update tick. **/
+    private float yPrevPos;
 
     /** Rectangles representing the shape of the entity **/
     private List<Rectangle> rects;
@@ -39,7 +54,10 @@ public class Entity implements EventListener, EventPublisher {
     private Boolean solid;
 
     public Entity() {
-        this.origin = new Rectangle(0, 0,0 ,0);
+        this.xPos = 0;
+        this.yPos = 0;
+        this.xPrevPos = 0;
+        this.yPrevPos = 0;
 
         this.rects = new ArrayList<>();
         this.outlineColor = Color.BLACK;
@@ -50,10 +68,11 @@ public class Entity implements EventListener, EventPublisher {
         this.solid = true;
     }
 
-    public Entity(final Rectangle origin, final List<Rectangle> rects) {
+    public Entity(final float startingX, final float startingY, final List<Rectangle> rects) {
         this();
 
-        this.origin = origin;
+        this.xPos = startingX;
+        this.yPos = startingY;
 
         for (Rectangle rect : rects) {
             this.rects.add(new Rectangle(rect.x, rect.y, rect.width, rect.height));
@@ -68,7 +87,7 @@ public class Entity implements EventListener, EventPublisher {
         for (Rectangle rect : rects) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(this.outlineColor);
-            shapeRenderer.rect(this.origin.x + rect.x, this.origin.y + rect.y, rect.width, rect.height);
+            shapeRenderer.rect(this.xPos + rect.x, this.yPos + rect.y, rect.width, rect.height);
             shapeRenderer.end();
         }
     }
@@ -77,33 +96,45 @@ public class Entity implements EventListener, EventPublisher {
         if (!this.active) {
             return;
         }
+
+        this.xPrevPos = this.xPos;
+        this.yPrevPos = this.yPos;
+
+        this.xPos += this.xVel;
+        this.yPos += this.yVel;
     }
 
     public void spawn(float x, float y) {
         this.hidden = false;
         this.active = true;
 
-        this.origin = new Rectangle(x, y, 0, 0);
+        this.xPos = x;
+        this.yPos = y;
     }
 
     @Override
     public void notify(Event event) {}
 
-    public Boolean intersects(Entity otherEntity) {
+    public CollissionEvent intersects(Entity otherEntity) {
         for (Rectangle rect : getTranslatedRects()) {
             for (Rectangle otherRect : otherEntity.getTranslatedRects()) {
                 if (otherRect.overlaps(rect)) {
-                    return true;
+                    return new CollissionEvent(this, rect, otherEntity, otherRect);
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
-    public void applyForce(float x, float y) {
-        this.origin.x += x;
-        this.origin.y += y;
+    public void applyForce(float xVel, float yVel) {
+        this.xVel += xVel;
+        this.yVel += yVel;
+    }
+
+    public void rollback() {
+        this.xPos = this.xPrevPos;
+        this.yPos = this.yPrevPos;
     }
 
     public List<Rectangle> getRects() {
@@ -114,7 +145,7 @@ public class Entity implements EventListener, EventPublisher {
         List<Rectangle> translatedRects = new ArrayList<Rectangle>();
 
         for (Rectangle rect : getRects()) {
-            translatedRects.add(new Rectangle(this.origin.x + rect.x, this.origin.y + rect.y, rect.width, rect.height));
+            translatedRects.add(new Rectangle(this.xPos + rect.x, this.yPos + rect.y, rect.width, rect.height));
         }
 
         return translatedRects;
@@ -124,23 +155,7 @@ public class Entity implements EventListener, EventPublisher {
         return outlineColor;
     }
 
-    public Rectangle getOrigin() {
-        return origin;
-    }
-
-    public Boolean isActive() {
-        return active;
-    }
-
-    public Boolean isHidden() {
-        return hidden;
-    }
-
     public Boolean isCollidable() {
         return collidable;
-    }
-
-    public Boolean isSolid() {
-        return solid;
     }
 }
