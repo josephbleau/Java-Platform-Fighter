@@ -1,6 +1,5 @@
 package com.josephbleau.game.event;
 
-import com.josephbleau.game.entity.Entity;
 import com.josephbleau.game.event.events.Event;
 
 import java.util.ArrayList;
@@ -13,11 +12,7 @@ public class EventHandler {
         this.listeners = new ArrayList<>();
     }
 
-    public void registerListeners(List<EventListener> listeners) {
-        this.listeners.addAll(listeners);
-    }
-
-    public void registerEntities(List<Entity> listeners) {
+    public void registerListeners(List<? extends EventListener> listeners) {
         this.listeners.addAll(listeners);
     }
 
