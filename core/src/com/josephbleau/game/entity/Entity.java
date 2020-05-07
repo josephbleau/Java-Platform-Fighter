@@ -112,12 +112,22 @@ public class Entity implements EventListener, EventPublisher {
         this.yPos = y;
     }
 
+    public void teleport(float x, float y, boolean keepVelocity) {
+        if (!keepVelocity) {
+            this.xVel = 0;
+            this.yVel = 0;
+        }
+
+        this.xPos = x;
+        this.yPos = y;
+    }
+
     @Override
     public void notify(Event event) {}
 
     public CollissionEvent intersects(Entity otherEntity) {
-        for (Rectangle rect : getTranslatedRects()) {
-            for (Rectangle otherRect : otherEntity.getTranslatedRects()) {
+        for (Rectangle rect : getCollidables()) {
+            for (Rectangle otherRect : otherEntity.getCollidables()) {
                 if (otherRect.overlaps(rect)) {
                     return new CollissionEvent(this, rect, otherEntity, otherRect);
                 }
@@ -142,13 +152,17 @@ public class Entity implements EventListener, EventPublisher {
     }
 
     public List<Rectangle> getTranslatedRects() {
-        List<Rectangle> translatedRects = new ArrayList<Rectangle>();
+        List<Rectangle> translatedRects = new ArrayList<>();
 
         for (Rectangle rect : getRects()) {
             translatedRects.add(new Rectangle(this.xPos + rect.x, this.yPos + rect.y, rect.width, rect.height));
         }
 
         return translatedRects;
+    }
+
+    public List<Rectangle> getCollidables() {
+        return getTranslatedRects();
     }
 
     public Color getOutlineColor() {

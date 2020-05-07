@@ -3,7 +3,9 @@ package com.josephbleau.game.entity.player;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
+import com.josephbleau.game.control.GamecubeController;
 import com.josephbleau.game.entity.Entity;
+import com.josephbleau.game.entity.parts.Ledge;
 import com.josephbleau.game.entity.stage.Stage;
 import com.josephbleau.game.event.events.CollissionEvent;
 import com.josephbleau.game.event.events.DeathEvent;
@@ -25,6 +27,9 @@ public class Character extends Entity {
     protected Shield shield;
 
     protected Stage stage;
+
+    protected State state;
+    protected State substate;
 
     public Character(Stage stage) {
         this.stage = stage;
@@ -75,8 +80,10 @@ public class Character extends Entity {
                 boolean falling = yVel < 0;
 
                 /* Reset our x/y to be the x/y of the top of the rect that we collided with (so x, y+height) */
-                if (falling && theirShape instanceof Rectangle) {
+                if (falling && this.stage.isGround((Rectangle) theirShape)) {
                     this.yPos = ((Rectangle)theirShape).y + ((Rectangle)theirShape).height;
+                } else if (falling && this.stage.isLedge((Ledge) theirShape)){
+                    snapToLedge((Ledge) theirShape);
                 }
 
                 this.grounded = true;
@@ -106,5 +113,24 @@ public class Character extends Entity {
         }
 
         return super.intersects(otherEntity);
+    }
+
+    public void handleInput(GamecubeController gamecubeController) {
+        shield.setActive(false);
+    }
+
+    private void snapToLedge(Ledge ledge) {
+        this.setActive(false); // prevents gravity from applying
+        this.state = State.HANGING;
+
+        Rectangle playerRect = this.getRects().get(0);
+
+        if (ledge.hangLeft) {
+            this.substate = State.SUBSTATE_HANGING_LEFT;
+            this.teleport(ledge.x - playerRect.width, ledge.y + ledge.height - playerRect.height, false);
+        } else {
+            this.substate = State.SUBSTATE_HANGING_RIGHT;
+            this.teleport(ledge.x + ledge.width, ledge.y + ledge.height - playerRect.height, false);
+        }
     }
 }

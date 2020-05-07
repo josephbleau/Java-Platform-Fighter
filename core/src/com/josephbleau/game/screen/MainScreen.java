@@ -54,7 +54,7 @@ public class MainScreen implements Screen {
         this.entities.add(enemy);
 
         this.eventHandler = new EventHandler();
-        this.eventHandler.registerEntities(this.entities);
+        this.eventHandler.registerListeners(this.entities);
 
         // Register controllers
         this.controllers = new ArrayList<>();
