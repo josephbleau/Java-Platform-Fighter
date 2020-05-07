@@ -9,6 +9,7 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.josephbleau.game.control.GamecubeController;
+import com.josephbleau.game.control.NoopGamecubeController;
 import com.josephbleau.game.entity.Entity;
 import com.josephbleau.game.entity.player.Player;
 import com.josephbleau.game.entity.stage.Stage;
@@ -71,6 +72,8 @@ public class MainScreen implements Screen {
         /* Input Loop */
         if (this.controllers.size() > 0) {
             player.handleInput(this.controllers.get(0));
+        } else {
+            player.handleInput(new NoopGamecubeController());
         }
 
         /* Update Loop: All entities will run their physics calculations here. */
