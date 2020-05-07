@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.josephbleau.game.control.GamecubeController;
 import com.josephbleau.game.control.NoopGamecubeController;
 import com.josephbleau.game.entity.Entity;
+import com.josephbleau.game.entity.player.Enemy;
 import com.josephbleau.game.entity.player.Player;
 import com.josephbleau.game.entity.stage.Stage;
 import com.josephbleau.game.entity.stage.TestStage;
@@ -25,6 +26,7 @@ public class MainScreen implements Screen {
     final Game game;
     final Stage stage;
     final Player player;
+    final Enemy enemy;
 
     private List<Entity> entities;
 
@@ -39,6 +41,7 @@ public class MainScreen implements Screen {
         this.game = game;
         this.stage = new TestStage();
         this.player = new Player(this.stage);
+        this.enemy = new Enemy(this.stage);
 
         this.entities = new ArrayList<>();
 
@@ -48,6 +51,7 @@ public class MainScreen implements Screen {
 
         this.entities.add(this.stage);
         this.entities.add(player);
+        this.entities.add(enemy);
 
         this.eventHandler = new EventHandler();
         this.eventHandler.registerEntities(this.entities);
@@ -75,6 +79,7 @@ public class MainScreen implements Screen {
         } else {
             player.handleInput(new NoopGamecubeController());
         }
+        enemy.handleInput();
 
         /* Update Loop: All entities will run their physics calculations here. */
         for (Entity entity : entities) {
