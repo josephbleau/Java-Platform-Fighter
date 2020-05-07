@@ -4,8 +4,11 @@ package com.josephbleau.game.screen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.josephbleau.game.control.GamecubeController;
 import com.josephbleau.game.entity.Entity;
 import com.josephbleau.game.entity.player.Player;
 import com.josephbleau.game.entity.stage.Stage;
@@ -29,6 +32,8 @@ public class MainScreen implements Screen {
 
     private EventHandler eventHandler;
 
+    private List<GamecubeController> controllers;
+
     public MainScreen(Game game) {
         this.game = game;
         this.stage = new TestStage();
@@ -45,6 +50,15 @@ public class MainScreen implements Screen {
 
         this.eventHandler = new EventHandler();
         this.eventHandler.registerEntities(this.entities);
+
+        // Register controllers
+        this.controllers = new ArrayList<>();
+        for(int i = 0, port = 0; i < Controllers.getControllers().size; ++i) {
+            Controller controller = Controllers.getControllers().get(i);
+            if (controller.getName().equals(GamecubeController.MAYFLASH_ADAPTER_ID)) {
+                this.controllers.add(new GamecubeController(controller, port++));
+            }
+        }
     }
 
     @Override
@@ -55,7 +69,9 @@ public class MainScreen implements Screen {
     @Override
     public void render(float delta) {
         /* Input Loop */
-        player.handleInput();
+        if (this.controllers.size() > 0) {
+            player.handleInput(this.controllers.get(0));
+        }
 
         /* Update Loop: All entities will run their physics calculations here. */
         for (Entity entity : entities) {

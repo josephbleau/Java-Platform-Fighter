@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.josephbleau.game.control.Controllable;
+import com.josephbleau.game.control.GamecubeController;
 import com.josephbleau.game.entity.Entity;
 import com.josephbleau.game.entity.stage.Stage;
 import com.josephbleau.game.event.events.CollissionEvent;
@@ -50,21 +51,26 @@ public class Player extends Entity implements Controllable {
     }
 
     @Override
-    public void handleInput() {
+    public void handleInput(GamecubeController gamecubeController) {
         this.shielded = false;
+
         if (grounded) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
                 this.xVel = 0;
                 this.shielded = true;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || gamecubeController.getControlStick().x < -0.02f) {
                 this.xVel = -maximumNaturalGroundSpeed;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || gamecubeController.getControlStick().x > 0.02f) {
                 this.xVel = maximumNaturalGroundSpeed;
             } else {
                 this.xVel = 0;
             }
 
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.X)) {
                 this.grounded = false;
                 this.shielded = false;
                 this.yVel += 40;
@@ -72,9 +78,9 @@ public class Player extends Entity implements Controllable {
         }
 
         if (!grounded) {
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || gamecubeController.getControlStick().x < -0.02f) {
                 this.xVel = -maximumNaturalAirSpeed;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || gamecubeController.getControlStick().x > 0.02f) {
                 this.xVel = maximumNaturalAirSpeed;
             } else {
                 this.xVel = 0;
