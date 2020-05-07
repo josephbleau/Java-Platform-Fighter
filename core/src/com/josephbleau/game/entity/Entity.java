@@ -29,6 +29,9 @@ public class Entity implements EventListener, EventPublisher {
     /** Current y velocity **/
     protected float yVel;
 
+    /** Color that the shape is rendered as **/
+    protected Color outlineColor;
+
     /** The last x location before the most recent update tick **/
     private float xPrevPos;
 
@@ -38,20 +41,17 @@ public class Entity implements EventListener, EventPublisher {
     /** Rectangles representing the shape of the entity **/
     private List<Rectangle> rects;
 
-    /** Color that the shape is rendered as **/
-    private Color outlineColor;
-
     /** Active being set to true means update() will process **/
-    private Boolean active;
+    private boolean active;
 
     /** Hidden being set to true means that render() will process **/
-    private Boolean hidden;
+    private boolean hidden;
 
     /** Collidable being set to true means that collisions are registered and published **/
-    private Boolean collidable;
+    private boolean collidable;
 
     /** Solid being set to true means that objects cannot pass through this one **/
-    private Boolean solid;
+    private boolean solid;
 
     public Entity() {
         this.xPos = 0;
@@ -157,5 +157,13 @@ public class Entity implements EventListener, EventPublisher {
 
     public Boolean isCollidable() {
         return collidable;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
