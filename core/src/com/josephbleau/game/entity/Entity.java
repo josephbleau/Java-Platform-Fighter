@@ -29,8 +29,11 @@ public class Entity implements EventListener, EventPublisher {
     /** Current y velocity **/
     protected float yVel;
 
-    /** Color that the shape is rendered as **/
-    protected Color outlineColor;
+    /** Color that the shape is rendered as by default **/
+    protected Color defaultColor;
+
+    /** Color that the shape is rendered as currently (changes with state). **/
+    protected Color currentColor;
 
     /** The last x location before the most recent update tick **/
     private float xPrevPos;
@@ -60,7 +63,8 @@ public class Entity implements EventListener, EventPublisher {
         this.yPrevPos = 0;
 
         this.rects = new ArrayList<>();
-        this.outlineColor = Color.BLACK;
+        this.defaultColor = Color.BLACK;
+        this.currentColor = this.defaultColor;
 
         this.active = false;
         this.hidden = true;
@@ -86,7 +90,7 @@ public class Entity implements EventListener, EventPublisher {
 
         for (Rectangle rect : rects) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.setColor(this.outlineColor);
+            shapeRenderer.setColor(this.currentColor);
             shapeRenderer.rect(this.xPos + rect.x, this.yPos + rect.y, rect.width, rect.height);
             shapeRenderer.end();
         }
@@ -165,8 +169,8 @@ public class Entity implements EventListener, EventPublisher {
         return getTranslatedRects();
     }
 
-    public Color getOutlineColor() {
-        return outlineColor;
+    public Color getDefaultColor() {
+        return defaultColor;
     }
 
     public Boolean isCollidable() {

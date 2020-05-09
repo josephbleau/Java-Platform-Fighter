@@ -14,7 +14,7 @@ public class Enemy extends Character {
 
         shield = new Shield(new Circle(10, 30, 30), new Color(Color.BLUE.r, Color.BLUE.g, Color.BLUE.b, .7f));
 
-        this.outlineColor = Color.FIREBRICK;
+        this.defaultColor = Color.FIREBRICK;
 
         this.maximumNaturalGroundSpeed = 5;
 
@@ -24,7 +24,8 @@ public class Enemy extends Character {
     }
 
     public void handleInput() {
-        float speed = grounded ? maximumNaturalGroundSpeed : maximumNaturalAirSpeed;
+        float speed = (this.state == State.STANDING || this.state == State.RUNNING)  ? maximumNaturalGroundSpeed : maximumNaturalAirSpeed;
+
         if (xVel > 0) {
             xVel = speed;
             if (xPos >= 630) {
@@ -40,7 +41,7 @@ public class Enemy extends Character {
         }
 
         if (grounded && Math.random() > .99) {
-            this.grounded = false;
+            this.state = State.STANDING;
             this.yVel += 40;
         }
     }
