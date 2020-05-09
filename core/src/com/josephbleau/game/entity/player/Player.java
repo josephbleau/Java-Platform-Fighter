@@ -26,7 +26,7 @@ public class Player extends Character implements Controllable {
         super.handleInput(gamecubeController); // Clears character-based attributes
 
         if (this.state == State.SHIELDING) {
-            if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || gamecubeController.getControlStick().y < -0.02f || gamecubeController.getControlStick().y > 0.02f) {
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || gamecubeController.getControlStick().y > 0.5f) {
                 this.state = State.SIDESTEPPING;
             } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
