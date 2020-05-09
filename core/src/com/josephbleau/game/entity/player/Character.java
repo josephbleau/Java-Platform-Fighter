@@ -47,15 +47,20 @@ public class Character extends Entity {
 
     protected Stage stage;
 
+    protected State prevState;
     protected State state;
+
     protected State substate;
+    protected State prevSubstate;
 
     protected Color sidestepColor;
 
     public Character(Stage stage) {
         this.stage = stage;
-        this.state = State.CLEAR;
         this.sidestepColor = Color.LIGHT_GRAY;
+
+        enterState(State.CLEAR);
+        enterSubstate(State.SUBSTATE_CLEAR);
     }
 
     @Override
@@ -74,11 +79,10 @@ public class Character extends Entity {
         }
 
         if (sidestepTimeRemaining <= 0) {
-            this.state = State.STANDING;
+            enterState(this.prevState);
             this.currentColor = this.defaultColor;
             this.sidestepTimeRemaining = this.sidestepTime;
         }
-
 
         shield.update(delta);
         super.update(delta);
@@ -121,8 +125,8 @@ public class Character extends Entity {
                     snapToLedge((Ledge) theirShape);
                 }
 
-                if (this.state == State.AIRBORNE) {
-                    this.state = State.STANDING;
+                if (inState(State.AIRBORNE)) {
+                    enterState(State.STANDING);
                 }
 
                 this.yVel = 0;
@@ -140,10 +144,16 @@ public class Character extends Entity {
     public void render(ShapeRenderer shapeRenderer) {
         super.render(shapeRenderer);
 
-        if (this.state == State.SIDESTEPPING) {
+        if (inState(State.SIDESTEPPING)) {
             this.currentColor = this.sidestepColor;
         } else {
             this.currentColor = this.defaultColor;
+        }
+
+        if (inState(State.SHIELDING)) {
+            this.shield.setActive(true);
+        } else {
+            this.shield.setActive(false);
         }
 
         shield.render(shapeRenderer);
@@ -159,13 +169,31 @@ public class Character extends Entity {
         return super.intersects(otherEntity);
     }
 
-    public void handleInput(GamecubeController gamecubeController) {
-        shield.setActive(false);
+    public void handleInput(GamecubeController gamecubeController) {}
+
+    protected void enterState(State newState) {
+        this.prevState = this.state;
+        this.state = newState;
+    }
+
+    protected void enterSubstate(State newSubstate) {
+        this.prevSubstate = this.substate;
+        this.substate = newSubstate;
+    }
+
+    protected boolean inState(State ... state) {
+        boolean outcome = false;
+
+        for (State s : state) {
+            outcome |= this.state == s;
+        }
+
+        return outcome;
     }
 
     private void snapToLedge(Ledge ledge) {
         this.setActive(false); // prevents gravity from applying
-        this.state = State.HANGING;
+        enterState(State.HANGING);
 
         Rectangle playerRect = this.getRects().get(0);
 

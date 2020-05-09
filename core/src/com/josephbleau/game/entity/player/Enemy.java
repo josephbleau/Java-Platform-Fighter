@@ -24,7 +24,7 @@ public class Enemy extends Character {
     }
 
     public void handleInput() {
-        float speed = (this.state == State.STANDING || this.state == State.RUNNING)  ? maximumNaturalGroundSpeed : maximumNaturalAirSpeed;
+        float speed = inState(State.STANDING, State.RUNNING)  ? maximumNaturalGroundSpeed : maximumNaturalAirSpeed;
 
         if (xVel > 0) {
             xVel = speed;
@@ -41,7 +41,7 @@ public class Enemy extends Character {
         }
 
         if (grounded && Math.random() > .99) {
-            this.state = State.STANDING;
+            enterState(State.STANDING);
             this.yVel += 40;
         }
     }
