@@ -25,6 +25,23 @@ public class Player extends Character implements Controllable {
     public void handleInput(GamecubeController gamecubeController) {
         super.handleInput(gamecubeController); // Clears character-based attributes
 
+        if (this.state == State.JUMPSQUAT) {
+            if (jumpSquatTimeRemaining <= 0.0f) {
+                shield.setActive(false);
+                this.grounded = false;
+                this.state = State.AIRBORNE;
+                this.jumpSquatTimeRemaining = this.jumpSquatTime;
+
+                if (Gdx.input.isKeyPressed(Input.Keys.SPACE) || gamecubeController.buttonPressed(GamecubeController.Button.X) || gamecubeController.buttonPressed((GamecubeController.Button.Y))) {
+                    this.yVel += this.fullHopVelocity;
+                } else {
+                    this.yVel += this.shortHopVelocity;
+                }
+            }
+
+            return;
+        }
+
         if (this.state == State.HANGING) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
@@ -32,7 +49,7 @@ public class Player extends Character implements Controllable {
 
                 this.setActive(true);
                 this.grounded = false;
-                this.yVel += 45;
+                this.yVel += fullHopVelocity;
                 this.state = State.AIRBORNE;
                 this.substate = State.SUBSTATE_CLEAR;
             }
@@ -61,14 +78,9 @@ public class Player extends Character implements Controllable {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.X)) {
-                this.grounded = false;
-                this.yVel += 40;
-                this.state = State.AIRBORNE;
-                shield.setActive(false);
+                this.state = State.JUMPSQUAT;
             }
-        }
-
-        if (!grounded) {
+        } else {
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || gamecubeController.getControlStick().x < -0.02f) {
                 this.xVel = -maximumNaturalAirSpeed;
             } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || gamecubeController.getControlStick().x > 0.02f) {
