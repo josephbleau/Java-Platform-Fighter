@@ -1,5 +1,6 @@
 package com.josephbleau.game.entity.player;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
@@ -34,7 +35,13 @@ public class Character extends Entity {
     protected float jumpSquatTime = 0.05f;
 
     /** The amount of time left in jumpsquat. **/
-    protected float jumpSquatTimeRemaining = jumpSquatTime;
+    protected float jumpSquatTimeRemaining = this.jumpSquatTime;
+
+    /** The total amount of time spent in sidestep **/
+    protected float sidestepTime = 0.37f;
+
+    /** The amount of time left in the current sidestep. **/
+    protected float sidestepTimeRemaining = this.sidestepTime;
 
     protected Shield shield;
 
@@ -43,14 +50,16 @@ public class Character extends Entity {
     protected State state;
     protected State substate;
 
+    protected Color sidestepColor;
+
     public Character(Stage stage) {
         this.stage = stage;
+        this.state = State.CLEAR;
+        this.sidestepColor = Color.LIGHT_GRAY;
     }
 
     @Override
     public void update(float delta) {
-        this.grounded = false;
-
         /* Apply gravity */
         if (this.yVel > maximumNaturalDownwardVelocity) {
             this.yVel = Math.max(maximumNaturalDownwardVelocity, this.yVel - this.stage.getGravity());
@@ -60,8 +69,18 @@ public class Character extends Entity {
             jumpSquatTimeRemaining -= delta;
         }
 
-        shield.update(delta);
+        if (state == State.SIDESTEPPING) {
+            sidestepTimeRemaining -= delta;
+        }
 
+        if (sidestepTimeRemaining <= 0) {
+            this.state = State.STANDING;
+            this.currentColor = this.defaultColor;
+            this.sidestepTimeRemaining = this.sidestepTime;
+        }
+
+
+        shield.update(delta);
         super.update(delta);
     }
 
@@ -102,7 +121,10 @@ public class Character extends Entity {
                     snapToLedge((Ledge) theirShape);
                 }
 
-                this.grounded = true;
+                if (this.state == State.AIRBORNE) {
+                    this.state = State.STANDING;
+                }
+
                 this.yVel = 0;
             }
         }
@@ -117,6 +139,12 @@ public class Character extends Entity {
     @Override
     public void render(ShapeRenderer shapeRenderer) {
         super.render(shapeRenderer);
+
+        if (this.state == State.SIDESTEPPING) {
+            this.currentColor = this.sidestepColor;
+        } else {
+            this.currentColor = this.defaultColor;
+        }
 
         shield.render(shapeRenderer);
     }

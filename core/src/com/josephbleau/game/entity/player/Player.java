@@ -25,10 +25,31 @@ public class Player extends Character implements Controllable {
     public void handleInput(GamecubeController gamecubeController) {
         super.handleInput(gamecubeController); // Clears character-based attributes
 
+        if (this.state == State.SHIELDING) {
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || gamecubeController.getControlStick().y < -0.02f || gamecubeController.getControlStick().y > 0.02f) {
+                this.state = State.SIDESTEPPING;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.X)) {
+                this.state = State.JUMPSQUAT;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
+                this.xVel = 0;
+                this.state = State.SHIELDING;
+                shield.spawn(xPos, yPos);
+            } else {
+                this.state = State.STANDING;
+            }
+        }
+
+        if (this.state == State.SIDESTEPPING) {
+            return;
+        }
+
         if (this.state == State.JUMPSQUAT) {
             if (jumpSquatTimeRemaining <= 0.0f) {
                 shield.setActive(false);
-                this.grounded = false;
                 this.state = State.AIRBORNE;
                 this.jumpSquatTimeRemaining = this.jumpSquatTime;
 
@@ -48,7 +69,6 @@ public class Player extends Character implements Controllable {
                     gamecubeController.buttonPressed(GamecubeController.Button.X)) {
 
                 this.setActive(true);
-                this.grounded = false;
                 this.yVel += fullHopVelocity;
                 this.state = State.AIRBORNE;
                 this.substate = State.SUBSTATE_CLEAR;
@@ -57,13 +77,13 @@ public class Player extends Character implements Controllable {
             return;
         }
 
-        if (grounded) {
+        if (this.state == State.CLEAR || this.state == State.RUNNING || this.state == State.STANDING) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
                 this.xVel = 0;
-                shield.spawn(xPos, yPos);
                 this.state = State.SHIELDING;
+                shield.spawn(xPos, yPos);
             } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || gamecubeController.getControlStick().x < -0.02f) {
                 this.xVel = -maximumNaturalGroundSpeed;
                 this.state = State.RUNNING;
@@ -80,7 +100,11 @@ public class Player extends Character implements Controllable {
                     gamecubeController.buttonPressed(GamecubeController.Button.X)) {
                 this.state = State.JUMPSQUAT;
             }
-        } else {
+
+            return;
+        }
+
+        if (this.state == State.AIRBORNE) {
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || gamecubeController.getControlStick().x < -0.02f) {
                 this.xVel = -maximumNaturalAirSpeed;
             } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || gamecubeController.getControlStick().x > 0.02f) {
