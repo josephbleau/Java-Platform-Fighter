@@ -24,6 +24,18 @@ public class Character extends Entity {
     /** The maximum x-velocity that can be reached via controller inputs while in the air. **/
     protected float maximumNaturalAirSpeed = 5;
 
+    /** The initial velocity boost of a short hop **/
+    protected float shortHopVelocity = 35;
+
+    /** The initial velocity boost of a full hop **/
+    protected float fullHopVelocity = 50;
+
+    /** The amount of time until you jump after pressing jump (from the ground) in seconds. **/
+    protected float jumpSquatTime = 0.05f;
+
+    /** The amount of time left in jumpsquat. **/
+    protected float jumpSquatTimeRemaining = jumpSquatTime;
+
     protected Shield shield;
 
     protected Stage stage;
@@ -42,6 +54,10 @@ public class Character extends Entity {
         /* Apply gravity */
         if (this.yVel > maximumNaturalDownwardVelocity) {
             this.yVel = Math.max(maximumNaturalDownwardVelocity, this.yVel - this.stage.getGravity());
+        }
+
+        if (state == State.JUMPSQUAT) {
+            jumpSquatTimeRemaining -= delta;
         }
 
         shield.update(delta);
