@@ -6,11 +6,16 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.josephbleau.game.control.GamecubeController;
 import com.josephbleau.game.entity.Entity;
+import com.josephbleau.game.entity.attack.Attack;
 import com.josephbleau.game.entity.parts.Ledge;
 import com.josephbleau.game.entity.stage.Stage;
 import com.josephbleau.game.event.events.CollissionEvent;
 import com.josephbleau.game.event.events.DeathEvent;
 import com.josephbleau.game.event.events.Event;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Character extends Entity {
 
@@ -55,6 +60,10 @@ public class Character extends Entity {
 
     protected Color sidestepColor;
 
+    protected boolean facingRight = true;
+
+    protected List<Attack> attacks = new ArrayList<>();
+
     public Character(Stage stage) {
         this.stage = stage;
         this.sidestepColor = Color.LIGHT_GRAY;
@@ -85,7 +94,33 @@ public class Character extends Entity {
         }
 
         shield.update(delta);
+        updateAttacks(delta);
+        if (!inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
+            if (xVel > 0) {
+                facingRight = true;
+            } else if (xVel < 0) {
+                facingRight = false;
+            }
+        }
         super.update(delta);
+    }
+
+    private void updateAttacks(float delta) {
+        boolean attackPlaying = false;
+        Iterator<Attack> attackIterator = attacks.iterator();
+        while (attackIterator.hasNext()) {
+            Attack attack = attackIterator.next();
+            attack.update(delta);
+            if (attack.isPlaying()) {
+                attackPlaying = true;
+            }
+            if (!attack.isActive()) {
+                attackIterator.remove();
+            }
+        }
+        if (!attackPlaying && inSubstate(State.SUBSTATE_ATTACKING)) {
+            enterSubstate(State.SUBSTATE_CLEAR);
+        }
     }
 
     @Override
@@ -127,6 +162,7 @@ public class Character extends Entity {
 
                 if (inState(State.AIRBORNE)) {
                     enterState(State.STANDING);
+                    enterSubstate(State.SUBSTATE_CLEAR);
                 }
 
                 this.yVel = 0;
@@ -157,6 +193,8 @@ public class Character extends Entity {
         }
 
         shield.render(shapeRenderer);
+
+        attacks.forEach(attack -> attack.render(shapeRenderer));
     }
 
     @Override
@@ -189,6 +227,23 @@ public class Character extends Entity {
         }
 
         return outcome;
+    }
+
+    protected boolean inSubstate(State... substate) {
+        for(State s : substate) {
+            if (this.substate.equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected void startAttack(Attack attack) {
+        attack.spawn(xPos, yPos);
+        if (attack.isPlaying()) {
+            enterSubstate(State.SUBSTATE_ATTACKING);
+        }
+        attacks.add(attack);
     }
 
     private void snapToLedge(Ledge ledge) {

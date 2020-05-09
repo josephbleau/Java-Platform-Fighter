@@ -10,6 +10,7 @@ public enum State {
     SHIELDING,              // Still, in shield
     HANGING,                // Hanging from a ledge
     SIDESTEPPING,           // Player is invincible during a sidestep (dodge)
+    SUBSTATE_ATTACKING,              // Player is in an attack animation
     SUBSTATE_HANGING_LEFT,
     SUBSTATE_HANGING_RIGHT
 }

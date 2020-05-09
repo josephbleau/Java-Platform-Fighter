@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.josephbleau.game.control.Controllable;
 import com.josephbleau.game.control.GamecubeController;
+import com.josephbleau.game.entity.attack.Laser;
 import com.josephbleau.game.entity.stage.Stage;
 
 public class Player extends Character implements Controllable {
@@ -77,7 +78,7 @@ public class Player extends Character implements Controllable {
             return;
         }
 
-        if (inState(State.CLEAR, State.RUNNING, State.STANDING)) {
+        if (inState(State.CLEAR, State.RUNNING, State.STANDING) && !inSubstate(State.SUBSTATE_ATTACKING)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
@@ -102,13 +103,19 @@ public class Player extends Character implements Controllable {
                 enterState(State.JUMPSQUAT);
             }
 
+            if (!inState(State.SHIELDING) && (Gdx.input.isKeyPressed(Input.Keys.S) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.B))) {
+                startAttack(new Laser(facingRight));
+                this.xVel = 0;
+            }
+
             return;
         }
 
         if (inState(State.AIRBORNE)) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
+            if (!inSubstate(State.SUBSTATE_ATTACKING) && (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
+                    gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK))) {
                 enterState(State.SIDESTEPPING);
                 this.xVel = 0;
                 return;
@@ -120,6 +127,11 @@ public class Player extends Character implements Controllable {
                 this.xVel = maximumNaturalAirSpeed;
             } else {
                 this.xVel = 0;
+            }
+
+            if (!inState(State.SIDESTEPPING) && !inSubstate(State.SUBSTATE_ATTACKING) &&
+                    (Gdx.input.isKeyPressed(Input.Keys.S) || gamecubeController.buttonPressed(GamecubeController.Button.B))) {
+                startAttack(new Laser(facingRight));
             }
         }
     }

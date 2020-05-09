@@ -35,6 +35,8 @@ public class Entity implements EventListener, EventPublisher {
     /** Color that the shape is rendered as currently (changes with state). **/
     protected Color currentColor;
 
+    protected ShapeRenderer.ShapeType shapeType = ShapeRenderer.ShapeType.Line;
+
     /** The last x location before the most recent update tick **/
     private float xPrevPos;
 
@@ -89,7 +91,7 @@ public class Entity implements EventListener, EventPublisher {
         }
 
         for (Rectangle rect : rects) {
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.begin(this.shapeType);
             shapeRenderer.setColor(this.currentColor);
             shapeRenderer.rect(this.xPos + rect.x, this.yPos + rect.y, rect.width, rect.height);
             shapeRenderer.end();
@@ -183,5 +185,9 @@ public class Entity implements EventListener, EventPublisher {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 }
