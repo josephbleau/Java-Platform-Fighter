@@ -1,4 +1,4 @@
-package com.nighto.weebu.control;
+package com.nighto.weebu.controller;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.math.Vector2;

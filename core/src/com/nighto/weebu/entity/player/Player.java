@@ -5,8 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
-import com.nighto.weebu.control.Controllable;
-import com.nighto.weebu.control.GamecubeController;
+import com.nighto.weebu.controller.Controllable;
+import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.attack.Projectile;
 import com.nighto.weebu.entity.stage.Stage;
 

@@ -1,4 +1,4 @@
-package com.nighto.weebu.control;
+package com.nighto.weebu.controller;
 
 public interface Controllable {
     void handleInput(GamecubeController controller);
