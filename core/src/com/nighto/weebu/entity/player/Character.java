@@ -40,13 +40,13 @@ public class Character extends Entity {
     protected float jumpSquatTime = 0.05f;
 
     /** The amount of time left in jumpsquat. **/
-    protected float jumpSquatTimeRemaining = this.jumpSquatTime;
+    protected float jumpSquatTimeRemaining = jumpSquatTime;
 
     /** The total amount of time spent in sidestep **/
     protected float sidestepTime = 0.37f;
 
     /** The amount of time left in the current sidestep. **/
-    protected float sidestepTimeRemaining = this.sidestepTime;
+    protected float sidestepTimeRemaining = sidestepTime;
 
     protected Shield shield;
 
@@ -66,7 +66,7 @@ public class Character extends Entity {
 
     public Character(Stage stage) {
         this.stage = stage;
-        this.sidestepColor = Color.LIGHT_GRAY;
+        sidestepColor = Color.LIGHT_GRAY;
 
         enterState(State.CLEAR);
         enterSubstate(State.SUBSTATE_CLEAR);
@@ -75,8 +75,8 @@ public class Character extends Entity {
     @Override
     public void update(float delta) {
         /* Apply gravity */
-        if (this.yVel > maximumNaturalDownwardVelocity) {
-            this.yVel = Math.max(maximumNaturalDownwardVelocity, this.yVel - this.stage.getGravity());
+        if (yVel > maximumNaturalDownwardVelocity) {
+            yVel = Math.max(maximumNaturalDownwardVelocity, yVel - stage.getGravity());
         }
 
         if (state == State.JUMPSQUAT) {
@@ -88,9 +88,9 @@ public class Character extends Entity {
         }
 
         if (sidestepTimeRemaining <= 0) {
-            enterState(this.prevState);
-            this.currentColor = this.defaultColor;
-            this.sidestepTimeRemaining = this.sidestepTime;
+            enterState(prevState);
+            currentColor = defaultColor;
+            sidestepTimeRemaining = sidestepTime;
         }
 
         shield.update(delta);
@@ -149,14 +149,14 @@ public class Character extends Entity {
                 theirShape = collissionEvent.shape1;
             }
 
-            if (them == this.stage) {
+            if (them == stage) {
                 /* Determine which direction we were heading so that we can set our position correctly. */
                 boolean falling = yVel < 0;
 
                 /* Reset our x/y to be the x/y of the top of the rect that we collided with (so x, y+height) */
-                if (falling && this.stage.isGround((Rectangle) theirShape)) {
-                    this.yPos = ((Rectangle)theirShape).y + ((Rectangle)theirShape).height;
-                } else if (falling && this.stage.isLedge((Ledge) theirShape)){
+                if (falling && stage.isGround((Rectangle) theirShape)) {
+                    yPos = ((Rectangle)theirShape).y + ((Rectangle)theirShape).height;
+                } else if (falling && stage.isLedge((Ledge) theirShape)){
                     snapToLedge((Ledge) theirShape);
                 }
 
@@ -165,7 +165,7 @@ public class Character extends Entity {
                     enterSubstate(State.SUBSTATE_CLEAR);
                 }
 
-                this.yVel = 0;
+                yVel = 0;
             }
         }
 
@@ -181,15 +181,15 @@ public class Character extends Entity {
         super.render(shapeRenderer);
 
         if (inState(State.SIDESTEPPING)) {
-            this.currentColor = this.sidestepColor;
+            currentColor = sidestepColor;
         } else {
-            this.currentColor = this.defaultColor;
+            currentColor = defaultColor;
         }
 
         if (inState(State.SHIELDING)) {
-            this.shield.setActive(true);
+            shield.setActive(true);
         } else {
-            this.shield.setActive(false);
+            shield.setActive(false);
         }
 
         shield.render(shapeRenderer);
@@ -200,6 +200,7 @@ public class Character extends Entity {
     @Override
     public CollissionEvent intersects(Entity otherEntity) {
         CollissionEvent shieldCollision = shield.intersects(otherEntity);
+
         if (shieldCollision != null) {
             return shieldCollision;
         }
@@ -210,28 +211,28 @@ public class Character extends Entity {
     public void handleInput(GamecubeController gamecubeController) {}
 
     protected void enterState(State newState) {
-        this.prevState = this.state;
-        this.state = newState;
+        prevState = state;
+        state = newState;
     }
 
     protected void enterSubstate(State newSubstate) {
-        this.prevSubstate = this.substate;
-        this.substate = newSubstate;
+        prevSubstate = substate;
+        substate = newSubstate;
     }
 
-    protected boolean inState(State ... state) {
+    protected boolean inState(State ... states) {
         boolean outcome = false;
 
-        for (State s : state) {
-            outcome |= this.state == s;
+        for (State checkingState : states) {
+            outcome |= state == checkingState;
         }
 
         return outcome;
     }
 
-    protected boolean inSubstate(State... substate) {
-        for(State s : substate) {
-            if (this.substate.equals(s)) {
+    protected boolean inSubstate(State... substates) {
+        for(State checkingState : substates) {
+            if (substate.equals(checkingState)) {
                 return true;
             }
         }
@@ -240,24 +241,26 @@ public class Character extends Entity {
 
     protected void startAttack(Attack attack) {
         attack.spawn(xPos, yPos);
+
         if (attack.isPlaying()) {
             enterSubstate(State.SUBSTATE_ATTACKING);
         }
+
         attacks.add(attack);
     }
 
     private void snapToLedge(Ledge ledge) {
-        this.setActive(false); // prevents gravity from applying
+        setActive(false); // prevents gravity from applying
         enterState(State.HANGING);
 
-        Rectangle playerRect = this.getRects().get(0);
+        Rectangle playerRect = getRects().get(0);
 
         if (ledge.hangLeft) {
-            this.substate = State.SUBSTATE_HANGING_LEFT;
-            this.teleport(ledge.x - playerRect.width, ledge.y + ledge.height - playerRect.height, false);
+            substate = State.SUBSTATE_HANGING_LEFT;
+            teleport(ledge.x - playerRect.width, ledge.y + ledge.height - playerRect.height, false);
         } else {
-            this.substate = State.SUBSTATE_HANGING_RIGHT;
-            this.teleport(ledge.x + ledge.width, ledge.y + ledge.height - playerRect.height, false);
+            substate = State.SUBSTATE_HANGING_RIGHT;
+            teleport(ledge.x + ledge.width, ledge.y + ledge.height - playerRect.height, false);
         }
     }
 }

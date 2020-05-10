@@ -10,17 +10,14 @@ public class Enemy extends Character {
     public Enemy(Stage stage) {
         super(stage);
 
-        this.getRects().add(new Rectangle(0, 0, 20, 60));
+        getRects().add(new Rectangle(0, 0, 20, 60));
 
         shield = new Shield(new Circle(10, 30, 30), new Color(Color.BLUE.r, Color.BLUE.g, Color.BLUE.b, .7f));
+        defaultColor = Color.FIREBRICK;
+        maximumNaturalGroundSpeed = 5;
+        maximumNaturalAirSpeed = 2.5f;
 
-        this.defaultColor = Color.FIREBRICK;
-
-        this.maximumNaturalGroundSpeed = 5;
-
-        this.maximumNaturalAirSpeed = 2.5f;
-
-        this.spawn(600, 400);
+        spawn(600, 400);
     }
 
     public void handleInput() {
@@ -42,7 +39,7 @@ public class Enemy extends Character {
 
         if (grounded && Math.random() > .99) {
             enterState(State.STANDING);
-            this.yVel += 40;
+            yVel += 40;
         }
     }
 }

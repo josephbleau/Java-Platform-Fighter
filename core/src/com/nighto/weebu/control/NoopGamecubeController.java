@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 public class NoopGamecubeController extends GamecubeController {
 
     public NoopGamecubeController() {
-        super(null, -1);
+        super(null);
     }
 
     @Override

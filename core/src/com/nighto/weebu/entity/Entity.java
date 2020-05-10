@@ -74,58 +74,47 @@ public class Entity implements EventListener, EventPublisher {
         this.solid = true;
     }
 
-    public Entity(final float startingX, final float startingY, final List<Rectangle> rects) {
-        this();
-
-        this.xPos = startingX;
-        this.yPos = startingY;
-
-        for (Rectangle rect : rects) {
-            this.rects.add(new Rectangle(rect.x, rect.y, rect.width, rect.height));
-        }
-    }
-
     public void render(ShapeRenderer shapeRenderer) {
-        if (this.hidden) {
+        if (hidden) {
             return;
         }
 
         for (Rectangle rect : rects) {
-            shapeRenderer.begin(this.shapeType);
-            shapeRenderer.setColor(this.currentColor);
-            shapeRenderer.rect(this.xPos + rect.x, this.yPos + rect.y, rect.width, rect.height);
+            shapeRenderer.begin(shapeType);
+            shapeRenderer.setColor(currentColor);
+            shapeRenderer.rect(xPos + rect.x, yPos + rect.y, rect.width, rect.height);
             shapeRenderer.end();
         }
     }
 
     public void update(float delta) {
-        if (!this.active) {
+        if (!active) {
             return;
         }
 
-        this.xPrevPos = this.xPos;
-        this.yPrevPos = this.yPos;
+        xPrevPos = xPos;
+        yPrevPos = yPos;
 
-        this.xPos += this.xVel;
-        this.yPos += this.yVel;
+        xPos += xVel;
+        yPos += yVel;
     }
 
     public void spawn(float x, float y) {
-        this.hidden = false;
-        this.active = true;
+        hidden = false;
+        active = true;
 
-        this.xPos = x;
-        this.yPos = y;
+        xPos = x;
+        yPos = y;
     }
 
     public void teleport(float x, float y, boolean keepVelocity) {
         if (!keepVelocity) {
-            this.xVel = 0;
-            this.yVel = 0;
+            xVel = 0;
+            yVel = 0;
         }
 
-        this.xPos = x;
-        this.yPos = y;
+        xPos = x;
+        yPos = y;
     }
 
     @Override
@@ -148,11 +137,6 @@ public class Entity implements EventListener, EventPublisher {
         this.yVel += yVel;
     }
 
-    public void rollback() {
-        this.xPos = this.xPrevPos;
-        this.yPos = this.yPrevPos;
-    }
-
     public List<Rectangle> getRects() {
         return rects;
     }
@@ -161,7 +145,7 @@ public class Entity implements EventListener, EventPublisher {
         List<Rectangle> translatedRects = new ArrayList<>();
 
         for (Rectangle rect : getRects()) {
-            translatedRects.add(new Rectangle(this.xPos + rect.x, this.yPos + rect.y, rect.width, rect.height));
+            translatedRects.add(new Rectangle(xPos + rect.x, yPos + rect.y, rect.width, rect.height));
         }
 
         return translatedRects;

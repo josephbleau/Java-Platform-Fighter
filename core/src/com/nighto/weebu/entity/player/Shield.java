@@ -23,7 +23,6 @@ public class Shield extends Entity {
 
     public Shield(Circle circle, Color color) {
         this.circle = circle;
-
         this.color = color;
 
         setActive(false);
@@ -32,7 +31,7 @@ public class Shield extends Entity {
     @Override
     public void update(float delta) {
         if (isActive()) {
-            this.size = MathUtils.clamp(size - DRAIN_RATE * delta, 0, 1);
+            size = MathUtils.clamp(size - DRAIN_RATE * delta, 0, 1);
         } else {
             size = MathUtils.clamp(size + GROW_RATE * delta, 0, 1);
         }
@@ -51,7 +50,8 @@ public class Shield extends Entity {
     @Override
     public CollissionEvent intersects(Entity otherEntity) {
         if (isActive()) {
-            Circle translatedCircle = new Circle(this.xPos + circle.x, this.yPos + circle.y, size * circle.radius);
+            Circle translatedCircle = new Circle(xPos + circle.x, yPos + circle.y, size * circle.radius);
+
             for (Rectangle otherRect : otherEntity.getTranslatedRects()) {
                 if (Intersector.overlaps(translatedCircle, otherRect)) {
                     return new CollissionEvent(this, translatedCircle, otherEntity, otherRect);

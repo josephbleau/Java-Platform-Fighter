@@ -14,11 +14,8 @@ public class Player extends Character implements Controllable {
 
     public Player(Stage stage) {
         super(stage);
-
         this.getRects().add(new Rectangle(0, 0, 20, 60));
-
-        shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
-
+        this.shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
         this.spawn(200, 400);
     }
 
@@ -36,7 +33,7 @@ public class Player extends Character implements Controllable {
             } else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
-                this.xVel = 0;
+                xVel = 0;
                 enterState(State.SHIELDING);
                 shield.spawn(xPos, yPos);
             } else {

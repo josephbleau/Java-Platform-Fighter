@@ -9,7 +9,7 @@ public class EventHandler {
     private List<EventListener> listeners;
 
     public EventHandler() {
-        this.listeners = new ArrayList<>();
+        listeners = new ArrayList<>();
     }
 
     public void registerListeners(List<? extends EventListener> listeners) {

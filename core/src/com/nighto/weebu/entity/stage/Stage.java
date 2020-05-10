@@ -24,10 +24,9 @@ public abstract class Stage extends Entity {
     protected Color ledgeColor;
 
     public Stage() {
-        this.blastZoneColor = Color.RED;
-        this.ledgeColor = Color.BLUE;
-
-        this.ledges = new ArrayList<>();
+        blastZoneColor = Color.RED;
+        ledgeColor = Color.BLUE;
+        ledges = new ArrayList<>();
     }
 
     public void render(ShapeRenderer shapeRenderer) {
@@ -35,13 +34,13 @@ public abstract class Stage extends Entity {
 
         // Draw the blast zone in red.
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(this.blastZoneColor);
-        shapeRenderer.rect(this.blastZone.x, this.blastZone.y, this.blastZone.width, this.blastZone.height);
+        shapeRenderer.setColor(blastZoneColor);
+        shapeRenderer.rect(blastZone.x, blastZone.y, blastZone.width, blastZone.height);
         shapeRenderer.end();
 
         for (Rectangle ledge : ledges) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.setColor(this.ledgeColor);
+            shapeRenderer.setColor(ledgeColor);
             shapeRenderer.rect(ledge.x, ledge.y, ledge.width, ledge.height);
             shapeRenderer.end();
         }
@@ -52,13 +51,13 @@ public abstract class Stage extends Entity {
     public void applyForce(float x, float y) { }
 
     public float getGravity() {
-        return this.gravity;
+        return gravity;
     }
 
     @Override
     public List<Rectangle> getCollidables() {
         List<Rectangle> collidables = super.getCollidables();
-        collidables.addAll(this.ledges);
+        collidables.addAll(ledges);
 
         return collidables;
     }
@@ -66,7 +65,7 @@ public abstract class Stage extends Entity {
     /** Returns true if the entity is completely outside of the blast zone **/
     public boolean inBounds(Entity entity) {
         for (Rectangle rect : entity.getTranslatedRects()) {
-            if (this.blastZone.contains(rect)) {
+            if (blastZone.contains(rect)) {
                 return true;
             }
         }
@@ -75,7 +74,7 @@ public abstract class Stage extends Entity {
     }
 
     public boolean isGround(Rectangle rect) {
-        for (Rectangle rectangle : this.getTranslatedRects()) {
+        for (Rectangle rectangle : getTranslatedRects()) {
             if (rect.equals(rectangle)) {
                 return true;
             }
@@ -85,7 +84,7 @@ public abstract class Stage extends Entity {
     }
 
     public boolean isLedge(Ledge ledge) {
-        for (Rectangle rectangle : this.ledges) {
+        for (Rectangle rectangle : ledges) {
             if (ledge.equals(rectangle)) {
                 return true;
             }

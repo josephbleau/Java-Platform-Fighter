@@ -39,29 +39,29 @@ public class MainScreen implements Screen {
 
     public MainScreen(Game game) {
         this.game = game;
-        this.stage = new TestStage();
-        this.player = new Player(this.stage);
-        this.enemy = new Enemy(this.stage);
+        stage = new TestStage();
+        player = new Player(stage);
+        enemy = new Enemy(stage);
 
-        this.entities = new ArrayList<>();
+        entities = new ArrayList<>();
 
-        this.camera = new OrthographicCamera();
-        this.camera.setToOrtho(false, 800, 640);
-        this.shapeRenderer = new ShapeRenderer();
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 800, 640);
+        shapeRenderer = new ShapeRenderer();
 
-        this.entities.add(this.stage);
-        this.entities.add(player);
-        this.entities.add(enemy);
+        entities.add(stage);
+        entities.add(player);
+        entities.add(enemy);
 
-        this.eventHandler = new EventHandler();
-        this.eventHandler.registerListeners(this.entities);
+        eventHandler = new EventHandler();
+        eventHandler.registerListeners(entities);
 
         // Register controllers
-        this.controllers = new ArrayList<>();
-        for(int i = 0, port = 0; i < Controllers.getControllers().size; ++i) {
-            Controller controller = Controllers.getControllers().get(i);
+        controllers = new ArrayList<>();
+
+        for(Controller controller : Controllers.getControllers()) {
             if (controller.getName().equals(GamecubeController.MAYFLASH_ADAPTER_ID)) {
-                this.controllers.add(new GamecubeController(controller, port++));
+                controllers.add(new GamecubeController(controller));
             }
         }
     }
@@ -74,11 +74,12 @@ public class MainScreen implements Screen {
     @Override
     public void render(float delta) {
         /* Input Loop */
-        if (this.controllers.size() > 0) {
-            player.handleInput(this.controllers.get(0));
+        if (controllers.size() > 0) {
+            player.handleInput(controllers.get(0));
         } else {
             player.handleInput(new NoopGamecubeController());
         }
+
         enemy.handleInput();
 
         /* Update Loop: All entities will run their physics calculations here. */
@@ -88,9 +89,9 @@ public class MainScreen implements Screen {
 
         /* Outcome Loop: Collisions and interactions will be resolved here. */
         for (Entity outerEntity : entities) {
-            if (!this.stage.inBounds(outerEntity)) {
+            if (!stage.inBounds(outerEntity)) {
                 DeathEvent deathEvent = new DeathEvent(outerEntity);
-                this.eventHandler.publish(deathEvent);
+                eventHandler.publish(deathEvent);
             }
 
             for (Entity innerEntity : entities) {
@@ -102,19 +103,19 @@ public class MainScreen implements Screen {
                     CollissionEvent collissionEvent = outerEntity.intersects(innerEntity);
 
                     if (collissionEvent != null) {
-                        this.eventHandler.publish(collissionEvent);
+                        eventHandler.publish(collissionEvent);
                     }
                 }
             }
         }
 
         /* Render Loop **/
-        this.shapeRenderer.setProjectionMatrix(this.camera.combined);
+        shapeRenderer.setProjectionMatrix(camera.combined);
 
-        this.stage.render(this.shapeRenderer);
+        stage.render(shapeRenderer);
 
         for (Entity entity : entities) {
-            entity.render(this.shapeRenderer);
+            entity.render(shapeRenderer);
         }
     }
 

@@ -7,11 +7,9 @@ public class GamecubeController {
     public static final String MAYFLASH_ADAPTER_ID = "MAYFLASH GameCube Controller Adapter";
 
     private Controller controller;
-    private int port;
 
-    public GamecubeController(Controller controller, int port) {
+    public GamecubeController(Controller controller) {
         this.controller = controller;
-        this.port = port;
     }
 
     public enum Button {
@@ -59,14 +57,14 @@ public class GamecubeController {
 
     public Vector2 getControlStick(){
         return new Vector2(
-                this.controller.getAxis(Axis.CONTROL_X_AXIS.value),
-                this.controller.getAxis(Axis.CONTROL_Y_AXIS.value)
+                controller.getAxis(Axis.CONTROL_X_AXIS.value),
+                controller.getAxis(Axis.CONTROL_Y_AXIS.value)
         );
     }
     public Vector2 getSmashStick() {
         return new Vector2(
-                this.controller.getAxis(Axis.SMASY_X_AXIS.value),
-                this.controller.getAxis(Axis.SMASH_Y_AXIS.value)
+                controller.getAxis(Axis.SMASY_X_AXIS.value),
+                controller.getAxis(Axis.SMASH_Y_AXIS.value)
         );
     }
 }
