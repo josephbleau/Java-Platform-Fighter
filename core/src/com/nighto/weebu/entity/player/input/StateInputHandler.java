@@ -67,4 +67,9 @@ public abstract class StateInputHandler {
     protected void enterState(State state) {
         getPlayer().enterState(state);
     }
+
+    /** Convenience pass-through function that invokes the players enterSubstate method **/
+    protected void enterSubstate(State state) {
+        getPlayer().enterSubstate(state);
+    }
 }
