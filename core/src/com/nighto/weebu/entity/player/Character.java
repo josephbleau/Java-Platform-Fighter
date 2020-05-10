@@ -286,4 +286,8 @@ public class Character extends Entity {
     public boolean getFacingRight() {
         return facingRight;
     }
+
+    public float getMaximumNaturalAirSpeed() {
+        return maximumNaturalAirSpeed;
+    }
 }
