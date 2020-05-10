@@ -37,12 +37,6 @@ public class Entity implements EventListener, EventPublisher {
 
     protected ShapeRenderer.ShapeType shapeType = ShapeRenderer.ShapeType.Line;
 
-    /** The last x location before the most recent update tick **/
-    private float xPrevPos;
-
-    /** The last y location before the most recent update tick. **/
-    private float yPrevPos;
-
     /** Rectangles representing the shape of the entity **/
     private List<Rectangle> rects;
 
@@ -55,14 +49,9 @@ public class Entity implements EventListener, EventPublisher {
     /** Collidable being set to true means that collisions are registered and published **/
     private boolean collidable;
 
-    /** Solid being set to true means that objects cannot pass through this one **/
-    private boolean solid;
-
     public Entity() {
         this.xPos = 0;
         this.yPos = 0;
-        this.xPrevPos = 0;
-        this.yPrevPos = 0;
 
         this.rects = new ArrayList<>();
         this.defaultColor = Color.BLACK;
@@ -71,7 +60,6 @@ public class Entity implements EventListener, EventPublisher {
         this.active = false;
         this.hidden = true;
         this.collidable = true;
-        this.solid = true;
     }
 
     public void render(ShapeRenderer shapeRenderer) {
@@ -91,9 +79,6 @@ public class Entity implements EventListener, EventPublisher {
         if (!active) {
             return;
         }
-
-        xPrevPos = xPos;
-        yPrevPos = yPos;
 
         xPos += xVel;
         yPos += yVel;
@@ -132,11 +117,6 @@ public class Entity implements EventListener, EventPublisher {
         return null;
     }
 
-    public void applyForce(float xVel, float yVel) {
-        this.xVel += xVel;
-        this.yVel += yVel;
-    }
-
     public List<Rectangle> getRects() {
         return rects;
     }
@@ -153,10 +133,6 @@ public class Entity implements EventListener, EventPublisher {
 
     public List<Rectangle> getCollidables() {
         return getTranslatedRects();
-    }
-
-    public Color getDefaultColor() {
-        return defaultColor;
     }
 
     public Boolean isCollidable() {
