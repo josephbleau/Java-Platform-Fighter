@@ -5,6 +5,7 @@ public enum State {
     SUBSTATE_CLEAR,
     STANDING,               // Standing still on the level
     RUNNING,                // Moving on the ground
+    CROUCHING,              // Player is crouched
     JUMPSQUAT,              // Preparing to jump (enter this state when jumping from the ground, leave it when jump happens)
     AIRBORNE,               // In the air
     SHIELDING,              // Still, in shield
