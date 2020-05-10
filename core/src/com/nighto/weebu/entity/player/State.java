@@ -7,6 +7,7 @@ public enum State {
     RUNNING,                // Moving on the ground
     CROUCHING,              // Player is crouched
     JUMPSQUAT,              // Preparing to jump (enter this state when jumping from the ground, leave it when jump happens)
+    EXIT_JUMPSQUAT,         // Player is exiting jumpsquat, next input poll pass will determine short or full hop
     AIRBORNE,               // In the air
     SHIELDING,              // Still, in shield
     HANGING,                // Hanging from a ledge
