@@ -46,6 +46,7 @@ public class Player extends Character implements Controllable {
         stateInputHandlers.add(new HangingStateInputHandler(this));
         stateInputHandlers.add(new ShieldStateInputHandler(this));
         stateInputHandlers.add(new GroundedStateInputHandler(this));
+        stateInputHandlers.add(new CrouchingStateInputHandler(this));
     }
 
     @Override
@@ -84,13 +85,6 @@ public class Player extends Character implements Controllable {
             if (!inState(State.SIDESTEPPING) && !inSubstate(State.SUBSTATE_ATTACKING) &&
                     (Gdx.input.isKeyPressed(Input.Keys.S) || gamecubeController.buttonPressed(GamecubeController.Button.B))) {
                 startAttack(new Projectile(facingRight));
-            }
-        }
-
-        if (inState(State.CROUCHING)) {
-            if(!Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                enterState(State.STANDING);
-                return;
             }
         }
     }
