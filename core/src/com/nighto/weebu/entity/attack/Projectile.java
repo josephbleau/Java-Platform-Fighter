@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 
-public class Laser extends Attack {
+public class Projectile extends Attack {
 
     private static final float STARTUP = .3f;
 
@@ -19,7 +19,7 @@ public class Laser extends Attack {
 
     private float timeToLive = 3;
 
-    public Laser(boolean facingRight) {
+    public Projectile(boolean facingRight) {
         super();
         startupTime = STARTUP;
         attackTime = ANIMATION_TIME;

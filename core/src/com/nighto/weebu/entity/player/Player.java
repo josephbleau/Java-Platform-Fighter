@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.control.Controllable;
 import com.nighto.weebu.control.GamecubeController;
-import com.nighto.weebu.entity.attack.Laser;
+import com.nighto.weebu.entity.attack.Projectile;
 import com.nighto.weebu.entity.stage.Stage;
 
 public class Player extends Character implements Controllable {
@@ -102,7 +102,7 @@ public class Player extends Character implements Controllable {
 
             if (!inState(State.SHIELDING) && (Gdx.input.isKeyPressed(Input.Keys.S) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.B))) {
-                startAttack(new Laser(facingRight));
+                startAttack(new Projectile(facingRight));
                 this.xVel = 0;
             }
 
@@ -128,7 +128,7 @@ public class Player extends Character implements Controllable {
 
             if (!inState(State.SIDESTEPPING) && !inSubstate(State.SUBSTATE_ATTACKING) &&
                     (Gdx.input.isKeyPressed(Input.Keys.S) || gamecubeController.buttonPressed(GamecubeController.Button.B))) {
-                startAttack(new Laser(facingRight));
+                startAttack(new Projectile(facingRight));
             }
         }
     }
