@@ -23,9 +23,9 @@ public class ShieldStateInputHandler extends StateInputHandler {
                 gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
                 gamecubeController.buttonPressed(GamecubeController.Button.X)) {
             enterState(State.JUMPSQUAT);
-        } else if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
+        } else if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) &&
+                !gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) &&
+                !gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
             enterState(State.STANDING);
         }
 
