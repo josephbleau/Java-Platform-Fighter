@@ -246,7 +246,7 @@ public class Character extends Entity {
         return false;
     }
 
-    protected void startAttack(Attack attack) {
+    public void startAttack(Attack attack) {
         attack.spawn(xPos, yPos);
 
         if (attack.isPlaying()) {
@@ -277,5 +277,13 @@ public class Character extends Entity {
 
     public float getFullHopVel() {
         return fullHopVel;
+    }
+
+    public float getMaximumNaturalGroundSpeed() {
+        return maximumNaturalGroundSpeed;
+    }
+
+    public boolean getFacingRight() {
+        return facingRight;
     }
 }

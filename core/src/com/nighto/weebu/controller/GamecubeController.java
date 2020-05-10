@@ -5,7 +5,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public class GamecubeController {
     public static final String MAYFLASH_ADAPTER_ID = "MAYFLASH GameCube Controller Adapter";
+
     public static final float HARD_DIRECTION_THRESHOLD = 0.5f;
+    public static final float LIGHT_DIRECTION_THRESHOLD = 0.02f;
 
     private Controller controller;
 

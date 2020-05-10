@@ -9,10 +9,7 @@ import com.nighto.weebu.controller.Controllable;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.attack.Projectile;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
-import com.nighto.weebu.entity.player.input.handlers.HangingStateInputHandler;
-import com.nighto.weebu.entity.player.input.handlers.JumpSquatExitStateInputHandler;
-import com.nighto.weebu.entity.player.input.handlers.NoInputStateInputHandler;
-import com.nighto.weebu.entity.player.input.handlers.ShieldStateInputHandler;
+import com.nighto.weebu.entity.player.input.handlers.*;
 import com.nighto.weebu.entity.stage.Stage;
 
 import java.util.ArrayList;
@@ -48,6 +45,7 @@ public class Player extends Character implements Controllable {
         stateInputHandlers.add(new JumpSquatExitStateInputHandler(this));
         stateInputHandlers.add(new HangingStateInputHandler(this));
         stateInputHandlers.add(new ShieldStateInputHandler(this));
+        stateInputHandlers.add(new GroundedStateInputHandler(this));
     }
 
     @Override
@@ -63,55 +61,6 @@ public class Player extends Character implements Controllable {
         }
 
         // TODO: Move state handling logic to individual state input handlers.
-        if (inState(State.CLEAR, State.RUNNING, State.STANDING) && !inSubstate(State.SUBSTATE_ATTACKING)) {
-            // Shield
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
-                enterState(State.SHIELDING);
-                shield.spawn(xPos, yPos);
-                this.xVel = 0;
-
-                return;
-            }
-
-            // Run or Stand
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || gamecubeController.getControlStick().x < -0.02f) {
-                enterState(State.RUNNING);
-                this.xVel = -maximumNaturalGroundSpeed;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || gamecubeController.getControlStick().x > 0.02f) {
-                enterState(State.RUNNING);
-                this.state = State.RUNNING;
-                this.xVel = maximumNaturalGroundSpeed;
-            } else {
-                enterState(State.STANDING);
-                this.xVel = 0;
-            }
-
-            // Crouch
-            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                enterState(State.CROUCHING);
-                this.xVel = 0;
-            }
-
-            // Jump
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.X)) {
-                enterState(State.JUMPSQUAT);
-                return;
-            }
-
-            // Use neutral special
-            if (!inState(State.SHIELDING) && (Gdx.input.isKeyPressed(Input.Keys.S) || gamecubeController.buttonPressed(GamecubeController.Button.B))) {
-                startAttack(new Projectile(facingRight));
-                this.xVel = 0;
-                return;
-            }
-
-            return;
-        }
-
         if (inState(State.AIRBORNE)) {
             // Neutral air dodge
             if (!inSubstate(State.SUBSTATE_ATTACKING) && (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
