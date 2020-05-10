@@ -95,6 +95,7 @@ public class Character extends Entity {
 
         shield.update(delta);
         updateAttacks(delta);
+
         if (!inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
             if (xVel > 0) {
                 facingRight = true;
@@ -102,6 +103,7 @@ public class Character extends Entity {
                 facingRight = false;
             }
         }
+
         super.update(delta);
     }
 
