@@ -1,13 +1,10 @@
 package com.nighto.weebu.entity.player;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.controller.Controllable;
 import com.nighto.weebu.controller.GamecubeController;
-import com.nighto.weebu.entity.attack.Projectile;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
 import com.nighto.weebu.entity.player.input.handlers.*;
 import com.nighto.weebu.entity.stage.Stage;
@@ -47,6 +44,7 @@ public class Player extends Character implements Controllable {
         stateInputHandlers.add(new ShieldStateInputHandler(this));
         stateInputHandlers.add(new GroundedStateInputHandler(this));
         stateInputHandlers.add(new CrouchingStateInputHandler(this));
+        stateInputHandlers.add(new AirborneStateInputHandler(this));
     }
 
     @Override
@@ -58,33 +56,6 @@ public class Player extends Character implements Controllable {
         for (StateInputHandler stateInputHandler : stateInputHandlers) {
             if (!stateInputHandler.handleInput(state, gamecubeController)) {
                 return;
-            }
-        }
-
-        // TODO: Move state handling logic to individual state input handlers.
-        if (inState(State.AIRBORNE)) {
-            // Neutral air dodge
-            if (!inSubstate(State.SUBSTATE_ATTACKING) && (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK))) {
-                enterState(State.SIDESTEPPING);
-                this.xVel = 0;
-                return;
-            }
-
-            // Aerial drift
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || gamecubeController.getControlStick().x < -0.02f) {
-                this.xVel = -maximumNaturalAirSpeed;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || gamecubeController.getControlStick().x > 0.02f) {
-                this.xVel = maximumNaturalAirSpeed;
-            } else {
-                this.xVel = 0;
-            }
-
-            // Use neutral special
-            if (!inState(State.SIDESTEPPING) && !inSubstate(State.SUBSTATE_ATTACKING) &&
-                    (Gdx.input.isKeyPressed(Input.Keys.S) || gamecubeController.buttonPressed(GamecubeController.Button.B))) {
-                startAttack(new Projectile(facingRight));
             }
         }
     }
