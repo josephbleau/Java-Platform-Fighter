@@ -150,4 +150,12 @@ public class Entity implements EventListener, EventPublisher {
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
+
+    public void setxVel(float xVel) {
+        this.xVel = xVel;
+    }
+
+    public void setyVel(float yVel) {
+        this.yVel = yVel;
+    }
 }

@@ -46,10 +46,6 @@ public abstract class Stage extends Entity {
         }
     }
 
-    /** You cannot apply force to a stage. **/
-    @Override
-    public void applyForce(float x, float y) { }
-
     public float getGravity() {
         return gravity;
     }

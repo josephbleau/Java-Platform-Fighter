@@ -8,7 +8,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.controller.Controllable;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.attack.Projectile;
+import com.nighto.weebu.entity.player.input.StateInputHandler;
+import com.nighto.weebu.entity.player.input.handlers.ShieldStateInputHandler;
 import com.nighto.weebu.entity.stage.Stage;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Player extends Character implements Controllable {
 
@@ -18,6 +25,8 @@ public class Player extends Character implements Controllable {
     private float height;
 
     private Rectangle rect;
+
+    private Map<State, List<StateInputHandler>> stateInputHandlers;
 
     public Player(Stage stage) {
         super(stage);
@@ -31,30 +40,27 @@ public class Player extends Character implements Controllable {
         getRects().add(rect);
         shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
         spawn(200, 400);
+
+        // Register state input handlers
+        stateInputHandlers = new HashMap<>();
+        stateInputHandlers.put(State.SHIELDING, Collections.singletonList(new ShieldStateInputHandler(this)));
     }
 
     @Override
     public void handleInput(GamecubeController gamecubeController) {
         super.handleInput(gamecubeController); // Clears character-based attributes
 
-        if (inState(State.SHIELDING)) {
-            if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || gamecubeController.getControlStick().y > 0.5f) {
-                enterState(State.SIDESTEPPING);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.X)) {
-                enterState(State.JUMPSQUAT);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
-                xVel = 0;
-                enterState(State.SHIELDING);
-                shield.spawn(xPos, yPos);
-            } else {
-                enterState(State.STANDING);
+        List<StateInputHandler> stateInputHandlersForCurrentState = this.stateInputHandlers.get(state);
+
+        if (stateInputHandlersForCurrentState != null) {
+            for (StateInputHandler stateInputHandler : stateInputHandlersForCurrentState) {
+                if (!stateInputHandler.handleInput(state, gamecubeController)) {
+                    return;
+                }
             }
         }
 
+        // TODO: Move state handling logic to individual state input handlers.
         if (inState(State.SIDESTEPPING)) {
             return;
         }
@@ -183,5 +189,9 @@ public class Player extends Character implements Controllable {
         }
 
         rect.height = height;
+    }
+
+    public void spawnShield() {
+        shield.spawn(xPos,yPos);
     }
 }
