@@ -9,6 +9,7 @@ import com.nighto.weebu.controller.Controllable;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.attack.Projectile;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
+import com.nighto.weebu.entity.player.input.handlers.HangingStateInputHandler;
 import com.nighto.weebu.entity.player.input.handlers.JumpSquatExitStateInputHandler;
 import com.nighto.weebu.entity.player.input.handlers.NoInputStateInputHandler;
 import com.nighto.weebu.entity.player.input.handlers.ShieldStateInputHandler;
@@ -45,6 +46,7 @@ public class Player extends Character implements Controllable {
         stateInputHandlers = new ArrayList<>();
         stateInputHandlers.add(new NoInputStateInputHandler(this));
         stateInputHandlers.add(new JumpSquatExitStateInputHandler(this));
+        stateInputHandlers.add(new HangingStateInputHandler(this));
         stateInputHandlers.add(new ShieldStateInputHandler(this));
     }
 
@@ -61,21 +63,6 @@ public class Player extends Character implements Controllable {
         }
 
         // TODO: Move state handling logic to individual state input handlers.
-        if (inState(State.HANGING)) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.X)) {
-
-                this.setActive(true);
-                this.yVel += fullHopVel;
-
-                enterState(State.AIRBORNE);
-                enterSubstate(State.SUBSTATE_CLEAR);
-            }
-
-            return;
-        }
-
         if (inState(State.CLEAR, State.RUNNING, State.STANDING) && !inSubstate(State.SUBSTATE_ATTACKING)) {
             // Shield
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
