@@ -13,7 +13,8 @@ public class NoInputStateInputHandler extends StateInputHandler {
                 player,
                 InputPriority.HIGHEST,
                 new State[]{
-                        State.SIDESTEPPING
+                        State.SIDESTEPPING,
+                        State.JUMPSQUAT
                 }
         );
     }

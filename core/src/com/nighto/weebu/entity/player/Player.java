@@ -9,6 +9,7 @@ import com.nighto.weebu.controller.Controllable;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.attack.Projectile;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
+import com.nighto.weebu.entity.player.input.handlers.JumpSquatExitStateInputHandler;
 import com.nighto.weebu.entity.player.input.handlers.NoInputStateInputHandler;
 import com.nighto.weebu.entity.player.input.handlers.ShieldStateInputHandler;
 import com.nighto.weebu.entity.stage.Stage;
@@ -43,12 +44,15 @@ public class Player extends Character implements Controllable {
         // Register state input handlers
         stateInputHandlers = new ArrayList<>();
         stateInputHandlers.add(new NoInputStateInputHandler(this));
+        stateInputHandlers.add(new JumpSquatExitStateInputHandler(this));
         stateInputHandlers.add(new ShieldStateInputHandler(this));
     }
 
     @Override
     public void handleInput(GamecubeController gamecubeController) {
         super.handleInput(gamecubeController); // Clears character-based attributes
+
+        System.out.println(state);
 
         for (StateInputHandler stateInputHandler : stateInputHandlers) {
             if (!stateInputHandler.handleInput(state, gamecubeController)) {
@@ -57,28 +61,13 @@ public class Player extends Character implements Controllable {
         }
 
         // TODO: Move state handling logic to individual state input handlers.
-        if (inState(State.JUMPSQUAT)) {
-            if (jumpSquatTimeRemaining <= 0.0f) {
-                enterState(State.AIRBORNE);
-                this.jumpSquatTimeRemaining = this.jumpSquatTime;
-
-                if (Gdx.input.isKeyPressed(Input.Keys.SPACE) || gamecubeController.buttonPressed(GamecubeController.Button.X) || gamecubeController.buttonPressed((GamecubeController.Button.Y))) {
-                    this.yVel += this.fullHopVelocity;
-                } else {
-                    this.yVel += this.shortHopVelocity;
-                }
-            }
-
-            return;
-        }
-
         if (inState(State.HANGING)) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.X)) {
 
                 this.setActive(true);
-                this.yVel += fullHopVelocity;
+                this.yVel += fullHopVel;
 
                 enterState(State.AIRBORNE);
                 enterSubstate(State.SUBSTATE_CLEAR);

@@ -31,15 +31,15 @@ public class Character extends Entity {
     protected float maximumNaturalAirSpeed = 5;
 
     /** The initial velocity boost of a short hop **/
-    protected float shortHopVelocity = 35;
+    protected float shortHopVel = 35;
 
     /** The initial velocity boost of a full hop **/
-    protected float fullHopVelocity = 50;
+    protected float fullHopVel = 50;
 
     /** The amount of time until you jump after pressing jump (from the ground) in seconds. **/
     protected float jumpSquatTime = 0.05f;
 
-    /** The amount of time left in jumpsquat. **/
+    /** The amount of time left in jump squat. **/
     protected float jumpSquatTimeRemaining = jumpSquatTime;
 
     /** The total amount of time spent in sidestep **/
@@ -81,6 +81,11 @@ public class Character extends Entity {
 
         if (state == State.JUMPSQUAT) {
             jumpSquatTimeRemaining -= delta;
+
+            if (jumpSquatTimeRemaining <= 0) {
+                jumpSquatTimeRemaining = jumpSquatTime;
+                enterState(State.EXIT_JUMPSQUAT);
+            }
         }
 
         if (state == State.SIDESTEPPING) {
@@ -88,9 +93,9 @@ public class Character extends Entity {
         }
 
         if (sidestepTimeRemaining <= 0) {
-            enterState(prevState);
             currentColor = defaultColor;
             sidestepTimeRemaining = sidestepTime;
+            enterState(prevState);
         }
 
         shield.update(delta);
@@ -264,5 +269,13 @@ public class Character extends Entity {
             substate = State.SUBSTATE_HANGING_RIGHT;
             teleport(ledge.x + ledge.width, ledge.y + ledge.height - playerRect.height, false);
         }
+    }
+
+    public float getShortHopVel() {
+        return shortHopVel;
+    }
+
+    public float getFullHopVel() {
+        return fullHopVel;
     }
 }
