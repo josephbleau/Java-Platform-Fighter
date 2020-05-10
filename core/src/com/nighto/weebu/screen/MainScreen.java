@@ -71,6 +71,7 @@ public class MainScreen implements Screen {
 
     }
 
+    /** Primary game loop **/
     @Override
     public void render(float delta) {
         /* Input Loop */

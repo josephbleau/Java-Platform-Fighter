@@ -212,17 +212,17 @@ public class Character extends Entity {
 
     public void handleInput(GamecubeController gamecubeController) {}
 
-    protected void enterState(State newState) {
+    public void enterState(State newState) {
         prevState = state;
         state = newState;
     }
 
-    protected void enterSubstate(State newSubstate) {
+    public void enterSubstate(State newSubstate) {
         prevSubstate = substate;
         substate = newSubstate;
     }
 
-    protected boolean inState(State ... states) {
+    public boolean inState(State ... states) {
         boolean outcome = false;
 
         for (State checkingState : states) {
@@ -232,7 +232,7 @@ public class Character extends Entity {
         return outcome;
     }
 
-    protected boolean inSubstate(State... substates) {
+    public boolean inSubstate(State... substates) {
         for(State checkingState : substates) {
             if (substate.equals(checkingState)) {
                 return true;
