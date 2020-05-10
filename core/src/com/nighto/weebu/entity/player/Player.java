@@ -9,13 +9,12 @@ import com.nighto.weebu.controller.Controllable;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.attack.Projectile;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
+import com.nighto.weebu.entity.player.input.handlers.NoInputStateInputHandler;
 import com.nighto.weebu.entity.player.input.handlers.ShieldStateInputHandler;
 import com.nighto.weebu.entity.stage.Stage;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Player extends Character implements Controllable {
 
@@ -26,7 +25,7 @@ public class Player extends Character implements Controllable {
 
     private Rectangle rect;
 
-    private Map<State, List<StateInputHandler>> stateInputHandlers;
+    private List<StateInputHandler> stateInputHandlers;
 
     public Player(Stage stage) {
         super(stage);
@@ -42,29 +41,22 @@ public class Player extends Character implements Controllable {
         spawn(200, 400);
 
         // Register state input handlers
-        stateInputHandlers = new HashMap<>();
-        stateInputHandlers.put(State.SHIELDING, Collections.singletonList(new ShieldStateInputHandler(this)));
+        stateInputHandlers = new ArrayList<>();
+        stateInputHandlers.add(new NoInputStateInputHandler(this));
+        stateInputHandlers.add(new ShieldStateInputHandler(this));
     }
 
     @Override
     public void handleInput(GamecubeController gamecubeController) {
         super.handleInput(gamecubeController); // Clears character-based attributes
 
-        List<StateInputHandler> stateInputHandlersForCurrentState = this.stateInputHandlers.get(state);
-
-        if (stateInputHandlersForCurrentState != null) {
-            for (StateInputHandler stateInputHandler : stateInputHandlersForCurrentState) {
-                if (!stateInputHandler.handleInput(state, gamecubeController)) {
-                    return;
-                }
+        for (StateInputHandler stateInputHandler : stateInputHandlers) {
+            if (!stateInputHandler.handleInput(state, gamecubeController)) {
+                return;
             }
         }
 
         // TODO: Move state handling logic to individual state input handlers.
-        if (inState(State.SIDESTEPPING)) {
-            return;
-        }
-
         if (inState(State.JUMPSQUAT)) {
             if (jumpSquatTimeRemaining <= 0.0f) {
                 enterState(State.AIRBORNE);
