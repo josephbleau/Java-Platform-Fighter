@@ -51,8 +51,6 @@ public class Player extends Character implements Controllable {
     public void handleInput(GamecubeController gamecubeController) {
         super.handleInput(gamecubeController); // Clears character-based attributes
 
-        System.out.println(state);
-
         for (StateInputHandler stateInputHandler : stateInputHandlers) {
             if (!stateInputHandler.handleInput(gamecubeController)) {
                 break;
