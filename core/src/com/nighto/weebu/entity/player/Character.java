@@ -201,7 +201,6 @@ public class Character extends Entity {
         }
 
         shield.render(shapeRenderer);
-
         attacks.forEach(attack -> attack.render(shapeRenderer));
     }
 

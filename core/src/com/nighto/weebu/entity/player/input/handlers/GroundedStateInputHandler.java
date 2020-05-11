@@ -1,9 +1,11 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.nighto.weebu.controller.GamecubeController;
-import com.nighto.weebu.entity.attack.Projectile;
+import com.nighto.weebu.entity.attack.MeleeAttack;
+import com.nighto.weebu.entity.attack.ProjectileAttack;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
@@ -30,7 +32,8 @@ public class GroundedStateInputHandler extends StateInputHandler {
                 handleRun(gamecubeController) &&
                 handleCrouch(gamecubeController) &&
                 handleJump(gamecubeController) &&
-                handleNeutralSpecial(gamecubeController);
+                handleNeutralSpecial(gamecubeController) &&
+                handleNeutralAttack(gamecubeController);
     }
 
     private boolean handleShield(GamecubeController gamecubeController) {
@@ -84,11 +87,27 @@ public class GroundedStateInputHandler extends StateInputHandler {
         return true;
     }
 
+    private boolean handleNeutralAttack(GamecubeController gamecubeController) {
+        if (!inSubState(State.SUBSTATE_ATTACKING)) {
+            if ((Gdx.input.isKeyPressed(Input.Keys.A) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.A))) {
+
+                float xOffsetDirectionMultiplier = (getPlayer().getFacingRight()) ? 1 : -1;
+                float xOffset = 30 * xOffsetDirectionMultiplier;
+
+                getPlayer().startAttack(new MeleeAttack(xOffset, 30));
+                getPlayer().setxVel(0);
+            }
+        }
+
+        return true;
+    }
+
     private boolean handleNeutralSpecial(GamecubeController gamecubeController) {
         if (!inSubState(State.SUBSTATE_ATTACKING)) {
             if ((Gdx.input.isKeyPressed(Input.Keys.S) ||
                     gamecubeController.buttonPressed(GamecubeController.Button.B))) {
-                getPlayer().startAttack(new Projectile(getPlayer().getFacingRight()));
+                getPlayer().startAttack(new ProjectileAttack(getPlayer().getFacingRight(), 0, 30));
                 getPlayer().setxVel(0);
             }
         }
