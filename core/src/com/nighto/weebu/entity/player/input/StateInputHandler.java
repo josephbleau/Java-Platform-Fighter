@@ -9,25 +9,37 @@ import java.util.Map;
 
 public abstract class StateInputHandler {
 
-    private InputPriority priority;
     private Player player;
-    private Map<State, Boolean> supportedStates;
 
-    public StateInputHandler(Player player, InputPriority priority, State[] supportedStates) {
+    private Map<State, Boolean> supportedStates;
+    private Map<State, Boolean> blockingSubStates;
+
+    public StateInputHandler(Player player, State[] supportedStates, State[] blockingSubStates) {
         this.player = player;
-        this.priority = priority;
         this.supportedStates = new HashMap<>();
+        this.blockingSubStates = new HashMap<>();
 
         for (State supportedState : supportedStates) {
             this.supportedStates.put(supportedState, true);
         }
+
+        for (State blockingState : blockingSubStates) {
+            this.blockingSubStates.put(blockingState, true);
+        }
+    }
+
+    public StateInputHandler(Player player, State[] supportedStates) {
+        this(player, supportedStates, new State[]{});
+
     }
 
     /**
-     * Return true if the state input handler supports the given state.
+     * Return true if the state input handler supports the given state and substate.
      */
     private boolean supports()  {
-        return supportedStates.get(getPlayerState()) != null && supportedStates.get(getPlayerState());
+        return supportedStates.get(getPlayerState()) != null &&
+                supportedStates.get(getPlayerState()) &&
+                blockingSubStates.get(getPlayerSubState()) == null;
     }
 
     /**
@@ -49,10 +61,6 @@ public abstract class StateInputHandler {
      * no other inputs should be considered.
      */
     protected abstract boolean doHandleInput(GamecubeController gamecubeController);
-
-    public InputPriority getPriority() {
-        return priority;
-    }
 
     public Player getPlayer() {
         return player;

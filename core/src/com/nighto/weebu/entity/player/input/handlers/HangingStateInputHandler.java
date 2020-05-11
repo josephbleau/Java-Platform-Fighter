@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
-import com.nighto.weebu.entity.player.input.InputPriority;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
 
 public class HangingStateInputHandler extends StateInputHandler {
@@ -13,7 +12,6 @@ public class HangingStateInputHandler extends StateInputHandler {
     public HangingStateInputHandler(Player player) {
         super(
                 player,
-                InputPriority.HIGH,
                 new State[]{State.HANGING}
         );
     }

@@ -6,7 +6,6 @@ import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.attack.Projectile;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
-import com.nighto.weebu.entity.player.input.InputPriority;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
 
 public class GroundedStateInputHandler extends StateInputHandler {
@@ -14,11 +13,13 @@ public class GroundedStateInputHandler extends StateInputHandler {
     public GroundedStateInputHandler(Player player) {
         super(
                 player,
-                InputPriority.MEDIUM,
                 new State[] {
                         State.CLEAR,
                         State.STANDING,
                         State.RUNNING
+                },
+                new State[] {
+                        State.SUBSTATE_ATTACKING
                 }
         );
     }
