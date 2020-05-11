@@ -18,7 +18,7 @@ public class CrouchingStateInputHandler extends StateInputHandler {
 
     @Override
     protected boolean doHandleInput(GamecubeController gamecubeController) {
-        if(!Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if(!Gdx.input.isKeyPressed(Input.Keys.DOWN) && !(gamecubeController.getControlStick().y >= GamecubeController.HARD_DIRECTION_THRESHOLD)) {
             enterState(State.STANDING);
             return false;
         }

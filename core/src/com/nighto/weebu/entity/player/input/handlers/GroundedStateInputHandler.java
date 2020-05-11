@@ -1,6 +1,5 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.nighto.weebu.controller.GamecubeController;
@@ -68,7 +67,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleCrouch(GamecubeController gamecubeController) {
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || gamecubeController.getControlStick().y >= GamecubeController.HARD_DIRECTION_THRESHOLD) {
             getPlayer().setxVel(0);
             enterState(State.CROUCHING);
         }
