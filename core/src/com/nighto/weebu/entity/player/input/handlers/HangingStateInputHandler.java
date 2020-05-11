@@ -19,7 +19,7 @@ public class HangingStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    protected boolean doHandleInput(State state, GamecubeController gamecubeController) {
+    protected boolean doHandleInput(GamecubeController gamecubeController) {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
                 gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
                 gamecubeController.buttonPressed(GamecubeController.Button.X)) {

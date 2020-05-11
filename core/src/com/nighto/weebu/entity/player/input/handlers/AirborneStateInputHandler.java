@@ -20,7 +20,7 @@ public class AirborneStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    protected boolean doHandleInput(State state, GamecubeController gamecubeController) {
+    protected boolean doHandleInput(GamecubeController gamecubeController) {
         return handleSidestep(gamecubeController) &&
                 handleDrift(gamecubeController) &&
                 handleNeutralSpecial(gamecubeController);
@@ -52,10 +52,14 @@ public class AirborneStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleNeutralSpecial(GamecubeController gamecubeController) {
-        if (Gdx.input.isKeyPressed(Input.Keys.S) || gamecubeController.buttonPressed(GamecubeController.Button.B)) {
-            getPlayer().startAttack(new Projectile(getPlayer().getFacingRight()));
+        if(!inSubState(State.SUBSTATE_ATTACKING)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.S) || gamecubeController.buttonPressed(GamecubeController.Button.B)) {
+                getPlayer().startAttack(new Projectile(getPlayer().getFacingRight()));
+
+                return false;
+            }
         }
 
-        return false;
+        return true;
     }
 }

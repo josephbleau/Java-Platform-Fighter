@@ -15,7 +15,7 @@ public class ShieldStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    public boolean doHandleInput(State state, GamecubeController gamecubeController) {
+    public boolean doHandleInput(GamecubeController gamecubeController) {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN) ||
                 gamecubeController.getControlStick().y >= GamecubeController.HARD_DIRECTION_THRESHOLD) {
             enterState(State.SIDESTEPPING);

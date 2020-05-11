@@ -24,7 +24,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    protected boolean doHandleInput(State state, GamecubeController gamecubeController) {
+    protected boolean doHandleInput(GamecubeController gamecubeController) {
         return handleShield(gamecubeController) &&
                 handleRun(gamecubeController) &&
                 handleCrouch(gamecubeController) &&
@@ -84,10 +84,12 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleNeutralSpecial(GamecubeController gamecubeController) {
-        if ((Gdx.input.isKeyPressed(Input.Keys.S) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.B))) {
-            getPlayer().startAttack(new Projectile(getPlayer().getFacingRight()));
-            getPlayer().setxVel(0);
+        if (!inSubState(State.SUBSTATE_ATTACKING)) {
+            if ((Gdx.input.isKeyPressed(Input.Keys.S) ||
+                    gamecubeController.buttonPressed(GamecubeController.Button.B))) {
+                getPlayer().startAttack(new Projectile(getPlayer().getFacingRight()));
+                getPlayer().setxVel(0);
+            }
         }
 
         return true;

@@ -54,8 +54,8 @@ public class Player extends Character implements Controllable {
         System.out.println(state);
 
         for (StateInputHandler stateInputHandler : stateInputHandlers) {
-            if (!stateInputHandler.handleInput(state, gamecubeController)) {
-                return;
+            if (!stateInputHandler.handleInput(gamecubeController)) {
+                break;
             }
         }
     }
@@ -69,6 +69,7 @@ public class Player extends Character implements Controllable {
         } else {
             height = baseHeight;
         }
+
 
         rect.height = height;
     }

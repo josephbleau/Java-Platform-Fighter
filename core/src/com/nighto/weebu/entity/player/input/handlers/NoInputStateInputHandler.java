@@ -20,7 +20,7 @@ public class NoInputStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    protected boolean doHandleInput(State state, GamecubeController gamecubeController) {
+    protected boolean doHandleInput(GamecubeController gamecubeController) {
         return false;
     }
 }

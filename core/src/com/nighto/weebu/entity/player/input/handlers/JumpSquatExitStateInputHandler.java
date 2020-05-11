@@ -19,7 +19,7 @@ public class JumpSquatExitStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    protected boolean doHandleInput(State state, GamecubeController gamecubeController) {
+    protected boolean doHandleInput(GamecubeController gamecubeController) {
         enterState(State.AIRBORNE);
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||

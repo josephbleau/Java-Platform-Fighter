@@ -26,8 +26,8 @@ public abstract class StateInputHandler {
     /**
      * Return true if the state input handler supports the given state.
      */
-    private boolean supports(State state)  {
-        return supportedStates.get(state) != null && supportedStates.get(state);
+    private boolean supports()  {
+        return supportedStates.get(getPlayerState()) != null && supportedStates.get(getPlayerState());
     }
 
     /**
@@ -36,9 +36,9 @@ public abstract class StateInputHandler {
      * @return true if the input handler chain should continue to be executed, otherwise
      * false if this input should end the chain.
      */
-    public boolean handleInput(State state, GamecubeController gamecubeController) {
-        if (supports(state)) {
-            return doHandleInput(state, gamecubeController);
+    public boolean handleInput(GamecubeController gamecubeController) {
+        if (supports()) {
+            return doHandleInput(gamecubeController);
         }
 
         return true;
@@ -48,7 +48,7 @@ public abstract class StateInputHandler {
      * Returns true if the input evaluation chain should continue, and false if
      * no other inputs should be considered.
      */
-    protected abstract boolean doHandleInput(State state, GamecubeController gamecubeController);
+    protected abstract boolean doHandleInput(GamecubeController gamecubeController);
 
     public InputPriority getPriority() {
         return priority;
@@ -61,6 +61,21 @@ public abstract class StateInputHandler {
     /** Convenience pass-through function that invokes the players inState method **/
     protected boolean inState(State ... states) {
         return getPlayer().inState(states);
+    }
+
+    /** Convenience pass-through function that invokes the players inSubState method **/
+    protected boolean inSubState(State ... states) {
+        return getPlayer().inSubState(states);
+    }
+
+    /** Convenience pass-through function that invokes the players getState method **/
+    protected State getPlayerState() {
+        return getPlayer().getState();
+    }
+
+    /** Convenience pass-through function that invokes the players getSubState method **/
+    protected State getPlayerSubState() {
+        return getPlayer().getSubState();
     }
 
     /** Convenience pass-through function that invokes the players enterState method **/

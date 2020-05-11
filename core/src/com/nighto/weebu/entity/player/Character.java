@@ -55,7 +55,7 @@ public class Character extends Entity {
     protected State prevState;
     protected State state;
 
-    protected State substate;
+    protected State subState;
     protected State prevSubstate;
 
     protected Color sidestepColor;
@@ -116,16 +116,17 @@ public class Character extends Entity {
         boolean attackPlaying = false;
         Iterator<Attack> attackIterator = attacks.iterator();
         while (attackIterator.hasNext()) {
+
             Attack attack = attackIterator.next();
             attack.update(delta);
-            if (attack.isPlaying()) {
-                attackPlaying = true;
-            }
+            attackPlaying = attack.isPlaying();
+
             if (!attack.isActive()) {
                 attackIterator.remove();
             }
         }
-        if (!attackPlaying && inSubstate(State.SUBSTATE_ATTACKING)) {
+
+        if (!attackPlaying && inSubState(State.SUBSTATE_ATTACKING)) {
             enterSubstate(State.SUBSTATE_CLEAR);
         }
     }
@@ -223,8 +224,8 @@ public class Character extends Entity {
     }
 
     public void enterSubstate(State newSubstate) {
-        prevSubstate = substate;
-        substate = newSubstate;
+        prevSubstate = subState;
+        subState = newSubstate;
     }
 
     public boolean inState(State ... states) {
@@ -237,9 +238,9 @@ public class Character extends Entity {
         return outcome;
     }
 
-    public boolean inSubstate(State... substates) {
+    public boolean inSubState(State... substates) {
         for(State checkingState : substates) {
-            if (substate.equals(checkingState)) {
+            if (subState.equals(checkingState)) {
                 return true;
             }
         }
@@ -263,10 +264,10 @@ public class Character extends Entity {
         Rectangle playerRect = getRects().get(0);
 
         if (ledge.hangLeft) {
-            substate = State.SUBSTATE_HANGING_LEFT;
+            subState = State.SUBSTATE_HANGING_LEFT;
             teleport(ledge.x - playerRect.width, ledge.y + ledge.height - playerRect.height, false);
         } else {
-            substate = State.SUBSTATE_HANGING_RIGHT;
+            subState = State.SUBSTATE_HANGING_RIGHT;
             teleport(ledge.x + ledge.width, ledge.y + ledge.height - playerRect.height, false);
         }
     }
@@ -289,5 +290,13 @@ public class Character extends Entity {
 
     public float getMaximumNaturalAirSpeed() {
         return maximumNaturalAirSpeed;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public State getSubState() {
+        return subState;
     }
 }
