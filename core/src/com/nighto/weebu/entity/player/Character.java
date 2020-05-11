@@ -160,20 +160,29 @@ public class Character extends Entity {
             if (them == stage) {
                 /* Determine which direction we were heading so that we can set our position correctly. */
                 boolean falling = yVel < 0;
+                Rectangle stageRect = ((Rectangle)theirShape);
 
                 /* Reset our x/y to be the x/y of the top of the rect that we collided with (so x, y+height) */
-                if (falling && stage.isGround((Rectangle) theirShape)) {
-                    yPos = ((Rectangle)theirShape).y + ((Rectangle)theirShape).height;
-                } else if (falling && stage.isLedge((Ledge) theirShape)){
+                if (falling && yPrevPos >= stageRect.y + stageRect.height && yPos <= stageRect.y + stageRect.height && stage.isGround(stageRect)) {
+                    yPos = stageRect.y + stageRect.height;
+
+                    if (inState(State.AIRBORNE)) {
+                        enterState(State.STANDING);
+                        enterSubstate(State.SUBSTATE_CLEAR);
+                    }
+
+                    yVel = 0;
+                } else if (falling && theirShape instanceof Ledge && stage.isLedge((Ledge) theirShape)){
                     snapToLedge((Ledge) theirShape);
-                }
+                } else {
+                    if (xVel < 0) {
+                        xPos = stageRect.x + stageRect.width;
+                    } else if (xVel > 0) {
+                        xPos = stageRect.x - 20;
+                    }
 
-                if (inState(State.AIRBORNE)) {
-                    enterState(State.STANDING);
-                    enterSubstate(State.SUBSTATE_CLEAR);
+                    xVel = 0;
                 }
-
-                yVel = 0;
             }
         }
 

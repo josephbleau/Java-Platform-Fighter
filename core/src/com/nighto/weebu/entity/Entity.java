@@ -23,6 +23,10 @@ public class Entity implements EventListener, EventPublisher {
     /** Current y position **/
     protected float yPos;
 
+    protected float xPrevPos;
+
+    protected float yPrevPos;
+
     /** Current x velocity **/
     protected float xVel;
 
@@ -52,6 +56,8 @@ public class Entity implements EventListener, EventPublisher {
     public Entity() {
         this.xPos = 0;
         this.yPos = 0;
+        this.xPrevPos = 0;
+        this.yPrevPos = 0;
 
         this.rects = new ArrayList<>();
         this.defaultColor = Color.BLACK;
@@ -80,6 +86,8 @@ public class Entity implements EventListener, EventPublisher {
             return;
         }
 
+        xPrevPos = xPos;
+        yPrevPos = yPos;
         xPos += xVel;
         yPos += yVel;
     }
@@ -88,6 +96,8 @@ public class Entity implements EventListener, EventPublisher {
         hidden = false;
         active = true;
 
+        xPrevPos = xPos;
+        yPrevPos = yPos;
         xPos = x;
         yPos = y;
     }
@@ -98,6 +108,8 @@ public class Entity implements EventListener, EventPublisher {
             yVel = 0;
         }
 
+        xPrevPos = xPos;
+        yPrevPos = yPos;
         xPos = x;
         yPos = y;
     }
