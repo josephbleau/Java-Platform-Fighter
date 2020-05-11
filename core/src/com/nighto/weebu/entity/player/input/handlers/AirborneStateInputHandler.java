@@ -3,7 +3,7 @@ package com.nighto.weebu.entity.player.input.handlers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.nighto.weebu.controller.GamecubeController;
-import com.nighto.weebu.entity.attack.Projectile;
+import com.nighto.weebu.entity.attack.ProjectileAttack;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
@@ -52,7 +52,7 @@ public class AirborneStateInputHandler extends StateInputHandler {
     private boolean handleNeutralSpecial(GamecubeController gamecubeController) {
         if(!inSubState(State.SUBSTATE_ATTACKING)) {
             if (Gdx.input.isKeyPressed(Input.Keys.S) || gamecubeController.buttonPressed(GamecubeController.Button.B)) {
-                getPlayer().startAttack(new Projectile(getPlayer().getFacingRight()));
+                getPlayer().startAttack(new ProjectileAttack(getPlayer().getFacingRight(), 0, 30));
 
                 return false;
             }
