@@ -46,7 +46,7 @@ public class MainScreen implements Screen {
         entities = new ArrayList<>();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 640);
+        camera.setToOrtho(false, 1920, 1080);
         shapeRenderer = new ShapeRenderer();
 
         entities.add(stage);

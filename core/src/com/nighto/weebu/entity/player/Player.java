@@ -30,7 +30,7 @@ public class Player extends Character implements Controllable {
 
         getRects().add(rect);
         shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
-        spawn(200, 400);
+        spawn(1920/2, 400);
 
         // Register state input handlers
         stateInputHandlers = new ArrayList<>();

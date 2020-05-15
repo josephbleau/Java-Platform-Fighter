@@ -21,20 +21,20 @@ public class Enemy extends Character {
         shield = new Shield(new Circle(10, 30, 30), new Color(Color.BLUE.r, Color.BLUE.g, Color.BLUE.b, .7f));
         defaultColor = Color.FIREBRICK;
 
-        spawn(600, 400);
+        spawn(1920/2, 400);
     }
 
     public void handleInput() {
-        float speed = inState(State.STANDING, State.RUNNING)  ? getCharacterData().getAttributes().getGroundSpeed()/2 : getCharacterData().getAttributes().getAirSpeed()/2;
+        float speed = inState(State.STANDING, State.RUNNING)  ? getCharacterData().getAttributes().getGroundSpeed() : getCharacterData().getAttributes().getAirSpeed();
 
         if (xVel > 0) {
             xVel = speed;
-            if (xPos >= 630) {
+            if (xPos >= (1920 - 1000) / 2 + 1000 - 5) {
                 xVel = -speed;
             }
         } else if (xVel < 0) {
             xVel = -speed;
-            if (xPos <= 150) {
+            if (xPos <= (1920 - 1000) / 2) {
                 xVel = speed;
             }
         } else {

@@ -180,7 +180,7 @@ public class Character extends Entity {
 
         if (event instanceof DeathEvent) {
             if (((DeathEvent) event).entity == this) {
-                spawn(400, 400);
+                spawn(1920/2, 400);
             }
         }
     }
