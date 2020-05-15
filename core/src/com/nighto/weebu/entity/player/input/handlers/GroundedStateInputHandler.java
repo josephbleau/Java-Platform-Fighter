@@ -79,6 +79,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
                 gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
                 gamecubeController.buttonPressed(GamecubeController.Button.X)) {
+            getPlayer().resetTimers();
             enterState(State.JUMPSQUAT);
             return false;
         }

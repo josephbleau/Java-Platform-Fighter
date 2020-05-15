@@ -11,6 +11,7 @@ public class MeleeAttack extends Attack {
 
         startupTime = 1f/60f;
         attackTime = 3f/60f;
+        knockbackInduced = 15f/60f;
     }
 
     @Override
