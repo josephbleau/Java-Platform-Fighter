@@ -1,1 +1,1 @@
-[Imgur](https://i.imgur.com/PW1CKwn.mp4)
+[Quick video of current progress](https://i.imgur.com/PW1CKwn.mp4)
