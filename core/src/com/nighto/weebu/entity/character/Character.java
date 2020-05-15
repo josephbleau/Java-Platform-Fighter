@@ -22,15 +22,10 @@ import java.util.List;
 public class Character extends Entity {
 
     protected CharacterData characterData;
+    protected CharacterTimers characterTimers;
 
     protected float width;
     protected float height;
-
-    /** The amount of time left in jump squat. **/
-    protected float jumpSquatTimeRemaining;
-
-    /** The amount of time left in the current sidestep. **/
-    protected float sidestepTimeRemaining;
 
     protected Shield shield;
     protected Stage stage;
@@ -50,9 +45,7 @@ public class Character extends Entity {
         this.stage = stage;
 
         characterData = CharacterLoader.loadCharacterData();
-
-        jumpSquatTimeRemaining = getCharacterData().getAttributes().getJumpSquatDuration();
-        sidestepTimeRemaining = getCharacterData().getAttributes().getSidestepDuration();
+        characterTimers = new CharacterTimers(characterData);
 
         sidestepColor = Color.LIGHT_GRAY;
 
@@ -65,62 +58,14 @@ public class Character extends Entity {
 
     @Override
     public void update(float delta) {
-        /* Apply gravity */
-        if (yVel > characterData.getAttributes().fallSpeed) {
-            yVel = Math.max(characterData.getAttributes().fallSpeed, yVel - stage.getGravity());
-        }
+        super.update(delta);
 
-        if (state == State.JUMPSQUAT) {
-            jumpSquatTimeRemaining -= delta;
-
-            if (jumpSquatTimeRemaining <= 0) {
-                jumpSquatTimeRemaining = characterData.getAttributes().getJumpSquatDuration();
-                enterState(State.EXIT_JUMPSQUAT);
-            }
-        }
-
-        if (state == State.SIDESTEPPING) {
-            sidestepTimeRemaining -= delta;
-        }
-
-        if (sidestepTimeRemaining <= 0) {
-            currentColor = defaultColor;
-            sidestepTimeRemaining = characterData.getAttributes().getSidestepDuration();
-            enterState(prevState);
-        }
+        updateGravity(delta);
+        updateTimers(delta);
+        updateAttacks(delta);
+        updateDirection(delta);
 
         shield.update(delta);
-
-        updateAttacks(delta);
-
-        if (!inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
-            if (xVel > 0) {
-                facingRight = true;
-            } else if (xVel < 0) {
-                facingRight = false;
-            }
-        }
-
-        super.update(delta);
-    }
-
-    private void updateAttacks(float delta) {
-        boolean attackPlaying = false;
-        Iterator<Attack> attackIterator = attacks.iterator();
-        while (attackIterator.hasNext()) {
-
-            Attack attack = attackIterator.next();
-            attack.update(delta);
-            attackPlaying = attack.isPlaying();
-
-            if (!attack.isActive()) {
-                attackIterator.remove();
-            }
-        }
-
-        if (!attackPlaying && inSubState(State.SUBSTATE_ATTACKING)) {
-            enterSubstate(State.SUBSTATE_DEFAULT);
-        }
     }
 
     @Override
@@ -217,6 +162,68 @@ public class Character extends Entity {
         return super.intersects(otherEntity);
     }
 
+    private void updateGravity(float delta) {
+        if (yVel > characterData.getAttributes().fallSpeed) {
+            yVel = Math.max(characterData.getAttributes().fallSpeed, yVel - stage.getGravity());
+        }
+    }
+
+    private void updateTimers(float delta) {
+        characterTimers.tickTimers(delta);
+
+        if (state == State.JUMPSQUAT) {
+            if (characterTimers.getJumpSquatTimeRemaining() <= 0) {
+                characterTimers.resetTimers();
+
+                enterState(State.EXIT_JUMPSQUAT);
+            }
+        }
+
+        if (state == State.SIDESTEPPING) {
+            if (characterTimers.getSidestepTimeRemaining() <= 0) {
+                characterTimers.resetTimers();
+
+                currentColor = defaultColor;
+
+                enterState(prevState);
+
+                if (inState(State.SHIELDING)) {
+                    enterState(State.STANDING);
+                }
+            }
+        }
+    }
+
+    private void updateAttacks(float delta) {
+        boolean attackPlaying = false;
+
+        Iterator<Attack> attackIterator = attacks.iterator();
+
+        while (attackIterator.hasNext()) {
+            Attack attack = attackIterator.next();
+            attack.update(delta);
+            attackPlaying = attack.isPlaying();
+
+            if (!attack.isActive()) {
+                attackIterator.remove();
+            }
+        }
+
+        if (!attackPlaying && inSubState(State.SUBSTATE_ATTACKING)) {
+            enterSubstate(State.SUBSTATE_DEFAULT);
+        }
+    }
+
+    private void updateDirection(float delta) {
+        if (!inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
+            if (xVel > 0) {
+                facingRight = true;
+            } else if (xVel < 0) {
+                facingRight = false;
+            }
+        }
+    }
+
     public void handleInput(GamecubeController gamecubeController) {}
 
     public void enterState(State newState) {
@@ -291,5 +298,9 @@ public class Character extends Entity {
 
     public CharacterData getCharacterData() {
         return characterData;
+    }
+
+    public void resetTimers() {
+        characterTimers.resetTimers();
     }
 }

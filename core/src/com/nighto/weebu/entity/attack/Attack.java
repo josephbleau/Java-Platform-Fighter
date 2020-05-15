@@ -10,6 +10,7 @@ import java.util.List;
 public class Attack extends Entity {
     protected float startupTime;
     protected float attackTime;
+    protected float knockbackInduced;
 
     private List<Rectangle> hitBoxes;
     private Color hitBoxColor;
