@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class Stage extends Entity {
     /** Gravity determines how fast an entity falls (in px/seconds) **/
-    protected float gravity = 5.0f;
+    protected float gravity = 4.5f;
 
     /** Rect representing the blast zone (if a player exits this rect they die) **/
     protected Rectangle blastZone;

@@ -1,8 +1,7 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.nighto.weebu.controller.GamecubeController;
+import com.nighto.weebu.controller.GameController;
+import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
@@ -17,15 +16,15 @@ public class JumpSquatExitStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    protected boolean doHandleInput(GamecubeController gamecubeController) {
+    protected boolean doHandleInput(GameController gameController) {
         enterState(State.AIRBORNE);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.X) ||
-                gamecubeController.buttonPressed((GamecubeController.Button.Y))) {
-            getPlayer().setyVel(getPlayer().getCharacterData().getAttributes().getFullHopSpeed());
-        } else {
-            getPlayer().setyVel(getPlayer().getCharacterData().getAttributes().getShortHopSpeed());
+        if (getPlayer().getJumpCount() < getPlayer().getCharacterData().getAttributes().getNumberOfJumps()){
+            if (gameController.isPressed(GameInput.Jump)) {
+                getPlayer().setyVel(getPlayer().getCharacterData().getAttributes().getFullHopSpeed());
+            } else {
+                getPlayer().setyVel(getPlayer().getCharacterData().getAttributes().getShortHopSpeed());
+            }
         }
 
         return true;

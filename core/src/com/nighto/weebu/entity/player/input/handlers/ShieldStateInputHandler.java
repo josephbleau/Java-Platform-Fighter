@@ -1,8 +1,7 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.nighto.weebu.controller.GamecubeController;
+import com.nighto.weebu.controller.GameController;
+import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
@@ -14,17 +13,12 @@ public class ShieldStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    public boolean doHandleInput(GamecubeController gamecubeController) {
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) ||
-                gamecubeController.getControlStick().y >= GamecubeController.HARD_DIRECTION_THRESHOLD) {
+    public boolean doHandleInput(GameController gameController) {
+        if (gameController.isPressed(GameInput.Sidestep)) {
             enterState(State.SIDESTEPPING);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.X)) {
+        } else if (gameController.isPressed(GameInput.Jump)) {
             enterState(State.JUMPSQUAT);
-        } else if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) &&
-                !gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) &&
-                !gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
+        } else if (!gameController.isPressed(GameInput.Shield)) {
             enterState(State.STANDING);
         }
 

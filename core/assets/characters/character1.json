@@ -1,6 +1,6 @@
 {
 	"attributes": {
-		"numberOfJumps": 1,
+		"numberOfJumps": 2,
 		"fallSpeed": -10,
 		"groundSpeed": 10,
 		"airSpeed": 5,

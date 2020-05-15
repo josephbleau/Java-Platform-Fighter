@@ -1,8 +1,7 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.nighto.weebu.controller.GamecubeController;
+import com.nighto.weebu.controller.GameController;
+import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
@@ -17,9 +16,10 @@ public class CrouchingStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    protected boolean doHandleInput(GamecubeController gamecubeController) {
-        if(!Gdx.input.isKeyPressed(Input.Keys.DOWN) && !(gamecubeController.getControlStick().y >= GamecubeController.HARD_DIRECTION_THRESHOLD)) {
+    protected boolean doHandleInput(GameController gameController) {
+        if(!gameController.isPressed(GameInput.Crouch)) {
             enterState(State.STANDING);
+
             return false;
         }
 

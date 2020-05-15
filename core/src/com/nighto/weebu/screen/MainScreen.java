@@ -8,8 +8,8 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GamecubeController;
-import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.player.Enemy;
 import com.nighto.weebu.entity.player.Player;
@@ -39,8 +39,24 @@ public class MainScreen implements Screen {
 
     public MainScreen(Game game) {
         this.game = game;
+
+        // Register controllers
+        controllers = new ArrayList<>();
+
+        for(Controller controller : Controllers.getControllers()) {
+            if (controller.getName().equals(GamecubeController.MAYFLASH_ADAPTER_ID)) {
+                controllers.add(new GamecubeController(controller));
+            }
+        }
+
+        GamecubeController gamecubeController = null;
+
+        if (controllers.size() > 0) {
+            gamecubeController = controllers.get(0);
+        }
+
         stage = new TestStage();
-        player = new Player(stage);
+        player = new Player(stage, new GameController(gamecubeController));
         enemy = new Enemy(stage);
 
         entities = new ArrayList<>();
@@ -55,15 +71,6 @@ public class MainScreen implements Screen {
 
         eventHandler = new EventHandler();
         eventHandler.registerListeners(entities);
-
-        // Register controllers
-        controllers = new ArrayList<>();
-
-        for(Controller controller : Controllers.getControllers()) {
-            if (controller.getName().equals(GamecubeController.MAYFLASH_ADAPTER_ID)) {
-                controllers.add(new GamecubeController(controller));
-            }
-        }
     }
 
     @Override
@@ -74,13 +81,7 @@ public class MainScreen implements Screen {
     /** Primary game loop **/
     @Override
     public void render(float delta) {
-        /* Input Loop */
-        if (controllers.size() > 0) {
-            player.handleInput(controllers.get(0));
-        } else {
-            player.handleInput(new NoopGamecubeController());
-        }
-
+        player.handleInput();
         enemy.handleInput();
 
         /* Update Loop: All entities will run their physics calculations here. */

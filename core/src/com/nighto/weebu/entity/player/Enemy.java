@@ -29,7 +29,7 @@ public class Enemy extends Character {
 
         if (xVel > 0) {
             xVel = speed;
-            if (xPos >= (1920 - 1000) / 2 + 1000 - 6) {
+            if (xPos >= (1920 - 1000) / 2 + 1000 - 30) {
                 xVel = -speed;
             }
         } else if (xVel < 0) {
