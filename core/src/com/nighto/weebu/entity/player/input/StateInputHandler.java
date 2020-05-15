@@ -1,5 +1,6 @@
 package com.nighto.weebu.entity.player.input;
 
+import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
@@ -47,9 +48,9 @@ public abstract class StateInputHandler {
      * @return true if the input handler chain should continue to be executed, otherwise
      * false if this input should end the chain.
      */
-    public boolean handleInput(GamecubeController gamecubeController) {
+    public boolean handleInput(GameController gameController) {
         if (supports()) {
-            return doHandleInput(gamecubeController);
+            return doHandleInput(gameController);
         }
 
         return true;
@@ -59,7 +60,7 @@ public abstract class StateInputHandler {
      * Returns true if the input evaluation chain should continue, and false if
      * no other inputs should be considered.
      */
-    protected abstract boolean doHandleInput(GamecubeController gamecubeController);
+    protected abstract boolean doHandleInput(GameController gameController);
 
     public Player getPlayer() {
         return player;

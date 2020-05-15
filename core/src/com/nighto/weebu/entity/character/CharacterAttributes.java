@@ -1,7 +1,7 @@
 package com.nighto.weebu.entity.character;
 
 public class CharacterAttributes {
-    float numberOfJumps;
+    int numberOfJumps;
 
     /** The maximum y-velocity that can be reached via gravity. Being knocked toward the ground will ignore this value. **/
     float fallSpeed;
@@ -24,11 +24,11 @@ public class CharacterAttributes {
     /** The total amount of time spent in sidestep **/
     float sidestepDuration;
 
-    public float getNumberOfJumps() {
+    public int getNumberOfJumps() {
         return numberOfJumps;
     }
 
-    public void setNumberOfJumps(float numberOfJumps) {
+    public void setNumberOfJumps(int numberOfJumps) {
         this.numberOfJumps = numberOfJumps;
     }
 

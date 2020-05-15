@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.controller.Controllable;
-import com.nighto.weebu.controller.GamecubeController;
+import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
 import com.nighto.weebu.entity.player.input.handlers.*;
@@ -16,23 +16,13 @@ import java.util.List;
 public class Player extends Character implements Controllable {
 
     private Rectangle rect;
-
     private List<StateInputHandler> stateInputHandlers;
+    private GameController gameController;
 
-    public Player(Stage stage) {
+    public Player(Stage stage, GameController gameController) {
         super(stage);
 
-        rect = new Rectangle(
-                0, 0,
-                getCharacterData().getHurtboxes().get(State.DEFAULT).width,
-                getCharacterData().getHurtboxes().get(State.DEFAULT).height
-        );
-
-        getRects().add(rect);
-        shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
-        spawn(1920/2, 400);
-
-        // Register state input handlers
+        this.gameController = gameController;
         stateInputHandlers = new ArrayList<>();
         stateInputHandlers.add(new NoInputStateInputHandler(this));
         stateInputHandlers.add(new JumpSquatExitStateInputHandler(this));
@@ -41,14 +31,25 @@ public class Player extends Character implements Controllable {
         stateInputHandlers.add(new GroundedStateInputHandler(this));
         stateInputHandlers.add(new CrouchingStateInputHandler(this));
         stateInputHandlers.add(new AirborneStateInputHandler(this));
+
+        rect = new Rectangle(
+                0, 0,
+                getCharacterData().getHurtboxes().get(State.DEFAULT).width,
+                getCharacterData().getHurtboxes().get(State.DEFAULT).height
+        );
+
+        shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
+
+        getRects().add(rect);
+        spawn(1920/2, 400);
     }
 
     @Override
-    public void handleInput(GamecubeController gamecubeController) {
-        super.handleInput(gamecubeController); // Clears character-based attributes
+    public void handleInput() {
+        gameController.poll();
 
         for (StateInputHandler stateInputHandler : stateInputHandlers) {
-            if (!stateInputHandler.handleInput(gamecubeController)) {
+            if (!stateInputHandler.handleInput(gameController)) {
                 break;
             }
         }

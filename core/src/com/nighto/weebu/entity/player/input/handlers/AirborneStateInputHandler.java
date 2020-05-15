@@ -1,14 +1,15 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.nighto.weebu.controller.GamecubeController;
+import com.nighto.weebu.controller.GameController;
+import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.attack.ProjectileAttack;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
 
 public class AirborneStateInputHandler extends StateInputHandler {
+
+    private boolean jumpChanged = false;
 
     public AirborneStateInputHandler(Player player) {
         super(
@@ -18,16 +19,31 @@ public class AirborneStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    protected boolean doHandleInput(GamecubeController gamecubeController) {
-        return handleSidestep(gamecubeController) &&
-                handleDrift(gamecubeController) &&
-                handleNeutralSpecial(gamecubeController);
+    protected boolean doHandleInput(GameController gameController) {
+        jumpChanged = gameController.hasChangedSinceLastFrame(GameInput.Jump);
+
+        return handleJump(gameController) &&
+                handleSidestep(gameController) &&
+                handleDrift(gameController) &&
+                handleNeutralSpecial(gameController);
     }
 
-    private boolean handleSidestep(GamecubeController gamecubeController) {
-        if ((Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK))) {
+    private boolean handleJump(GameController gameController) {
+        int jumpCount = getPlayer().getJumpCount();
+        int totalJumps = getPlayer().getCharacterData().getAttributes().getNumberOfJumps();
+
+        if (jumpChanged && jumpCount < totalJumps) {
+            if (gameController.isPressed(GameInput.Jump)) {
+                getPlayer().setJumpCount(++jumpCount);
+                enterState(State.JUMPSQUAT);
+            }
+        }
+
+        return true;
+    }
+
+    private boolean handleSidestep(GameController gameController) {
+        if (gameController.isPressed(GameInput.Shield)) {
             getPlayer().setxVel(0);
             enterState(State.SIDESTEPPING);
 
@@ -37,10 +53,10 @@ public class AirborneStateInputHandler extends StateInputHandler {
         return true;
     }
 
-    private boolean handleDrift(GamecubeController gamecubeController) {
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || gamecubeController.getControlStick().x < -0.02f) {
+    private boolean handleDrift(GameController gameController) {
+        if (gameController.isPressed(GameInput.ControlLeftLight)) {
             getPlayer().setxVel(-getPlayer().getCharacterData().getAttributes().getAirSpeed());
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || gamecubeController.getControlStick().x > 0.02f) {
+        } else if (gameController.isPressed(GameInput.ControlRightLight)) {
             getPlayer().setxVel(getPlayer().getCharacterData().getAttributes().getAirSpeed());
         } else {
             getPlayer().setxVel(0);
@@ -49,9 +65,9 @@ public class AirborneStateInputHandler extends StateInputHandler {
         return true;
     }
 
-    private boolean handleNeutralSpecial(GamecubeController gamecubeController) {
+    private boolean handleNeutralSpecial(GameController gameController) {
         if(!inSubState(State.SUBSTATE_ATTACKING)) {
-            if (Gdx.input.isKeyPressed(Input.Keys.S) || gamecubeController.buttonPressed(GamecubeController.Button.B)) {
+            if (gameController.isPressed(GameInput.NeutralSpecial)) {
                 getPlayer().startAttack(new ProjectileAttack(getPlayer().getFacingRight(), 0, 30));
 
                 return false;

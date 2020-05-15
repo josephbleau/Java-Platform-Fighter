@@ -1,8 +1,7 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.nighto.weebu.controller.GamecubeController;
+import com.nighto.weebu.controller.GameController;
+import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.attack.MeleeAttack;
 import com.nighto.weebu.entity.attack.ProjectileAttack;
 import com.nighto.weebu.entity.player.Player;
@@ -26,36 +25,33 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     @Override
-    protected boolean doHandleInput(GamecubeController gamecubeController) {
-        return handleShield(gamecubeController) &&
-                handleRun(gamecubeController) &&
-                handleCrouch(gamecubeController) &&
-                handleJump(gamecubeController) &&
-                handleNeutralSpecial(gamecubeController) &&
-                handleNeutralAttack(gamecubeController);
+    protected boolean doHandleInput(GameController gameController) {
+        return handleShield(gameController) &&
+                handleRun(gameController) &&
+                handleCrouch(gameController) &&
+                handleJump(gameController) &&
+                handleNeutralSpecial(gameController) &&
+                handleNeutralAttack(gameController);
     }
 
-    private boolean handleShield(GamecubeController gamecubeController) {
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.LEFT_BUMPER_CLICK) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.RIGHT_BUMPER_CLICK)) {
+    private boolean handleShield(GameController gameController) {
+        if (gameController.isPressed(GameInput.Shield)) {
             getPlayer().spawnShield();
             getPlayer().setxVel(0);
 
             enterState(State.SHIELDING);
+
             return false;
         }
 
         return true;
     }
 
-    private boolean handleRun(GamecubeController gamecubeController) {
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
-                gamecubeController.getControlStick().x < -GamecubeController.LIGHT_DIRECTION_THRESHOLD) {
+    private boolean handleRun(GameController gameController) {
+        if (gameController.isPressed(GameInput.ControlLeftLight)) {
             getPlayer().setxVel(-getPlayer().getCharacterData().getAttributes().getGroundSpeed());
             enterState(State.RUNNING);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) ||
-                gamecubeController.getControlStick().x > GamecubeController.LIGHT_DIRECTION_THRESHOLD) {
+        } else if (gameController.isPressed(GameInput.ControlRightLight)) {
             getPlayer().setxVel(getPlayer().getCharacterData().getAttributes().getGroundSpeed());
             enterState(State.RUNNING);
         } else {
@@ -66,8 +62,8 @@ public class GroundedStateInputHandler extends StateInputHandler {
         return true;
     }
 
-    private boolean handleCrouch(GamecubeController gamecubeController) {
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || gamecubeController.getControlStick().y >= GamecubeController.HARD_DIRECTION_THRESHOLD) {
+    private boolean handleCrouch(GameController gameController) {
+        if (gameController.isPressed(GameInput.Crouch)) {
             getPlayer().setxVel(0);
             enterState(State.CROUCHING);
         }
@@ -75,23 +71,21 @@ public class GroundedStateInputHandler extends StateInputHandler {
         return true;
     }
 
-    private boolean handleJump(GamecubeController gamecubeController) {
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.Y) ||
-                gamecubeController.buttonPressed(GamecubeController.Button.X)) {
+    private boolean handleJump(GameController gameController) {
+        if (gameController.isPressed(GameInput.Jump)) {
+            getPlayer().setJumpCount(1);
             getPlayer().resetTimers();
             enterState(State.JUMPSQUAT);
+
             return false;
         }
 
         return true;
     }
 
-    private boolean handleNeutralAttack(GamecubeController gamecubeController) {
+    private boolean handleNeutralAttack(GameController gameController) {
         if (!inSubState(State.SUBSTATE_ATTACKING)) {
-            if ((Gdx.input.isKeyPressed(Input.Keys.A) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.A))) {
-
+            if (gameController.isPressed(GameInput.NeutralAttack)) {
                 float xOffsetDirectionMultiplier = (getPlayer().getFacingRight()) ? 1 : -1;
                 float xOffset = 30 * xOffsetDirectionMultiplier;
 
@@ -103,10 +97,9 @@ public class GroundedStateInputHandler extends StateInputHandler {
         return true;
     }
 
-    private boolean handleNeutralSpecial(GamecubeController gamecubeController) {
+    private boolean handleNeutralSpecial(GameController gameController) {
         if (!inSubState(State.SUBSTATE_ATTACKING)) {
-            if ((Gdx.input.isKeyPressed(Input.Keys.S) ||
-                    gamecubeController.buttonPressed(GamecubeController.Button.B))) {
+            if (gameController.isPressed(GameInput.NeutralSpecial)) {
                 getPlayer().startAttack(new ProjectileAttack(getPlayer().getFacingRight(), 0, 30));
                 getPlayer().setxVel(0);
             }

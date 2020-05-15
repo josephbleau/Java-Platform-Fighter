@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.entity.Entity;
+import com.nighto.weebu.event.events.Event;
 
 import java.util.List;
 
@@ -47,6 +48,11 @@ public class Attack extends Entity {
             shapeRenderer.rect(xPos + hitBox.x, yPos + hitBox.y, hitBox.width, hitBox.height);
             shapeRenderer.end();
         }
+    }
+
+    @Override
+    public void notify(Event event) {
+        super.notify(event);
     }
 
     public boolean isPlaying() {

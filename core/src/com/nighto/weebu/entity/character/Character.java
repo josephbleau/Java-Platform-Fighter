@@ -24,6 +24,8 @@ public class Character extends Entity {
     protected CharacterData characterData;
     protected CharacterTimers characterTimers;
 
+    protected int jumpCount = 0;
+
     protected float width;
     protected float height;
 
@@ -102,6 +104,7 @@ public class Character extends Entity {
                 /* Reset our x/y to be the x/y of the top of the rect that we collided with (so x, y+height) */
                 if (falling && yPrevPos >= stageRect.y + stageRect.height && yPos <= stageRect.y + stageRect.height && stage.isGround(stageRect)) {
                     yPos = stageRect.y + stageRect.height;
+                    jumpCount = 0;
 
                     if (inState(State.AIRBORNE)) {
                         enterState(State.STANDING);
@@ -224,7 +227,7 @@ public class Character extends Entity {
         }
     }
 
-    public void handleInput(GamecubeController gamecubeController) {}
+    public void handleInput() {}
 
     public void enterState(State newState) {
         prevState = state;
@@ -270,13 +273,14 @@ public class Character extends Entity {
         enterState(State.HANGING);
 
         Rectangle playerRect = getRects().get(0);
+        jumpCount = 0;
 
         if (ledge.hangLeft) {
             subState = State.SUBSTATE_HANGING_LEFT;
-            teleport(ledge.x - playerRect.width, ledge.y + ledge.height - playerRect.height, false);
+            teleport(ledge.x - playerRect.width + ledge.width, ledge.y + ledge.height - playerRect.height, false);
         } else {
             subState = State.SUBSTATE_HANGING_RIGHT;
-            teleport(ledge.x + ledge.width, ledge.y + ledge.height - playerRect.height, false);
+            teleport(ledge.x, ledge.y + ledge.height - playerRect.height, false);
         }
     }
 
@@ -294,6 +298,14 @@ public class Character extends Entity {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public int getJumpCount() {
+        return jumpCount;
+    }
+
+    public void setJumpCount(int jumpCount) {
+        this.jumpCount = jumpCount;
     }
 
     public CharacterData getCharacterData() {
