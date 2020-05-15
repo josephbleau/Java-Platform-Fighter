@@ -23,10 +23,10 @@ public class HangingStateInputHandler extends StateInputHandler {
                 gamecubeController.buttonPressed(GamecubeController.Button.X)) {
 
             getPlayer().setActive(true);
-            getPlayer().setyVel(getPlayer().getFullHopVel());
+            getPlayer().setyVel(getPlayer().getCharacterData().getAttributes().getFullHopSpeed());
 
             enterState(State.AIRBORNE);
-            enterSubstate(State.SUBSTATE_CLEAR);
+            enterSubstate(State.SUBSTATE_DEFAULT);
         }
 
         return true;

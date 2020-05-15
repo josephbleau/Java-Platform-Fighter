@@ -30,7 +30,6 @@ public abstract class StateInputHandler {
 
     public StateInputHandler(Player player, State[] supportedStates) {
         this(player, supportedStates, new State[]{});
-
     }
 
     /**
