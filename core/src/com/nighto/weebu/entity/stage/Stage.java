@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.entity.Entity;
-import com.nighto.weebu.entity.parts.Ledge;
+import com.nighto.weebu.entity.stage.parts.Ledge;
 
 import java.util.ArrayList;
 import java.util.List;

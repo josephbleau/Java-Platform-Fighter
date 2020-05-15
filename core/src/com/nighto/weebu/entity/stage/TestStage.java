@@ -1,7 +1,7 @@
 package com.nighto.weebu.entity.stage;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.nighto.weebu.entity.parts.Ledge;
+import com.nighto.weebu.entity.stage.parts.Ledge;
 
 public class TestStage extends Stage {
     public TestStage() {

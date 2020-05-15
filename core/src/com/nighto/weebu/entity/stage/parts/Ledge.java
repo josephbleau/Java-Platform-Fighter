@@ -1,4 +1,4 @@
-package com.nighto.weebu.entity.parts;
+package com.nighto.weebu.entity.stage.parts;
 
 import com.badlogic.gdx.math.Rectangle;
 

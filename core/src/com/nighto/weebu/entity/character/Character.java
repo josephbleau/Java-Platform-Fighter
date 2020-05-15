@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
-import com.nighto.weebu.entity.parts.Ledge;
+import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.entity.player.Shield;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.stage.Stage;
