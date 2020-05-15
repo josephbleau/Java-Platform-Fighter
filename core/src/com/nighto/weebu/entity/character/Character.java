@@ -1,4 +1,4 @@
-package com.nighto.weebu.entity.player;
+package com.nighto.weebu.entity.character;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -8,6 +8,8 @@ import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
 import com.nighto.weebu.entity.parts.Ledge;
+import com.nighto.weebu.entity.player.Shield;
+import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.event.events.CollissionEvent;
 import com.nighto.weebu.event.events.DeathEvent;
@@ -19,43 +21,23 @@ import java.util.List;
 
 public class Character extends Entity {
 
-    protected boolean grounded = false;
+    protected CharacterData characterData;
 
-    /** The maximum y-velocity that can be reached via gravity. Being knocked toward the ground will ignore this value. **/
-    protected float maximumNaturalDownwardVelocity = -10;
-
-    /** The maximum x-velocity that can be reached via controller inputs while grounded. **/
-    protected float maximumNaturalGroundSpeed = 10;
-
-    /** The maximum x-velocity that can be reached via controller inputs while in the air. **/
-    protected float maximumNaturalAirSpeed = 5;
-
-    /** The initial velocity boost of a short hop **/
-    protected float shortHopVel = 35;
-
-    /** The initial velocity boost of a full hop **/
-    protected float fullHopVel = 50;
-
-    /** The amount of time until you jump after pressing jump (from the ground) in seconds. **/
-    protected float jumpSquatTime = 0.05f;
+    protected float width;
+    protected float height;
 
     /** The amount of time left in jump squat. **/
-    protected float jumpSquatTimeRemaining = jumpSquatTime;
-
-    /** The total amount of time spent in sidestep **/
-    protected float sidestepTime = 0.37f;
+    protected float jumpSquatTimeRemaining;
 
     /** The amount of time left in the current sidestep. **/
-    protected float sidestepTimeRemaining = sidestepTime;
+    protected float sidestepTimeRemaining;
 
     protected Shield shield;
-
     protected Stage stage;
 
-    protected State prevState;
     protected State state;
-
     protected State subState;
+    protected State prevState;
     protected State prevSubstate;
 
     protected Color sidestepColor;
@@ -66,24 +48,33 @@ public class Character extends Entity {
 
     public Character(Stage stage) {
         this.stage = stage;
+
+        characterData = CharacterLoader.loadCharacterData();
+
+        jumpSquatTimeRemaining = getCharacterData().getAttributes().getJumpSquatDuration();
+        sidestepTimeRemaining = getCharacterData().getAttributes().getSidestepDuration();
+
         sidestepColor = Color.LIGHT_GRAY;
 
-        enterState(State.CLEAR);
-        enterSubstate(State.SUBSTATE_CLEAR);
+        width = getCharacterData().getHurtboxes().get(State.DEFAULT).width;
+        height = getCharacterData().getHurtboxes().get(State.DEFAULT).height;
+
+        enterState(State.DEFAULT);
+        enterSubstate(State.SUBSTATE_DEFAULT);
     }
 
     @Override
     public void update(float delta) {
         /* Apply gravity */
-        if (yVel > maximumNaturalDownwardVelocity) {
-            yVel = Math.max(maximumNaturalDownwardVelocity, yVel - stage.getGravity());
+        if (yVel > characterData.getAttributes().fallSpeed) {
+            yVel = Math.max(characterData.getAttributes().fallSpeed, yVel - stage.getGravity());
         }
 
         if (state == State.JUMPSQUAT) {
             jumpSquatTimeRemaining -= delta;
 
             if (jumpSquatTimeRemaining <= 0) {
-                jumpSquatTimeRemaining = jumpSquatTime;
+                jumpSquatTimeRemaining = characterData.getAttributes().getJumpSquatDuration();
                 enterState(State.EXIT_JUMPSQUAT);
             }
         }
@@ -94,11 +85,12 @@ public class Character extends Entity {
 
         if (sidestepTimeRemaining <= 0) {
             currentColor = defaultColor;
-            sidestepTimeRemaining = sidestepTime;
+            sidestepTimeRemaining = characterData.getAttributes().getSidestepDuration();
             enterState(prevState);
         }
 
         shield.update(delta);
+
         updateAttacks(delta);
 
         if (!inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
@@ -127,7 +119,7 @@ public class Character extends Entity {
         }
 
         if (!attackPlaying && inSubState(State.SUBSTATE_ATTACKING)) {
-            enterSubstate(State.SUBSTATE_CLEAR);
+            enterSubstate(State.SUBSTATE_DEFAULT);
         }
     }
 
@@ -168,7 +160,7 @@ public class Character extends Entity {
 
                     if (inState(State.AIRBORNE)) {
                         enterState(State.STANDING);
-                        enterSubstate(State.SUBSTATE_CLEAR);
+                        enterSubstate(State.SUBSTATE_DEFAULT);
                     }
 
                     yVel = 0;
@@ -210,6 +202,7 @@ public class Character extends Entity {
         }
 
         shield.render(shapeRenderer);
+
         attacks.forEach(attack -> attack.render(shapeRenderer));
     }
 
@@ -280,24 +273,8 @@ public class Character extends Entity {
         }
     }
 
-    public float getShortHopVel() {
-        return shortHopVel;
-    }
-
-    public float getFullHopVel() {
-        return fullHopVel;
-    }
-
-    public float getMaximumNaturalGroundSpeed() {
-        return maximumNaturalGroundSpeed;
-    }
-
     public boolean getFacingRight() {
         return facingRight;
-    }
-
-    public float getMaximumNaturalAirSpeed() {
-        return maximumNaturalAirSpeed;
     }
 
     public State getState() {
@@ -306,5 +283,13 @@ public class Character extends Entity {
 
     public State getSubState() {
         return subState;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public CharacterData getCharacterData() {
+        return characterData;
     }
 }

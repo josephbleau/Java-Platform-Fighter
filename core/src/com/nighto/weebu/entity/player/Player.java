@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.controller.Controllable;
 import com.nighto.weebu.controller.GamecubeController;
+import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.player.input.StateInputHandler;
 import com.nighto.weebu.entity.player.input.handlers.*;
 import com.nighto.weebu.entity.stage.Stage;
@@ -14,11 +15,6 @@ import java.util.List;
 
 public class Player extends Character implements Controllable {
 
-    private float baseWidth;
-    private float baseHeight;
-    private float width;
-    private float height;
-
     private Rectangle rect;
 
     private List<StateInputHandler> stateInputHandlers;
@@ -26,11 +22,11 @@ public class Player extends Character implements Controllable {
     public Player(Stage stage) {
         super(stage);
 
-        baseWidth = 20;
-        baseHeight = 60;
-        width = baseWidth;
-        height = baseHeight;
-        rect = new Rectangle(0, 0, baseWidth, baseHeight);
+        rect = new Rectangle(
+                0, 0,
+                getCharacterData().getHurtboxes().get(State.DEFAULT).width,
+                getCharacterData().getHurtboxes().get(State.DEFAULT).height
+        );
 
         getRects().add(rect);
         shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
@@ -63,11 +59,10 @@ public class Player extends Character implements Controllable {
         super.update(delta);
 
         if (state == State.CROUCHING) {
-            height = baseHeight / 2;
+            height = getCharacterData().getHurtboxes().get(State.CROUCHING).height;
         } else {
-            height = baseHeight;
+            height = getCharacterData().getHurtboxes().get(State.DEFAULT).height;
         }
-
 
         rect.height = height;
     }

@@ -1,0 +1,16 @@
+{
+	"attributes": {
+		"numberOfJumps": 1,
+		"fallSpeed": -10,
+		"groundSpeed": 10,
+		"airSpeed": 5,
+		"shortHopSpeed": 35,
+		"fullHopSpeed": 50,
+		"jumpSquatDuration": 0.05,
+		"sidestepDuration": 0.37
+	},
+	"hurtboxes": {
+		"DEFAULT":  {"width": 20, "height": 60},
+		"CROUCHING": {"width": 20, "height": 30}
+	}
+}

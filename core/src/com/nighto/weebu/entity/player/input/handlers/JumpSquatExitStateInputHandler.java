@@ -23,9 +23,9 @@ public class JumpSquatExitStateInputHandler extends StateInputHandler {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
                 gamecubeController.buttonPressed(GamecubeController.Button.X) ||
                 gamecubeController.buttonPressed((GamecubeController.Button.Y))) {
-            getPlayer().setyVel(getPlayer().getFullHopVel());
+            getPlayer().setyVel(getPlayer().getCharacterData().getAttributes().getFullHopSpeed());
         } else {
-            getPlayer().setyVel(getPlayer().getShortHopVel());
+            getPlayer().setyVel(getPlayer().getCharacterData().getAttributes().getShortHopSpeed());
         }
 
         return true;

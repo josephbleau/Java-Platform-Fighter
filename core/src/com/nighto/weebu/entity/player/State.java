@@ -1,8 +1,8 @@
 package com.nighto.weebu.entity.player;
 
 public enum State {
-    CLEAR,                  // Neutral state. State is cleared to this at the beginning of each input loop.
-    SUBSTATE_CLEAR,
+    DEFAULT,                  // Neutral state. State is cleared to this at the beginning of each input loop.
+    SUBSTATE_DEFAULT,
     STANDING,               // Standing still on the level
     RUNNING,                // Moving on the ground
     CROUCHING,              // Player is crouched

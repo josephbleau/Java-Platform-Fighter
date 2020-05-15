@@ -39,9 +39,9 @@ public class AirborneStateInputHandler extends StateInputHandler {
 
     private boolean handleDrift(GamecubeController gamecubeController) {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || gamecubeController.getControlStick().x < -0.02f) {
-            getPlayer().setxVel(-getPlayer().getMaximumNaturalAirSpeed());
+            getPlayer().setxVel(-getPlayer().getCharacterData().getAttributes().getAirSpeed());
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || gamecubeController.getControlStick().x > 0.02f) {
-            getPlayer().setxVel(getPlayer().getMaximumNaturalAirSpeed());
+            getPlayer().setxVel(getPlayer().getCharacterData().getAttributes().getAirSpeed());
         } else {
             getPlayer().setxVel(0);
         }

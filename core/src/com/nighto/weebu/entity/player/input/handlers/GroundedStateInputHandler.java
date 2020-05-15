@@ -15,7 +15,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
         super(
                 player,
                 new State[] {
-                        State.CLEAR,
+                        State.DEFAULT,
                         State.STANDING,
                         State.RUNNING
                 },
@@ -52,11 +52,11 @@ public class GroundedStateInputHandler extends StateInputHandler {
     private boolean handleRun(GamecubeController gamecubeController) {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
                 gamecubeController.getControlStick().x < -GamecubeController.LIGHT_DIRECTION_THRESHOLD) {
-            getPlayer().setxVel(-getPlayer().getMaximumNaturalGroundSpeed());
+            getPlayer().setxVel(-getPlayer().getCharacterData().getAttributes().getGroundSpeed());
             enterState(State.RUNNING);
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) ||
                 gamecubeController.getControlStick().x > GamecubeController.LIGHT_DIRECTION_THRESHOLD) {
-            getPlayer().setxVel(getPlayer().getMaximumNaturalGroundSpeed());
+            getPlayer().setxVel(getPlayer().getCharacterData().getAttributes().getGroundSpeed());
             enterState(State.RUNNING);
         } else {
             getPlayer().setxVel(0);
