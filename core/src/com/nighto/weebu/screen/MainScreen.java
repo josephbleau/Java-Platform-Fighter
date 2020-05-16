@@ -15,7 +15,7 @@ import com.nighto.weebu.entity.player.Enemy;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.TestStage;
-import com.nighto.weebu.event.EventHandler;
+import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.event.events.CollissionEvent;
 import com.nighto.weebu.event.events.DeathEvent;
 
@@ -33,7 +33,7 @@ public class MainScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
 
-    private EventHandler eventHandler;
+    private EventPublisher eventPublisher;
 
     private List<GamecubeController> controllers;
 
@@ -69,8 +69,8 @@ public class MainScreen implements Screen {
         entities.add(player);
         entities.add(enemy);
 
-        eventHandler = new EventHandler();
-        eventHandler.registerListeners(entities);
+        eventPublisher = new EventPublisher();
+        eventPublisher.registerListeners(entities);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class MainScreen implements Screen {
         for (Entity outerEntity : entities) {
             if (!stage.inBounds(outerEntity)) {
                 DeathEvent deathEvent = new DeathEvent(outerEntity);
-                eventHandler.publish(deathEvent);
+                eventPublisher.publish(deathEvent);
             }
 
             for (Entity innerEntity : entities) {
@@ -105,7 +105,7 @@ public class MainScreen implements Screen {
                     CollissionEvent collissionEvent = outerEntity.intersects(innerEntity);
 
                     if (collissionEvent != null) {
-                        eventHandler.publish(collissionEvent);
+                        eventPublisher.publish(collissionEvent);
                     }
                 }
             }
