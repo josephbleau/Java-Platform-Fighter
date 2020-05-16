@@ -1,7 +1,6 @@
 package com.nighto.weebu.entity.player.input;
 
 import com.nighto.weebu.controller.GameController;
-import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.player.State;
 
