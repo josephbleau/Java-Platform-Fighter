@@ -3,16 +3,15 @@ package com.nighto.weebu.entity.character;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
+import com.nighto.weebu.entity.character.event.CollisionEventHandler;
+import com.nighto.weebu.entity.character.event.DeathhEventHandler;
 import com.nighto.weebu.entity.player.Shield;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.events.CollissionEvent;
-import com.nighto.weebu.event.events.DeathEvent;
-import com.nighto.weebu.event.events.Event;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,6 +52,9 @@ public class Character extends Entity {
         width = getCharacterData().getHurtboxes().get(State.DEFAULT).width;
         height = getCharacterData().getHurtboxes().get(State.DEFAULT).height;
 
+        registerEventHandler(new CollisionEventHandler(this));
+        registerEventHandler(new DeathhEventHandler(this));
+
         enterState(State.DEFAULT);
         enterSubstate(State.SUBSTATE_DEFAULT);
     }
@@ -67,69 +69,6 @@ public class Character extends Entity {
         updateDirection(delta);
 
         shield.update(delta);
-    }
-
-    @Override
-    public void notify(Event event) {
-        super.notify(event);
-
-        if (event instanceof CollissionEvent) {
-            CollissionEvent collissionEvent = (CollissionEvent) event;
-
-            Entity us = null;
-            Entity them = null;
-            Shape2D ourShape = null;
-            Shape2D theirShape = null;
-
-            if (collissionEvent.entity1 == this) {
-                us = collissionEvent.entity1;
-                ourShape = collissionEvent.shape1;
-                them = collissionEvent.entity2;
-                theirShape = collissionEvent.shape2;
-            }
-
-            if (collissionEvent.entity2 == this) {
-                us = collissionEvent.entity2;
-                ourShape = collissionEvent.shape2;
-                them = collissionEvent.entity1;
-                theirShape = collissionEvent.shape1;
-            }
-
-            if (them == stage) {
-                /* Determine which direction we were heading so that we can set our position correctly. */
-                boolean falling = yVel < 0;
-                Rectangle stageRect = ((Rectangle)theirShape);
-
-                /* Reset our x/y to be the x/y of the top of the rect that we collided with (so x, y+height) */
-                if (falling && yPrevPos >= stageRect.y + stageRect.height && yPos <= stageRect.y + stageRect.height && stage.isGround(stageRect)) {
-                    yPos = stageRect.y + stageRect.height;
-                    jumpCount = 0;
-
-                    if (inState(State.AIRBORNE)) {
-                        enterState(State.STANDING);
-                        enterSubstate(State.SUBSTATE_DEFAULT);
-                    }
-
-                    yVel = 0;
-                } else if (falling && theirShape instanceof Ledge && stage.isLedge((Ledge) theirShape)){
-                    snapToLedge((Ledge) theirShape);
-                } else {
-                    if (xVel < 0) {
-                        xPos = stageRect.x + stageRect.width;
-                    } else if (xVel > 0) {
-                        xPos = stageRect.x - 20;
-                    }
-
-                    xVel = 0;
-                }
-            }
-        }
-
-        if (event instanceof DeathEvent) {
-            if (((DeathEvent) event).entity == this) {
-                spawn(1920/2, 400);
-            }
-        }
     }
 
     @Override
@@ -267,7 +206,7 @@ public class Character extends Entity {
         attacks.add(attack);
     }
 
-    private void snapToLedge(Ledge ledge) {
+    public void snapToLedge(Ledge ledge) {
         setActive(false); // prevents gravity from applying
         enterState(State.HANGING);
 
@@ -281,6 +220,14 @@ public class Character extends Entity {
             subState = State.SUBSTATE_HANGING_RIGHT;
             teleport(ledge.x, ledge.y + ledge.height - playerRect.height, false);
         }
+    }
+
+    public CharacterData getCharacterData() {
+        return characterData;
+    }
+
+    public void resetTimers() {
+        characterTimers.resetTimers();
     }
 
     public boolean getFacingRight() {
@@ -307,11 +254,7 @@ public class Character extends Entity {
         this.jumpCount = jumpCount;
     }
 
-    public CharacterData getCharacterData() {
-        return characterData;
-    }
-
-    public void resetTimers() {
-        characterTimers.resetTimers();
+    public Stage getStage() {
+        return stage;
     }
 }

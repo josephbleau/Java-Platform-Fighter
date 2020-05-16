@@ -3,8 +3,8 @@ package com.nighto.weebu.entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
-import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.event.events.CollissionEvent;
 import com.nighto.weebu.event.events.Event;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * Entity is the base object representing all "things" in the game, whether it be a player, a stage, an item, or some
  * other interactive element. It has various properties that affect the way the game interprets, renders, and updates them.
  */
-public class Entity implements EventListener, EventPublisher {
+public class Entity implements EventListener {
 
     /** Current x position **/
     protected float xPos;
@@ -53,6 +53,8 @@ public class Entity implements EventListener, EventPublisher {
     /** Collidable being set to true means that collisions are registered and published **/
     private boolean collidable;
 
+    private List<EventHandler> eventHandlers;
+
     public Entity() {
         this.xPos = 0;
         this.yPos = 0;
@@ -66,6 +68,8 @@ public class Entity implements EventListener, EventPublisher {
         this.active = false;
         this.hidden = true;
         this.collidable = true;
+
+        this.eventHandlers = new ArrayList<>();
     }
 
     public void render(ShapeRenderer shapeRenderer) {
@@ -115,7 +119,17 @@ public class Entity implements EventListener, EventPublisher {
     }
 
     @Override
-    public void notify(Event event) {}
+    public void notify(Event event) {
+        for (EventHandler eventHandler : eventHandlers) {
+            if (eventHandler.supports(event)) {
+                eventHandler.handle(event);
+            }
+        }
+    }
+
+    public void registerEventHandler(EventHandler eventHandler) {
+        this.eventHandlers.add(eventHandler);
+    }
 
     public CollissionEvent intersects(Entity otherEntity) {
         for (Rectangle rect : getCollidables()) {
@@ -169,5 +183,39 @@ public class Entity implements EventListener, EventPublisher {
 
     public void setyVel(float yVel) {
         this.yVel = yVel;
+    }
+
+    public float getxPos() {
+        return xPos;
+    }
+
+    public float getyPos() {
+        return yPos;
+    }
+
+    public float getxPrevPos() {
+        return xPrevPos;
+    }
+
+    public float getyPrevPos() {
+        return yPrevPos;
+    }
+
+    public float getxVel() {
+        return xVel;
+    }
+
+    public float getyVel() {
+        return yVel;
+    }
+
+    public void setxPos(float xPos) {
+        xPrevPos = xPos;
+        this.xPos = xPos;
+    }
+
+    public void setyPos(float yPos) {
+        yPrevPos = yPos;
+        this.yPos = yPos;
     }
 }

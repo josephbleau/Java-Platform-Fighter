@@ -11,6 +11,7 @@ public enum State {
     AIRBORNE,               // In the air
     SHIELDING,              // Still, in shield
     HANGING,                // Hanging from a ledge
+    WALLSLIDING,            // Sliding down a wall
     SIDESTEPPING,           // Player is invincible during a sidestep (dodge)
     SUBSTATE_ATTACKING,     // Player is in an attack animation
     SUBSTATE_HANGING_LEFT,  // Player is hanging from a ledge on the left
