@@ -1,6 +1,5 @@
 package com.nighto.weebu.entity.character.event;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.controller.GameInput;
@@ -97,7 +96,12 @@ public class CollisionEventHandler implements EventHandler {
         }
 
         if (them instanceof Attack) {
-            Gdx.app.log("Collision", "Collided with attack.");
+            Attack attack = (Attack) them;
+            Character character = (Character) us;
+
+            if (!attack.getOwner().equals(character)) {
+                character.enterKnockback(attack);
+            }
         }
     }
 }

@@ -14,7 +14,8 @@ public class AirborneStateInputHandler extends StateInputHandler {
     public AirborneStateInputHandler(Player player) {
         super(
                 player,
-                new State[]{State.AIRBORNE}
+                new State[]{State.AIRBORNE},
+                new State[]{State.SUBSTATE_KNOCKBACK}
         );
     }
 

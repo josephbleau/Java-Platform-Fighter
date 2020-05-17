@@ -30,6 +30,10 @@ public class GameController {
     public void poll() {
         lastFrame.putAll(currentFrame);
 
+        if (controller instanceof NoopGamecubeController) {
+            return;
+        }
+
         currentFrame.put(GameInput.ControlLeftLight, controller.getControlStick().x <= -GamecubeController.LIGHT_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.LEFT));
         currentFrame.put(GameInput.ControlLeftHard, controller.getControlStick().x <= -GamecubeController.HARD_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.LEFT));
         currentFrame.put(GameInput.ControlRightLight, controller.getControlStick().x >= GamecubeController.LIGHT_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.RIGHT));

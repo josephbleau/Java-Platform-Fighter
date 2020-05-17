@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GamecubeController;
+import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
-import com.nighto.weebu.entity.player.Enemy;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.TestStage;
@@ -26,7 +26,7 @@ public class StageScreen implements Screen {
     final Game game;
     final Stage stage;
     final Player player;
-    final Enemy enemy;
+    final Player enemy;
 
     private List<Entity> entities;
     private List<Entity> entitiesToRemove;
@@ -58,7 +58,7 @@ public class StageScreen implements Screen {
 
         stage = new TestStage(this);
         player = new Player(this, new GameController(gamecubeController));
-        enemy = new Enemy(this);
+        enemy = new Player(this, new GameController(new NoopGamecubeController()));
 
         entities = new ArrayList<>();
         entitiesToRemove = new ArrayList<>();
