@@ -28,6 +28,7 @@ public class Character extends Entity {
 
     protected float width;
     protected float height;
+    protected boolean fastFalling = false;
 
     protected Shield shield;
     protected Stage stage;
@@ -113,7 +114,11 @@ public class Character extends Entity {
         }
 
         if (inState(State.WALLSLIDING)) {
-            yVel = proposedyVel/4;
+            yVel = proposedyVel/3;
+        }
+
+        if (yVel < 0 && fastFalling) {
+            yVel = proposedyVel * 2;
         }
     }
 
@@ -272,5 +277,13 @@ public class Character extends Entity {
 
     public float getWidth() {
         return width;
+    }
+
+    public void setFastFalling(boolean fastFalling) {
+        this.fastFalling = fastFalling;
+    }
+
+    public boolean isFastFalling() {
+        return fastFalling;
     }
 }

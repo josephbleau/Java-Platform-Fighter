@@ -25,6 +25,7 @@ public class AirborneStateInputHandler extends StateInputHandler {
         return handleJump(gameController) &&
                 handleSidestep(gameController) &&
                 handleDrift(gameController) &&
+                handleFastFall(gameController) &&
                 handleNeutralSpecial(gameController);
     }
 
@@ -62,6 +63,11 @@ public class AirborneStateInputHandler extends StateInputHandler {
             getPlayer().setxVel(0);
         }
 
+        return true;
+    }
+
+    private boolean handleFastFall(GameController gameController) {
+        getPlayer().setFastFalling(gameController.isPressed(GameInput.Crouch));
         return true;
     }
 
