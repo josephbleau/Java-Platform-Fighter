@@ -2,6 +2,7 @@ package com.nighto.weebu.entity.character.event;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
+import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.player.State;
@@ -65,9 +66,27 @@ public class CollisionEventHandler implements EventHandler {
                 character.snapToLedge((Ledge) theirShape);
             } else {
                 if (character.getxVel() < 0) {
+                    if(falling && (character.getGameController().isPressed(GameInput.ControlLeftLight) || character.getGameController().isPressed(GameInput.ControlLeftHard))) {
+                        character.enterState(State.WALLSLIDING);
+                        character.enterSubstate(State.SUBSTATE_WALLSLIDING_LEFT);
+                    } else {
+                        character.inState(State.AIRBORNE);
+                        character.inState(State.SUBSTATE_DEFAULT);
+                    }
+
                     character.setxPos(stageRect.x + stageRect.width);
                 } else if (character.getxVel() > 0) {
-                    character.setxPos(stageRect.x - 20);
+                    // Move character out of the wall
+                    float difference = Math.abs((character.getxPos() + character.getWidth()) - stageRect.x);
+                    character.setxPos(character.getxPos() - difference);
+
+                    if(falling && (character.getGameController().isPressed(GameInput.ControlRightLight) || character.getGameController().isPressed(GameInput.ControlRightHard))) {
+                        character.enterState(State.WALLSLIDING);
+                        character.enterSubstate(State.SUBSTATE_WALLSLIDING_RIGHT);
+                    } else {
+                        character.inState(State.AIRBORNE);
+                        character.inState(State.SUBSTATE_DEFAULT);
+                    }
                 }
 
                 character.setxVel(0);

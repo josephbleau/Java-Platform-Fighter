@@ -3,7 +3,7 @@
 		"numberOfJumps": 2,
 		"fallSpeed": -10,
 		"groundSpeed": 10,
-		"airSpeed": 5,
+		"airSpeed": 4.5,
 		"shortHopSpeed": 35,
 		"fullHopSpeed": 50,
 		"jumpSquatDuration": 0.05,

@@ -33,7 +33,7 @@ public class GameController {
         currentFrame.put(GameInput.ControlLeftLight, controller.getControlStick().x <= -GamecubeController.LIGHT_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.LEFT));
         currentFrame.put(GameInput.ControlLeftHard, controller.getControlStick().x <= -GamecubeController.HARD_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.LEFT));
         currentFrame.put(GameInput.ControlRightLight, controller.getControlStick().x >= GamecubeController.LIGHT_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.RIGHT));
-        currentFrame.put(GameInput.ControlRightHard, controller.getControlStick().x >= -GamecubeController.HARD_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.RIGHT));
+        currentFrame.put(GameInput.ControlRightHard, controller.getControlStick().x >= GamecubeController.HARD_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.RIGHT));
         currentFrame.put(GameInput.Jump, controller.buttonPressed(GamecubeController.Button.X) || controller.buttonPressed(GamecubeController.Button.Y) || Gdx.input.isKeyPressed(Input.Keys.SPACE));
         currentFrame.put(GameInput.Crouch, (controller.getControlStick().y > GamecubeController.HARD_DIRECTION_THRESHOLD) || Gdx.input.isKeyPressed(Input.Keys.DOWN));
         currentFrame.put(GameInput.NeutralAttack, controller.buttonPressed(GamecubeController.Button.A) || Gdx.input.isKeyPressed(Input.Keys.A));

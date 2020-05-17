@@ -25,25 +25,25 @@ public class Enemy extends Character {
     }
 
     public void handleInput() {
-        float speed = inState(State.STANDING, State.RUNNING)  ? getCharacterData().getAttributes().getGroundSpeed() : getCharacterData().getAttributes().getAirSpeed();
-
-        if (xVel > 0) {
-            xVel = speed;
-            if (xPos >= (1920 - 1000) / 2 + 1000 - 30) {
-                xVel = -speed;
-            }
-        } else if (xVel < 0) {
-            xVel = -speed;
-            if (xPos <= (1920 - 1000) / 2) {
-                xVel = speed;
-            }
-        } else {
-            xVel = -speed;
-        }
-
-        if (!inState(State.AIRBORNE) && Math.random() > .99) {
-            enterState(State.STANDING);
-            yVel += getCharacterData().getAttributes().getShortHopSpeed();
-        }
+//        float speed = inState(State.STANDING, State.RUNNING)  ? getCharacterData().getAttributes().getGroundSpeed() : getCharacterData().getAttributes().getAirSpeed();
+//
+//        if (xVel > 0) {
+//            xVel = speed;
+//            if (xPos >= (1920 - 1000) / 2 + 1000 - 30) {
+//                xVel = -speed;
+//            }
+//        } else if (xVel < 0) {
+//            xVel = -speed;
+//            if (xPos <= (1920 - 1000) / 2) {
+//                xVel = speed;
+//            }
+//        } else {
+//            xVel = -speed;
+//        }
+//
+//        if (!inState(State.AIRBORNE) && Math.random() > .99) {
+//            enterState(State.STANDING);
+//            yVel += getCharacterData().getAttributes().getShortHopSpeed();
+//        }
     }
 }

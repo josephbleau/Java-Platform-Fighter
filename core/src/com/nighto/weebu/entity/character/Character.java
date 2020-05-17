@@ -3,6 +3,7 @@ package com.nighto.weebu.entity.character;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
 import com.nighto.weebu.entity.character.event.CollisionEventHandler;
@@ -21,6 +22,7 @@ public class Character extends Entity {
 
     protected CharacterData characterData;
     protected CharacterTimers characterTimers;
+    protected GameController gameController;
 
     protected int jumpCount = 0;
 
@@ -104,8 +106,14 @@ public class Character extends Entity {
     }
 
     private void updateGravity(float delta) {
+        float proposedyVel = Math.max(characterData.getAttributes().fallSpeed, yVel - stage.getGravity());
+
         if (yVel > characterData.getAttributes().fallSpeed) {
-            yVel = Math.max(characterData.getAttributes().fallSpeed, yVel - stage.getGravity());
+            yVel = proposedyVel;
+        }
+
+        if (inState(State.WALLSLIDING)) {
+            yVel = proposedyVel/4;
         }
     }
 
@@ -256,5 +264,13 @@ public class Character extends Entity {
 
     public Stage getStage() {
         return stage;
+    }
+
+    public GameController getGameController() {
+        return gameController;
+    }
+
+    public float getWidth() {
+        return width;
     }
 }
