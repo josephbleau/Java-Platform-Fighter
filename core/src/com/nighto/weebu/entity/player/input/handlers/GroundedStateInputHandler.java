@@ -72,7 +72,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleJump(GameController gameController) {
-        if (gameController.isPressed(GameInput.Jump)) {
+        if (gameController.hasChangedSinceLastFrame(GameInput.Jump) && gameController.isPressed(GameInput.Jump)) {
             getPlayer().setJumpCount(1);
             getPlayer().resetTimers();
             enterState(State.JUMPSQUAT);
