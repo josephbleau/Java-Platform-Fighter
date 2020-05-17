@@ -21,4 +21,8 @@ public class EventPublisher {
             listener.notify(event);
         }
     }
+
+    public void publish(List<? extends Event> events) {
+        events.forEach(this::publish);
+    }
 }

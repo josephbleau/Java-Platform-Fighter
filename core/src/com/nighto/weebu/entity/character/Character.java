@@ -12,7 +12,8 @@ import com.nighto.weebu.entity.player.Shield;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
-import com.nighto.weebu.event.events.CollissionEvent;
+import com.nighto.weebu.event.events.CollisionEvent;
+import com.nighto.weebu.screen.StageScreen;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,8 +45,10 @@ public class Character extends Entity {
 
     protected List<Attack> attacks = new ArrayList<>();
 
-    public Character(Stage stage) {
-        this.stage = stage;
+    public Character(StageScreen parentScreen) {
+        super(parentScreen);
+
+        this.stage = parentScreen.getStage();
 
         characterData = CharacterLoader.loadCharacterData();
         characterTimers = new CharacterTimers(characterData);
@@ -96,8 +99,8 @@ public class Character extends Entity {
     }
 
     @Override
-    public CollissionEvent intersects(Entity otherEntity) {
-        CollissionEvent shieldCollision = shield.intersects(otherEntity);
+    public List<CollisionEvent> intersects(Entity otherEntity) {
+        List<CollisionEvent> shieldCollision = shield.intersects(otherEntity);
 
         if (shieldCollision != null) {
             return shieldCollision;
@@ -210,6 +213,8 @@ public class Character extends Entity {
     }
 
     public void startAttack(Attack attack) {
+        getStageScreen().registerEntity(attack);
+
         attack.spawn(xPos, yPos);
 
         if (attack.isPlaying()) {

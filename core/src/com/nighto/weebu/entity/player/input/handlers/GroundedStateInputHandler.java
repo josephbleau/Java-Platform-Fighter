@@ -89,7 +89,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
                 float xOffsetDirectionMultiplier = (getPlayer().getFacingRight()) ? 1 : -1;
                 float xOffset = 30 * xOffsetDirectionMultiplier;
 
-                getPlayer().startAttack(new MeleeAttack(xOffset, 30));
+                getPlayer().startAttack(new MeleeAttack(getPlayer(), xOffset, 30));
                 getPlayer().setxVel(0);
             }
         }
@@ -100,7 +100,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
     private boolean handleNeutralSpecial(GameController gameController) {
         if (!inSubState(State.SUBSTATE_ATTACKING)) {
             if (gameController.isPressed(GameInput.NeutralSpecial)) {
-                getPlayer().startAttack(new ProjectileAttack(getPlayer().getFacingRight(), 0, 30));
+                getPlayer().startAttack(new ProjectileAttack(getPlayer(), 0, 30));
                 getPlayer().setxVel(0);
             }
         }
