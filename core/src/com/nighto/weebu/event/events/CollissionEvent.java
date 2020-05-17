@@ -3,7 +3,7 @@ package com.nighto.weebu.event.events;
 import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.entity.Entity;
 
-public class CollissionEvent extends Event {
+public class  CollissionEvent extends Event {
     /** The first entity involved in the collision **/
     public Entity entity1;
     public Shape2D shape1;

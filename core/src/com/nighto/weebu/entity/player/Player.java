@@ -1,5 +1,6 @@
 package com.nighto.weebu.entity.player;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
@@ -17,7 +18,6 @@ public class Player extends Character implements Controllable {
 
     private Rectangle rect;
     private List<StateInputHandler> stateInputHandlers;
-    private GameController gameController;
 
     public Player(Stage stage, GameController gameController) {
         super(stage);
@@ -25,12 +25,14 @@ public class Player extends Character implements Controllable {
         this.gameController = gameController;
         stateInputHandlers = new ArrayList<>();
         stateInputHandlers.add(new NoInputStateInputHandler(this));
+        stateInputHandlers.add(new WallslideStateInputHandler(this));
         stateInputHandlers.add(new JumpSquatExitStateInputHandler(this));
         stateInputHandlers.add(new HangingStateInputHandler(this));
         stateInputHandlers.add(new ShieldStateInputHandler(this));
         stateInputHandlers.add(new GroundedStateInputHandler(this));
         stateInputHandlers.add(new CrouchingStateInputHandler(this));
         stateInputHandlers.add(new AirborneStateInputHandler(this));
+
 
         rect = new Rectangle(
                 0, 0,
