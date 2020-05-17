@@ -1,6 +1,8 @@
 package com.nighto.weebu.entity.attack;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.nighto.weebu.entity.character.Character;
+import com.nighto.weebu.screen.StageScreen;
 
 import java.util.Collections;
 
@@ -13,12 +15,12 @@ public class ProjectileAttack extends Attack {
 
     private float timeToLive = 3;
 
-    public ProjectileAttack(boolean facingRight, float hitBoxOffsetX, float hitBoxOffsetY) {
-        super(Collections.singletonList(new Rectangle(hitBoxOffsetX, hitBoxOffsetY, 40, 5)));
+    public ProjectileAttack(Character owner, float hitBoxOffsetX, float hitBoxOffsetY) {
+        super(owner, Collections.singletonList(new Rectangle(hitBoxOffsetX, hitBoxOffsetY, 40, 5)));
 
         startupTime = STARTUP;
         attackTime = ANIMATION_TIME;
-        xVel = facingRight ? SPEED : -SPEED;
+        xVel = owner.getFacingRight() ? SPEED : -SPEED;
 
         setHidden(true);
         getRects().addAll(getHitBoxes());

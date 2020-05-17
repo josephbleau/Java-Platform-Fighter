@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
-import com.nighto.weebu.event.events.CollissionEvent;
+import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.event.events.Event;
+import com.nighto.weebu.screen.StageScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,9 @@ public class Entity implements EventListener {
 
     private List<EventHandler> eventHandlers;
 
-    public Entity() {
+    private StageScreen stageScreen;
+
+    public Entity(StageScreen stageScreen) {
         this.xPos = 0;
         this.yPos = 0;
         this.xPrevPos = 0;
@@ -70,6 +73,7 @@ public class Entity implements EventListener {
         this.collidable = true;
 
         this.eventHandlers = new ArrayList<>();
+        this.stageScreen = stageScreen;
     }
 
     public void render(ShapeRenderer shapeRenderer) {
@@ -131,16 +135,18 @@ public class Entity implements EventListener {
         this.eventHandlers.add(eventHandler);
     }
 
-    public CollissionEvent intersects(Entity otherEntity) {
+    public List<CollisionEvent> intersects(Entity otherEntity) {
+        List<CollisionEvent> collisionEvents = new ArrayList<>();
+
         for (Rectangle rect : getCollidables()) {
             for (Rectangle otherRect : otherEntity.getCollidables()) {
                 if (otherRect.overlaps(rect)) {
-                    return new CollissionEvent(this, rect, otherEntity, otherRect);
+                    collisionEvents.add(new CollisionEvent(this, rect, otherEntity, otherRect));
                 }
             }
         }
 
-        return null;
+        return collisionEvents;
     }
 
     public List<Rectangle> getRects() {
@@ -217,5 +223,9 @@ public class Entity implements EventListener {
     public void setyPos(float yPos) {
         yPrevPos = yPos;
         this.yPos = yPos;
+    }
+
+    public StageScreen getStageScreen() {
+        return stageScreen;
     }
 }

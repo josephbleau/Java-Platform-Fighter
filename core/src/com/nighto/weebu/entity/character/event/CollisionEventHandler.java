@@ -1,14 +1,16 @@
 package com.nighto.weebu.entity.character.event;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.Entity;
+import com.nighto.weebu.entity.attack.Attack;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.EventHandler;
-import com.nighto.weebu.event.events.CollissionEvent;
+import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.event.events.Event;
 
 public class CollisionEventHandler implements EventHandler {
@@ -20,32 +22,33 @@ public class CollisionEventHandler implements EventHandler {
 
     @Override
     public boolean supports(Event event) {
-        return event instanceof CollissionEvent;
+        return event instanceof CollisionEvent;
     }
 
     @Override
     public void handle(Event event) {
-        CollissionEvent collissionEvent = (CollissionEvent) event;
+        CollisionEvent collisionEvent = (CollisionEvent) event;
 
         Entity us = null;
         Entity them = null;
         Shape2D ourShape = null;
         Shape2D theirShape = null;
 
-        if (collissionEvent.entity1 == character) {
-            us = collissionEvent.entity1;
-            ourShape = collissionEvent.shape1;
-            them = collissionEvent.entity2;
-            theirShape = collissionEvent.shape2;
+        if (collisionEvent.entity1 == character) {
+            us = collisionEvent.entity1;
+            ourShape = collisionEvent.shape1;
+            them = collisionEvent.entity2;
+            theirShape = collisionEvent.shape2;
         }
 
-        if (collissionEvent.entity2 == character) {
-            us = collissionEvent.entity2;
-            ourShape = collissionEvent.shape2;
-            them = collissionEvent.entity1;
-            theirShape = collissionEvent.shape1;
+        if (collisionEvent.entity2 == character) {
+            us = collisionEvent.entity2;
+            ourShape = collisionEvent.shape2;
+            them = collisionEvent.entity1;
+            theirShape = collisionEvent.shape1;
         }
 
+        // TODO: Refactor differing types of collision into their own handlers
         if (them == character.getStage()) {
             /* Determine which direction we were heading so that we can set our position correctly. */
             boolean falling = character.getyVel() < 0;
@@ -91,6 +94,10 @@ public class CollisionEventHandler implements EventHandler {
 
                 character.setxVel(0);
             }
+        }
+
+        if (them instanceof Attack) {
+            Gdx.app.log("Collision", "Collided with attack.");
         }
     }
 }

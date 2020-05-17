@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.stage.parts.Ledge;
+import com.nighto.weebu.screen.StageScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,9 @@ public abstract class Stage extends Entity {
     protected List<Rectangle> ledges;
     protected Color ledgeColor;
 
-    public Stage() {
+    public Stage(StageScreen stageScreen) {
+        super(stageScreen);
+
         blastZoneColor = Color.RED;
         ledgeColor = Color.BLUE;
         ledges = new ArrayList<>();
