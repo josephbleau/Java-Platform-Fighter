@@ -68,8 +68,8 @@ public class Entity implements EventListener {
         this.defaultColor = Color.BLACK;
         this.currentColor = this.defaultColor;
 
-        this.active = true;
-        this.hidden = false;
+        this.active = false;
+        this.hidden = true;
         this.collidable = true;
 
         this.eventHandlers = new ArrayList<>();

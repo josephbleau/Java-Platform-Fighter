@@ -18,6 +18,7 @@ public class HangingStateInputHandler extends StateInputHandler {
     @Override
     protected boolean doHandleInput(GameController gameController) {
         if (gameController.isPressed(GameInput.Jump)) {
+            getPlayer().setActive(true);
             getPlayer().setyVel(getPlayer().getCharacterData().getAttributes().getFullHopSpeed());
 
             enterState(State.AIRBORNE);
