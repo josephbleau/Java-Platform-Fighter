@@ -16,7 +16,7 @@ public enum State {
     SUBSTATE_ATTACKING,     // Player is in an attack animation
     SUBSTATE_HANGING_LEFT,  // Player is hanging from a ledge on the left
     SUBSTATE_HANGING_RIGHT, // Player is hanging from a ledge on the right
-    SUBSTATE_KNOCKBACK,      // Player cannot act while in knockback, exit knockback on landing (for now)
+    SUBSTATE_KNOCKBACK,      // Player cannot action while in knockback, exit knockback on landing (for now)
     SUBSTATE_WALLSLIDING_LEFT,
     SUBSTATE_WALLSLIDING_RIGHT
     ;

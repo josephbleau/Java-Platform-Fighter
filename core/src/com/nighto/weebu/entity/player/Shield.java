@@ -7,11 +7,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.entity.Entity;
-import com.nighto.weebu.event.events.CollisionEvent;
-import com.nighto.weebu.screen.StageScreen;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.nighto.weebu.event.events.CollissionEvent;
 
 public class Shield extends Entity {
 
@@ -25,9 +21,7 @@ public class Shield extends Entity {
 
     private float size = 1.0f;
 
-    public Shield(StageScreen stageScreen, Circle circle, Color color) {
-        super(stageScreen);
-
+    public Shield(Circle circle, Color color) {
         this.circle = circle;
         this.color = color;
 
@@ -54,19 +48,17 @@ public class Shield extends Entity {
     }
 
     @Override
-    public List<CollisionEvent> intersects(Entity otherEntity) {
-        List<CollisionEvent> collisionEvents = new ArrayList<>();
-
+    public CollissionEvent intersects(Entity otherEntity) {
         if (isActive()) {
             Circle translatedCircle = new Circle(xPos + circle.x, yPos + circle.y, size * circle.radius);
 
             for (Rectangle otherRect : otherEntity.getTranslatedRects()) {
                 if (Intersector.overlaps(translatedCircle, otherRect)) {
-                    collisionEvents.add(new CollisionEvent(this, translatedCircle, otherEntity, otherRect));
+                    return new CollissionEvent(this, translatedCircle, otherEntity, otherRect);
                 }
             }
         }
 
-        return collisionEvents;
+        return null;
     }
 }

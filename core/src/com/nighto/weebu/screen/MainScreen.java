@@ -16,12 +16,13 @@ import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.TestStage;
 import com.nighto.weebu.event.EventPublisher;
+import com.nighto.weebu.event.events.CollissionEvent;
 import com.nighto.weebu.event.events.DeathEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StageScreen implements Screen {
+public class MainScreen implements Screen {
     final Game game;
     final Stage stage;
     final Player player;
@@ -36,7 +37,7 @@ public class StageScreen implements Screen {
 
     private List<GamecubeController> controllers;
 
-    public StageScreen(Game game) {
+    public MainScreen(Game game) {
         this.game = game;
 
         // Register controllers
@@ -54,9 +55,9 @@ public class StageScreen implements Screen {
             gamecubeController = controllers.get(0);
         }
 
-        stage = new TestStage(this);
-        player = new Player(this, new GameController(gamecubeController));
-        enemy = new Enemy(this);
+        stage = new TestStage();
+        player = new Player(stage, new GameController(gamecubeController));
+        enemy = new Enemy(stage);
 
         entities = new ArrayList<>();
 
@@ -101,7 +102,11 @@ public class StageScreen implements Screen {
                 }
 
                 if (innerEntity.isCollidable() && outerEntity.isCollidable()) {
-                    eventPublisher.publish(outerEntity.intersects(innerEntity));
+                    CollissionEvent collissionEvent = outerEntity.intersects(innerEntity);
+
+                    if (collissionEvent != null) {
+                        eventPublisher.publish(collissionEvent);
+                    }
                 }
             }
         }
@@ -114,9 +119,6 @@ public class StageScreen implements Screen {
         for (Entity entity : entities) {
             entity.render(shapeRenderer);
         }
-
-        // Remove inactive entities
-        entities.removeIf(e -> !e.isActive());
     }
 
     @Override
@@ -142,13 +144,5 @@ public class StageScreen implements Screen {
     @Override
     public void dispose() {
 
-    }
-
-    public void registerEntity(Entity entity) {
-        entities.add(entity);
-    }
-
-    public Stage getStage() {
-        return stage;
     }
 }

@@ -74,7 +74,8 @@ public class AirborneStateInputHandler extends StateInputHandler {
     private boolean handleNeutralSpecial(GameController gameController) {
         if(!inSubState(State.SUBSTATE_ATTACKING)) {
             if (gameController.isPressed(GameInput.NeutralSpecial)) {
-                getPlayer().startAttack(new ProjectileAttack(getPlayer(),0 , 30));
+                getPlayer().startAttack(new ProjectileAttack(getPlayer().getFacingRight(), 0, 30));
+
                 return false;
             }
         }
