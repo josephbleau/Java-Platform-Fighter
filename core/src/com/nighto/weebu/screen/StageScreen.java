@@ -20,6 +20,7 @@ import com.nighto.weebu.event.events.DeathEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StageScreen implements Screen {
     final Game game;
@@ -28,6 +29,7 @@ public class StageScreen implements Screen {
     final Enemy enemy;
 
     private List<Entity> entities;
+    private List<Entity> entitiesToRemove;
 
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
@@ -59,6 +61,7 @@ public class StageScreen implements Screen {
         enemy = new Enemy(this);
 
         entities = new ArrayList<>();
+        entitiesToRemove = new ArrayList<>();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1920, 1080);
@@ -84,18 +87,18 @@ public class StageScreen implements Screen {
         enemy.handleInput();
 
         /* Update Loop: All entities will run their physics calculations here. */
-        for (Entity entity : entities) {
+        for (Entity entity : getActiveEntities()) {
             entity.update(Gdx.graphics.getDeltaTime());
         }
 
         /* Outcome Loop: Collisions and interactions will be resolved here. */
-        for (Entity outerEntity : entities) {
+        for (Entity outerEntity : getActiveEntities()) {
             if (!stage.inBounds(outerEntity)) {
                 DeathEvent deathEvent = new DeathEvent(outerEntity);
                 eventPublisher.publish(deathEvent);
             }
 
-            for (Entity innerEntity : entities) {
+            for (Entity innerEntity : getActiveEntities()) {
                 if (outerEntity == innerEntity) {
                     continue;
                 }
@@ -111,12 +114,16 @@ public class StageScreen implements Screen {
 
         stage.render(shapeRenderer);
 
-        for (Entity entity : entities) {
+        for (Entity entity : getActiveEntities()) {
             entity.render(shapeRenderer);
         }
 
         // Remove inactive entities
-        entities.removeIf(e -> !e.isActive());
+        entitiesToRemove.forEach(e -> entities.remove(e));
+    }
+
+    public List<Entity> getActiveEntities() {
+        return entities.stream().filter(e->e.isActive()).collect(Collectors.toList());
     }
 
     @Override
@@ -147,6 +154,8 @@ public class StageScreen implements Screen {
     public void registerEntity(Entity entity) {
         entities.add(entity);
     }
+
+    public void removeEntity(Entity entity) { entitiesToRemove.add(entity); }
 
     public Stage getStage() {
         return stage;

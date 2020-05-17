@@ -162,6 +162,7 @@ public class Character extends Entity {
             attackPlaying = attack.isPlaying();
 
             if (!attack.isActive()) {
+                getStageScreen().removeEntity(attack);
                 attackIterator.remove();
             }
         }
@@ -225,7 +226,6 @@ public class Character extends Entity {
     }
 
     public void snapToLedge(Ledge ledge) {
-        setActive(false); // prevents gravity from applying
         enterState(State.HANGING);
 
         Rectangle playerRect = getRects().get(0);
