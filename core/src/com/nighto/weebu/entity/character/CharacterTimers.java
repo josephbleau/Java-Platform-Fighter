@@ -54,8 +54,4 @@ public class CharacterTimers {
     public float getKnockbackTimeRemaining() {
         return knockbackTimeRemaining;
     }
-
-    public void setKnockbackTimeRemaining(float knockbackTimeRemaining) {
-        this.knockbackTimeRemaining = knockbackTimeRemaining;
-    }
 }

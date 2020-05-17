@@ -1,6 +1,5 @@
 package com.nighto.weebu.entity.character;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -27,7 +26,6 @@ public class Character extends Entity {
     protected GameController gameController;
 
     protected int jumpCount = 0;
-    protected float knockbackModifier = 0;
 
     protected float width;
     protected float height;
@@ -111,14 +109,6 @@ public class Character extends Entity {
         return super.intersects(otherEntity);
     }
 
-    @Override
-    public void spawn(float x, float y) {
-        super.spawn(x, y);
-
-        knockbackModifier = 0;
-        characterTimers.resetTimers();
-    }
-
     private void updateGravity(float delta) {
         float proposedyVel = Math.max(characterData.getAttributes().fallSpeed, yVel - stage.getGravity());
 
@@ -141,6 +131,7 @@ public class Character extends Entity {
         if (state == State.JUMPSQUAT) {
             if (characterTimers.getJumpSquatTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
+
                 enterState(State.EXIT_JUMPSQUAT);
             }
         }
@@ -156,13 +147,6 @@ public class Character extends Entity {
                 if (inState(State.SHIELDING)) {
                     enterState(State.STANDING);
                 }
-            }
-        }
-
-        if (subState == State.SUBSTATE_KNOCKBACK) {
-            if (characterTimers.getKnockbackTimeRemaining() <= 0) {
-                characterTimers.resetTimers();
-                enterSubstate(State.DEFAULT);
             }
         }
     }
@@ -227,19 +211,6 @@ public class Character extends Entity {
             }
         }
         return false;
-    }
-
-    public void enterKnockback(Attack attack) {
-        knockbackModifier += attack.getKnockbackModifierIncrease();
-
-        Gdx.app.log("Knockback", knockbackModifier + "%");
-
-        xVel = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier/50f);
-        yVel = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier/100f);
-
-        characterTimers.setKnockbackTimeRemaining(attack.getKnockbackInduced());
-
-        enterSubstate(State.SUBSTATE_KNOCKBACK);
     }
 
     public void startAttack(Attack attack) {

@@ -19,8 +19,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
                         State.RUNNING
                 },
                 new State[] {
-                        State.SUBSTATE_ATTACKING,
-                        State.SUBSTATE_KNOCKBACK
+                        State.SUBSTATE_ATTACKING
                 }
         );
     }
@@ -90,21 +89,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
                 float xOffsetDirectionMultiplier = (getPlayer().getFacingRight()) ? 1 : -1;
                 float xOffset = 30 * xOffsetDirectionMultiplier;
 
-                float xImpulseModifier = getPlayer().getFacingRight() ? 1 : -1;
-                float xImpulse = 10 * xImpulseModifier;
-                float yImpulse = 20;
-                float knockbackInduced = 10f/60f;
-
-                getPlayer().startAttack(
-                        new MeleeAttack(
-                                getPlayer(),
-                                xOffset,
-                                30,
-                                knockbackInduced,
-                                xImpulse, yImpulse
-                        )
-                );
-
+                getPlayer().startAttack(new MeleeAttack(getPlayer(), xOffset, 30));
                 getPlayer().setxVel(0);
             }
         }

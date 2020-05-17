@@ -11,8 +11,7 @@ public class CrouchingStateInputHandler extends StateInputHandler {
     public CrouchingStateInputHandler(Player player) {
         super(
                 player,
-                new State[]{State.CROUCHING},
-                new State[]{State.SUBSTATE_KNOCKBACK}
+                new State[]{State.CROUCHING}
         );
     }
 
