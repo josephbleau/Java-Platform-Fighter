@@ -7,12 +7,16 @@ import com.nighto.weebu.entity.character.Character;
 import java.util.Collections;
 
 public class MeleeAttack extends Attack {
-    public MeleeAttack(Character owner, float hitBoxOffsetX, float hitBoxOffsetY) {
+    public MeleeAttack(Character owner, float hitBoxOffsetX, float hitBoxOffsetY, float knockbackInduced, float xImpulse, float yImpulse) {
         super(owner, Collections.singletonList(new Rectangle(hitBoxOffsetX, hitBoxOffsetY, 20, 20)));
 
         startupTime = 1f/60f;
         attackTime = 3f/60f;
-        knockbackInduced = 15f/60f;
+
+        this.knockbackInduced = knockbackInduced;
+        this.xImpulse = xImpulse;
+        this.yImpulse = yImpulse;
+        this.knockbackModifierIncrease = 15;
     }
 
     @Override

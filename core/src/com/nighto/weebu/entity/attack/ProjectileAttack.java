@@ -2,7 +2,6 @@ package com.nighto.weebu.entity.attack;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.screen.StageScreen;
 
 import java.util.Collections;
 
@@ -22,7 +21,6 @@ public class ProjectileAttack extends Attack {
         attackTime = ANIMATION_TIME;
         xVel = owner.getFacingRight() ? SPEED : -SPEED;
 
-        setHidden(true);
         getRects().addAll(getHitBoxes());
     }
 

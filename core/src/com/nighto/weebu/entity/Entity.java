@@ -108,6 +108,8 @@ public class Entity implements EventListener {
         yPrevPos = yPos;
         xPos = x;
         yPos = y;
+        xVel = 0;
+        yVel = 0;
     }
 
     public void teleport(float x, float y, boolean keepVelocity) {
