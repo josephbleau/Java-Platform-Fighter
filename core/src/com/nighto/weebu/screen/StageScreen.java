@@ -57,6 +57,7 @@ public class StageScreen implements Screen {
         }
 
         stage = new TestStage(this);
+
         player = new Player(this, new GameController(gamecubeController, false));
         enemy = new Player(this, new GameController(new NoopGamecubeController(), true));
 
