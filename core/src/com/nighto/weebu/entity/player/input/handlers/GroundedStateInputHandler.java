@@ -50,13 +50,15 @@ public class GroundedStateInputHandler extends StateInputHandler {
 
     private boolean handleRun(GameController gameController) {
         if (gameController.isPressed(GameInput.ControlLeftLight)) {
+            getPlayer().setActiveControl(true);
             getPlayer().setxVel(-getPlayer().getCharacterData().getAttributes().getGroundSpeed());
             enterState(State.RUNNING);
         } else if (gameController.isPressed(GameInput.ControlRightLight)) {
+            getPlayer().setActiveControl(true);
             getPlayer().setxVel(getPlayer().getCharacterData().getAttributes().getGroundSpeed());
             enterState(State.RUNNING);
         } else {
-            getPlayer().setxVel(0);
+            getPlayer().setActiveControl(false);
             enterState(State.STANDING);
         }
 

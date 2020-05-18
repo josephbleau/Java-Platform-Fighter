@@ -8,11 +8,13 @@ import java.util.Map;
 
 public class GameController {
     private GamecubeController controller;
+    private boolean off;
     private final Map<GameInput, Boolean> lastFrame;
     private final Map<GameInput, Boolean> currentFrame;
 
-    public GameController(GamecubeController controller) {
+    public GameController(GamecubeController controller, boolean off) {
         this.controller = controller;
+        this.off = off;
 
         if (this.controller == null) {
             this.controller = new NoopGamecubeController();
@@ -28,11 +30,11 @@ public class GameController {
     }
 
     public void poll() {
-        lastFrame.putAll(currentFrame);
-
-        if (controller instanceof NoopGamecubeController) {
+        if (off) {
             return;
         }
+
+        lastFrame.putAll(currentFrame);
 
         currentFrame.put(GameInput.ControlLeftLight, controller.getControlStick().x <= -GamecubeController.LIGHT_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.LEFT));
         currentFrame.put(GameInput.ControlLeftHard, controller.getControlStick().x <= -GamecubeController.HARD_DIRECTION_THRESHOLD || Gdx.input.isKeyPressed(Input.Keys.LEFT));

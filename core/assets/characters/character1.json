@@ -7,7 +7,9 @@
 		"shortHopSpeed": 35,
 		"fullHopSpeed": 50,
 		"jumpSquatDuration": 0.05,
-		"sidestepDuration": 0.37
+		"sidestepDuration": 0.37,
+		"airFriction": 1.1,
+		"groundFriction": 2
 	},
 	"hurtboxes": {
 		"DEFAULT":  {"width": 20, "height": 60},
