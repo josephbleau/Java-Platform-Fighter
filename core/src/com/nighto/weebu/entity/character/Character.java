@@ -31,7 +31,8 @@ public class Character extends Entity {
 
     protected float width;
     protected float height;
-    protected boolean fastFalling = false;
+    protected boolean fastFalling;
+    protected boolean activeControl;
 
     protected Shield shield;
     protected Stage stage;
@@ -133,6 +134,14 @@ public class Character extends Entity {
         if (yVel < 0 && fastFalling) {
             yVel = proposedyVel * 2;
         }
+
+        if (!activeControl) {
+                if (inState(State.AIRBORNE)) {
+                    xVel /= getCharacterData().getAttributes().getAirFriction();
+                } else if (inState(State.STANDING)) {
+                    xVel /= getCharacterData().getAttributes().getGroundFriction();
+                }
+        }
     }
 
     private void updateTimers(float delta) {
@@ -232,13 +241,12 @@ public class Character extends Entity {
     public void enterKnockback(Attack attack) {
         knockbackModifier += attack.getKnockbackModifierIncrease();
 
-        Gdx.app.log("Knockback", knockbackModifier + "%");
-
         xVel = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier/50f);
         yVel = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier/100f);
 
         characterTimers.setKnockbackTimeRemaining(attack.getKnockbackInduced());
 
+        enterState(State.AIRBORNE);
         enterSubstate(State.SUBSTATE_KNOCKBACK);
     }
 
@@ -319,5 +327,9 @@ public class Character extends Entity {
 
     public boolean isFastFalling() {
         return fastFalling;
+    }
+
+    public void setActiveControl(boolean activeControl) {
+        this.activeControl = activeControl;
     }
 }

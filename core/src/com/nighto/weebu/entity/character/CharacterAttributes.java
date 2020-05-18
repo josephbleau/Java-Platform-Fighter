@@ -24,6 +24,9 @@ public class CharacterAttributes {
     /** The total amount of time spent in sidestep **/
     float sidestepDuration;
 
+    float airFriction;
+    float groundFriction;
+
     public int getNumberOfJumps() {
         return numberOfJumps;
     }
@@ -86,5 +89,21 @@ public class CharacterAttributes {
 
     public void setSidestepDuration(float sidestepDuration) {
         this.sidestepDuration = sidestepDuration;
+    }
+
+    public float getAirFriction() {
+        return airFriction;
+    }
+
+    public void setAirFriction(float airFriction) {
+        this.airFriction = airFriction;
+    }
+
+    public float getGroundFriction() {
+        return groundFriction;
+    }
+
+    public void setGroundFriction(float groundFriction) {
+        this.groundFriction = groundFriction;
     }
 }

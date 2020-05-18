@@ -57,11 +57,13 @@ public class AirborneStateInputHandler extends StateInputHandler {
 
     private boolean handleDrift(GameController gameController) {
         if (gameController.isPressed(GameInput.ControlLeftLight)) {
+            getPlayer().setActiveControl(true);
             getPlayer().setxVel(-getPlayer().getCharacterData().getAttributes().getAirSpeed());
         } else if (gameController.isPressed(GameInput.ControlRightLight)) {
+            getPlayer().setActiveControl(true);
             getPlayer().setxVel(getPlayer().getCharacterData().getAttributes().getAirSpeed());
         } else {
-            getPlayer().setxVel(0);
+            getPlayer().setActiveControl(false);
         }
 
         return true;
