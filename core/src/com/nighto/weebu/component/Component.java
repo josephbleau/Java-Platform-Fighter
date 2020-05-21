@@ -1,3 +1,9 @@
 package com.nighto.weebu.component;
 
-public interface Component {}
+public abstract class Component {
+    protected boolean enabled = true;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+}

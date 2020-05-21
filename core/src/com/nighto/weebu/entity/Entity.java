@@ -97,14 +97,6 @@ public class Entity implements EventListener {
         if (!active) {
             return;
         }
-
-        // TODO: Move to PhysicalSystem
-        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
-
-        physicalComponent.prevPosition = new Vector2(physicalComponent.position);
-        physicalComponent.prevVelocity = new Vector2(physicalComponent.velocity);
-
-        physicalComponent.position.add(physicalComponent.velocity);
     }
 
     public void spawn(float x, float y) {

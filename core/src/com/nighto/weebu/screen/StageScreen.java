@@ -19,6 +19,8 @@ import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.TestStage;
 import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.event.events.DeathEvent;
+import com.nighto.weebu.system.PositionSystem;
+import com.nighto.weebu.system.System;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,8 @@ public class StageScreen implements Screen {
     private EventPublisher eventPublisher;
 
     private List<GamecubeController> controllers;
+
+    private List<System> systems;
 
     public StageScreen(Game game) {
         this.game = game;
@@ -84,6 +88,9 @@ public class StageScreen implements Screen {
 
         eventPublisher = new EventPublisher();
         eventPublisher.registerListeners(entities);
+
+        systems = new ArrayList<>();
+        systems.add(PositionSystem.getInstance());
     }
 
     @Override
@@ -98,8 +105,12 @@ public class StageScreen implements Screen {
         enemy.handleInput();
 
         /* Update Loop: All entities will run their physics calculations here. */
-        for (Entity entity : getActiveEntities()) {
-            entity.update(Gdx.graphics.getDeltaTime());
+        for (Entity entity : entities) {
+            entity.update(delta);
+        }
+
+        for (System system : systems) {
+            system.process(entities);
         }
 
         /* Outcome Loop: Collisions and interactions will be resolved here. */

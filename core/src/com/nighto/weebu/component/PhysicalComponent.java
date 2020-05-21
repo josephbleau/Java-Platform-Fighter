@@ -2,7 +2,7 @@ package com.nighto.weebu.component;
 
 import com.badlogic.gdx.math.Vector2;
 
-public class PhysicalComponent implements Component {
+public class PhysicalComponent extends Component {
     public Vector2 position;
     public Vector2 prevPosition;
     public Vector2 velocity;
