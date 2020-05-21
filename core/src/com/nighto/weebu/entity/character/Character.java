@@ -86,7 +86,7 @@ public class Character extends Entity {
         skeleton.setScale(.2f, .2f);
 
         animationState = new AnimationState(animationStateData);
-        animationState.setAnimation(0, "run", true);
+        animationState.setAnimation(0, "idle", true);
 
         state = State.AIRBORNE;
     }
@@ -95,7 +95,6 @@ public class Character extends Entity {
 
     @Override
     public void update(float delta) {
-        super.update(delta);
 
         skeleton.setX(Math.round(xPos));
         skeleton.setY(Math.round(yPos));
@@ -123,6 +122,8 @@ public class Character extends Entity {
         animationState.apply(skeleton);
 
         shield.update(delta);
+
+        super.update(delta);
     }
 
     @Override
