@@ -13,7 +13,7 @@ public class CharacterLoader {
         Gson gson = new Gson();
 
         try {
-            String jsonFile = new String(Files.readAllBytes(Paths.get("core/assets/characters/character1.json")));
+            String jsonFile = new String(Files.readAllBytes(Paths.get("core/assets/characters/sunflower/attributes.json")));
             return gson.fromJson(jsonFile, CharacterData.class);
         } catch (IOException e) {
             throw new RuntimeException(e);

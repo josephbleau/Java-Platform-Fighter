@@ -2,8 +2,10 @@ package com.nighto.weebu.entity.character;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.esotericsoftware.spine.*;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
@@ -48,6 +50,13 @@ public class Character extends Entity {
 
     protected List<Attack> attacks = new ArrayList<>();
 
+    protected TextureAtlas textureAtlas;
+    protected SkeletonJson skeletonJson;
+    protected SkeletonData skeletonData;
+    protected AnimationStateData animationStateData;
+    protected Skeleton skeleton;
+    protected AnimationState animationState;
+
     public Character(StageScreen parentScreen) {
         super(parentScreen);
 
@@ -55,6 +64,12 @@ public class Character extends Entity {
 
         characterData = CharacterLoader.loadCharacterData();
         characterTimers = new CharacterTimers(characterData);
+
+        textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
+        skeletonJson = new SkeletonJson(textureAtlas);
+        skeletonData = skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/sunflower/skeleton.json"));
+        skeletonData.setFps(60);
+        animationStateData = new AnimationStateData(skeletonData);
 
         sidestepColor = Color.LIGHT_GRAY;
 
@@ -66,16 +81,46 @@ public class Character extends Entity {
 
         enterState(State.DEFAULT);
         enterSubstate(State.SUBSTATE_DEFAULT);
+
+        skeleton = new Skeleton(skeletonData);
+        skeleton.setScale(.2f, .2f);
+
+        animationState = new AnimationState(animationStateData);
+        animationState.setAnimation(0, "run", true);
+
+        state = State.AIRBORNE;
     }
+
+    private int x = 0;
 
     @Override
     public void update(float delta) {
         super.update(delta);
 
+        skeleton.setX(Math.round(xPos));
+        skeleton.setY(Math.round(yPos));
+
+        skeleton.updateWorldTransform();
+
+        if (getFacingRight()) {
+            skeleton.setScale(0.2f, skeleton.getScaleY());
+        } else {
+            skeleton.setScale(-0.2f, skeleton.getScaleY());
+        }
+
+        if (inState(State.CROUCHING)) {
+            skeleton.setScale(skeleton.getScaleX(), .2f/1.5f);
+        } else {
+            skeleton.setScale(skeleton.getScaleX(), .2f);
+        }
+
         updateGravity(delta);
         updateTimers(delta);
         updateAttacks(delta);
         updateDirection(delta);
+
+        animationState.update(delta);
+        animationState.apply(skeleton);
 
         shield.update(delta);
     }
@@ -99,6 +144,11 @@ public class Character extends Entity {
         shield.render(shapeRenderer);
 
         attacks.forEach(attack -> attack.render(shapeRenderer));
+    }
+
+    @Override
+    public Skeleton getSkeleton() {
+        return skeleton;
     }
 
     @Override

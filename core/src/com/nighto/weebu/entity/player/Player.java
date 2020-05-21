@@ -39,6 +39,8 @@ public class Player extends Character implements Controllable {
                 getCharacterData().getHurtboxes().get(State.DEFAULT).height
         );
 
+
+
         shield = new Shield(
                 getStageScreen(),
                 new Circle(10, 30, 30),

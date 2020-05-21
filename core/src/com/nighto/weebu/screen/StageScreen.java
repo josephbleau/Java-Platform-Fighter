@@ -7,7 +7,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.esotericsoftware.spine.SkeletonRenderer;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.controller.NoopGamecubeController;
@@ -33,6 +35,9 @@ public class StageScreen implements Screen {
 
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
+
+    private SpriteBatch spriteBatch;
+    private SkeletonRenderer skeletonRenderer;
 
     private EventPublisher eventPublisher;
 
@@ -67,6 +72,11 @@ public class StageScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1920, 1080);
         shapeRenderer = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
+
+        skeletonRenderer = new SkeletonRenderer();
+        skeletonRenderer.setPremultipliedAlpha(true);
+        spriteBatch.setProjectionMatrix(camera.combined);
 
         entities.add(stage);
         entities.add(player);
@@ -111,10 +121,19 @@ public class StageScreen implements Screen {
         }
 
         /* Render Loop **/
+        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.begin();
+
+        for (Entity entity : getActiveEntities()) {
+            if (entity.getSkeleton() != null) {
+                skeletonRenderer.draw(spriteBatch, entity.getSkeleton());
+            }
+        }
+
+        spriteBatch.end();
+
         shapeRenderer.setProjectionMatrix(camera.combined);
-
         stage.render(shapeRenderer);
-
         for (Entity entity : getActiveEntities()) {
             entity.render(shapeRenderer);
         }

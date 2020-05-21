@@ -61,5 +61,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api 'com.google.code.gson:gson:2.8.6'
+
+        api "com.esotericsoftware.spine:spine-libgdx:3.8.55.1"
     }
 }

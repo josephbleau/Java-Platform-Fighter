@@ -1,0 +1,62 @@
+
+spine.png
+size: 401,866
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Attack Face
+  rotate: true
+  xy: 2, 2
+  size: 108, 116
+  orig: 164, 160
+  offset: 35, 25
+  index: -1
+Body
+  rotate: true
+  xy: 2, 466
+  size: 72, 374
+  orig: 72, 374
+  offset: 0, 0
+  index: -1
+Head
+  rotate: true
+  xy: 2, 540
+  size: 324, 397
+  orig: 375, 417
+  offset: 19, 3
+  index: -1
+Left Foot
+  rotate: false
+  xy: 2, 112
+  size: 197, 187
+  orig: 409, 408
+  offset: 106, 114
+  index: -1
+Left Hand
+  rotate: true
+  xy: 224, 245
+  size: 219, 163
+  orig: 351, 294
+  offset: 69, 67
+  index: -1
+Neck
+  rotate: true
+  xy: 120, 78
+  size: 32, 70
+  orig: 32, 70
+  offset: 0, 0
+  index: -1
+Right Foot
+  rotate: false
+  xy: 201, 52
+  size: 193, 191
+  orig: 357, 354
+  offset: 82, 85
+  index: -1
+Right Hand
+  rotate: false
+  xy: 2, 301
+  size: 220, 163
+  orig: 397, 398
+  offset: 85, 119
+  index: -1

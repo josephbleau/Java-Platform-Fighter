@@ -3,6 +3,8 @@ package com.nighto.weebu.entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.esotericsoftware.spine.Skeleton;
+import com.esotericsoftware.spine.SkeletonRenderer;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
 import com.nighto.weebu.event.events.CollisionEvent;
@@ -87,6 +89,10 @@ public class Entity implements EventListener {
             shapeRenderer.rect(xPos + rect.x, yPos + rect.y, rect.width, rect.height);
             shapeRenderer.end();
         }
+    }
+
+    public Skeleton getSkeleton() {
+        return null;
     }
 
     public void update(float delta) {
