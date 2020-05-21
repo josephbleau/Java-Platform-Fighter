@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.screen.StageScreen;
@@ -45,20 +46,24 @@ public class Shield extends Entity {
 
     @Override
     public void render(ShapeRenderer shapeRenderer) {
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         if (isActive()) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(color);
-            shapeRenderer.circle(xPos + circle.x, yPos + circle.y, size * circle.radius);
+            shapeRenderer.circle(physicalComponent.position.x + circle.x, physicalComponent.position.y + circle.y, size * circle.radius);
             shapeRenderer.end();
         }
     }
 
     @Override
     public List<CollisionEvent> intersects(Entity otherEntity) {
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         List<CollisionEvent> collisionEvents = new ArrayList<>();
 
         if (isActive()) {
-            Circle translatedCircle = new Circle(xPos + circle.x, yPos + circle.y, size * circle.radius);
+            Circle translatedCircle = new Circle(physicalComponent.position.x + circle.x, physicalComponent.position.y + circle.y, size * circle.radius);
 
             for (Rectangle otherRect : otherEntity.getTranslatedRects()) {
                 if (Intersector.overlaps(translatedCircle, otherRect)) {

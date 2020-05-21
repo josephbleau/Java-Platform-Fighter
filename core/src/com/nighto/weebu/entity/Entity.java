@@ -3,8 +3,10 @@ package com.nighto.weebu.entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.spine.Skeleton;
-import com.esotericsoftware.spine.SkeletonRenderer;
+import com.nighto.weebu.component.Component;
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
 import com.nighto.weebu.event.events.CollisionEvent;
@@ -12,7 +14,9 @@ import com.nighto.weebu.event.events.Event;
 import com.nighto.weebu.screen.StageScreen;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Entity is the base object representing all "things" in the game, whether it be a player, a stage, an item, or some
@@ -20,21 +24,7 @@ import java.util.List;
  */
 public class Entity implements EventListener {
 
-    /** Current x position **/
-    protected float xPos;
-
-    /** Current y position **/
-    protected float yPos;
-
-    protected float xPrevPos;
-
-    protected float yPrevPos;
-
-    /** Current x velocity **/
-    protected float xVel;
-
-    /** Current y velocity **/
-    protected float yVel;
+    private Map<Class<?>, Component> components;
 
     /** Color that the shape is rendered as by default **/
     protected Color defaultColor;
@@ -61,10 +51,8 @@ public class Entity implements EventListener {
     private StageScreen stageScreen;
 
     public Entity(StageScreen stageScreen) {
-        this.xPos = 0;
-        this.yPos = 0;
-        this.xPrevPos = 0;
-        this.yPrevPos = 0;
+        components = new HashMap<>();
+        registerComponent(PhysicalComponent.class, new PhysicalComponent());
 
         this.rects = new ArrayList<>();
         this.defaultColor = Color.BLACK;
@@ -83,12 +71,22 @@ public class Entity implements EventListener {
             return;
         }
 
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         for (Rectangle rect : rects) {
             shapeRenderer.begin(shapeType);
             shapeRenderer.setColor(currentColor);
-            shapeRenderer.rect(xPos + rect.x, yPos + rect.y, rect.width, rect.height);
+            shapeRenderer.rect(physicalComponent.position.x + rect.x, physicalComponent.position.y + rect.y, rect.width, rect.height);
             shapeRenderer.end();
         }
+    }
+
+    public void registerComponent(Class<?> componentType, Component component) {
+        components.put(componentType, component);
+    }
+
+    public <T extends Component> T getComponent(Class<?> componentType) {
+        return (T) components.get(componentType);
     }
 
     public Skeleton getSkeleton() {
@@ -100,34 +98,35 @@ public class Entity implements EventListener {
             return;
         }
 
-        xPrevPos = xPos;
-        yPrevPos = yPos;
-        xPos += xVel;
-        yPos += yVel;
+        // TODO: Move to PhysicalSystem
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
+        physicalComponent.prevPosition = new Vector2(physicalComponent.position);
+        physicalComponent.prevVelocity = new Vector2(physicalComponent.velocity);
+
+        physicalComponent.position.add(physicalComponent.velocity);
     }
 
     public void spawn(float x, float y) {
         hidden = false;
         active = true;
 
-        xPrevPos = xPos;
-        yPrevPos = yPos;
-        xPos = x;
-        yPos = y;
-        xVel = 0;
-        yVel = 0;
+        // TODO: Move to PhysicalSystem
+        registerComponent(PhysicalComponent.class, new PhysicalComponent(new Vector2(x, y), Vector2.Zero));
     }
 
     public void teleport(float x, float y, boolean keepVelocity) {
+        // TODO: Move to PhysicalSystem
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         if (!keepVelocity) {
-            xVel = 0;
-            yVel = 0;
+            physicalComponent.velocity = new Vector2();
         }
 
-        xPrevPos = xPos;
-        yPrevPos = yPos;
-        xPos = x;
-        yPos = y;
+        physicalComponent.prevPosition.x = physicalComponent.position.x;
+        physicalComponent.prevPosition.y = physicalComponent.position.y;
+        physicalComponent.position.x = x;
+        physicalComponent.position.y = y;
     }
 
     @Override
@@ -164,8 +163,11 @@ public class Entity implements EventListener {
     public List<Rectangle> getTranslatedRects() {
         List<Rectangle> translatedRects = new ArrayList<>();
 
+        // TODO: Move to RenderSystem
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         for (Rectangle rect : getRects()) {
-            translatedRects.add(new Rectangle(xPos + rect.x, yPos + rect.y, rect.width, rect.height));
+            translatedRects.add(new Rectangle(physicalComponent.position.x + rect.x, physicalComponent.position.y + rect.y, rect.width, rect.height));
         }
 
         return translatedRects;
@@ -189,48 +191,6 @@ public class Entity implements EventListener {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
-    }
-
-    public void setxVel(float xVel) {
-        this.xVel = xVel;
-    }
-
-    public void setyVel(float yVel) {
-        this.yVel = yVel;
-    }
-
-    public float getxPos() {
-        return xPos;
-    }
-
-    public float getyPos() {
-        return yPos;
-    }
-
-    public float getxPrevPos() {
-        return xPrevPos;
-    }
-
-    public float getyPrevPos() {
-        return yPrevPos;
-    }
-
-    public float getxVel() {
-        return xVel;
-    }
-
-    public float getyVel() {
-        return yVel;
-    }
-
-    public void setxPos(float xPos) {
-        xPrevPos = xPos;
-        this.xPos = xPos;
-    }
-
-    public void setyPos(float yPos) {
-        yPrevPos = yPos;
-        this.yPos = yPos;
     }
 
     public StageScreen getStageScreen() {

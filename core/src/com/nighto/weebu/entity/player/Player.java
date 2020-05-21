@@ -3,6 +3,7 @@ package com.nighto.weebu.entity.player;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.controller.Controllable;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.entity.character.Character;
@@ -76,6 +77,8 @@ public class Player extends Character implements Controllable {
     }
 
     public void spawnShield() {
-        shield.spawn(xPos,yPos);
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
+        shield.spawn(physicalComponent.position.x, physicalComponent.position.y);
     }
 }

@@ -2,6 +2,7 @@ package com.nighto.weebu.entity.character.event;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
@@ -49,13 +50,15 @@ public class CollisionEventHandler implements EventHandler {
 
         // TODO: Refactor differing types of collision into their own handlers
         if (them == character.getStage()) {
+            PhysicalComponent physicalComponent = character.getComponent(PhysicalComponent.class);
+
             /* Determine which direction we were heading so that we can set our position correctly. */
-            boolean falling = character.getyVel() < 0;
+            boolean falling = physicalComponent.velocity.y < 0;
             Rectangle stageRect = ((Rectangle)theirShape);
 
             /* Reset our x/y to be the x/y of the top of the rect that we collided with (so x, y+height) */
-            if (falling && character.getyPrevPos() >= stageRect.y + stageRect.height && character.getyPos() <= stageRect.y + stageRect.height && character.getStage().isGround(stageRect)) {
-                character.setyPos(stageRect.y + stageRect.height);
+            if (falling && physicalComponent.prevPosition.y >= stageRect.y + stageRect.height && physicalComponent.position.y <= stageRect.y + stageRect.height && character.getStage().isGround(stageRect)) {
+                physicalComponent.position.y = (stageRect.y + stageRect.height);
                 character.setJumpCount(0);
 
                 if (character.inState(State.AIRBORNE)) {
@@ -63,11 +66,11 @@ public class CollisionEventHandler implements EventHandler {
                     character.enterSubstate(State.SUBSTATE_DEFAULT);
                 }
 
-                character.setyVel(0);
+                physicalComponent.velocity.y = 0;
             } else if (falling && theirShape instanceof Ledge && character.getStage().isLedge((Ledge) theirShape)){
                 character.snapToLedge((Ledge) theirShape);
             } else {
-                if (character.getxVel() < 0) {
+                if (physicalComponent.velocity.x < 0) {
                     if(falling && (character.getGameController().isPressed(GameInput.ControlLeftLight) || character.getGameController().isPressed(GameInput.ControlLeftHard))) {
                         character.enterState(State.WALLSLIDING);
                         character.enterSubstate(State.SUBSTATE_WALLSLIDING_LEFT);
@@ -76,11 +79,11 @@ public class CollisionEventHandler implements EventHandler {
                         character.inState(State.SUBSTATE_DEFAULT);
                     }
 
-                    character.setxPos(stageRect.x + stageRect.width);
-                } else if (character.getxVel() > 0) {
+                    physicalComponent.position.x = (stageRect.x + stageRect.width);
+                } else if (physicalComponent.velocity.x > 0) {
                     // Move character out of the wall
-                    float difference = Math.abs((character.getxPos() + character.getWidth()) - stageRect.x);
-                    character.setxPos(character.getxPos() - difference);
+                    float difference = Math.abs((physicalComponent.position.x + character.getWidth()) - stageRect.x);
+                    physicalComponent.position.x -= difference;
 
                     if(falling && (character.getGameController().isPressed(GameInput.ControlRightLight) || character.getGameController().isPressed(GameInput.ControlRightHard))) {
                         character.enterState(State.WALLSLIDING);
@@ -91,7 +94,7 @@ public class CollisionEventHandler implements EventHandler {
                     }
                 }
 
-                character.setxVel(0);
+                physicalComponent.velocity.x = 0;
             }
         }
 

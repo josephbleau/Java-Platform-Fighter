@@ -1,5 +1,6 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.attack.MeleeAttack;
@@ -36,9 +37,11 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleShield(GameController gameController) {
+        PhysicalComponent physicalComponent = getPlayer().getComponent(PhysicalComponent.class);
+
         if (gameController.isPressed(GameInput.Shield)) {
             getPlayer().spawnShield();
-            getPlayer().setxVel(0);
+            physicalComponent.velocity.x = 0;
 
             enterState(State.SHIELDING);
 
@@ -49,13 +52,15 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleRun(GameController gameController) {
+        PhysicalComponent physicalComponent = getPlayer().getComponent(PhysicalComponent.class);
+
         if (gameController.isPressed(GameInput.ControlLeftLight)) {
             getPlayer().setActiveControl(true);
-            getPlayer().setxVel(-getPlayer().getCharacterData().getAttributes().getGroundSpeed());
+            physicalComponent.velocity.x = (-getPlayer().getCharacterData().getAttributes().getGroundSpeed());
             enterState(State.RUNNING);
         } else if (gameController.isPressed(GameInput.ControlRightLight)) {
             getPlayer().setActiveControl(true);
-            getPlayer().setxVel(getPlayer().getCharacterData().getAttributes().getGroundSpeed());
+            physicalComponent.velocity.x = (getPlayer().getCharacterData().getAttributes().getGroundSpeed());
             enterState(State.RUNNING);
         } else {
             getPlayer().setActiveControl(false);
@@ -66,8 +71,10 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleCrouch(GameController gameController) {
+        PhysicalComponent physicalComponent = getPlayer().getComponent(PhysicalComponent.class);
+
         if (gameController.isPressed(GameInput.Crouch)) {
-            getPlayer().setxVel(0);
+            physicalComponent.velocity.x = 0;
             enterState(State.CROUCHING);
         }
 
@@ -87,6 +94,8 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleNeutralAttack(GameController gameController) {
+        PhysicalComponent physicalComponent = getPlayer().getComponent(PhysicalComponent.class);
+
         if (!inSubState(State.SUBSTATE_ATTACKING)) {
             if (gameController.isPressed(GameInput.NeutralAttack)) {
                 float xOffsetDirectionMultiplier = (getPlayer().getFacingRight()) ? 1 : -1;
@@ -107,7 +116,7 @@ public class GroundedStateInputHandler extends StateInputHandler {
                         )
                 );
 
-                getPlayer().setxVel(0);
+                physicalComponent.velocity.x = 0;
             }
         }
 
@@ -115,10 +124,12 @@ public class GroundedStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleNeutralSpecial(GameController gameController) {
+        PhysicalComponent physicalComponent = getPlayer().getComponent(PhysicalComponent.class);
+
         if (!inSubState(State.SUBSTATE_ATTACKING)) {
             if (gameController.isPressed(GameInput.NeutralSpecial)) {
                 getPlayer().startAttack(new ProjectileAttack(getPlayer(), 0, 30));
-                getPlayer().setxVel(0);
+                physicalComponent.velocity.x = 0;
             }
         }
 

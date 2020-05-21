@@ -1,5 +1,6 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.attack.ProjectileAttack;
@@ -45,8 +46,10 @@ public class AirborneStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleSidestep(GameController gameController) {
+        PhysicalComponent physicalComponent = getPlayer().getComponent(PhysicalComponent.class);
+
         if (gameController.isPressed(GameInput.Shield)) {
-            getPlayer().setxVel(0);
+            physicalComponent.velocity.x = 0;
             enterState(State.SIDESTEPPING);
 
             return false;
@@ -56,12 +59,14 @@ public class AirborneStateInputHandler extends StateInputHandler {
     }
 
     private boolean handleDrift(GameController gameController) {
+        PhysicalComponent physicalComponent = getPlayer().getComponent(PhysicalComponent.class);
+
         if (gameController.isPressed(GameInput.ControlLeftLight)) {
             getPlayer().setActiveControl(true);
-            getPlayer().setxVel(-getPlayer().getCharacterData().getAttributes().getAirSpeed());
+            physicalComponent.velocity.x = (-getPlayer().getCharacterData().getAttributes().getAirSpeed());
         } else if (gameController.isPressed(GameInput.ControlRightLight)) {
             getPlayer().setActiveControl(true);
-            getPlayer().setxVel(getPlayer().getCharacterData().getAttributes().getAirSpeed());
+            physicalComponent.velocity.x = (getPlayer().getCharacterData().getAttributes().getAirSpeed());
         } else {
             getPlayer().setActiveControl(false);
         }

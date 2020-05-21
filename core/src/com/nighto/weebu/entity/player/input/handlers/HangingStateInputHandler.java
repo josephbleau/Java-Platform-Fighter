@@ -1,5 +1,6 @@
 package com.nighto.weebu.entity.player.input.handlers;
 
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.player.Player;
@@ -17,8 +18,10 @@ public class HangingStateInputHandler extends StateInputHandler {
 
     @Override
     protected boolean doHandleInput(GameController gameController) {
+        PhysicalComponent physicalComponent = getPlayer().getComponent(PhysicalComponent.class);
+
         if (gameController.isPressed(GameInput.Jump)) {
-            getPlayer().setyVel(getPlayer().getCharacterData().getAttributes().getFullHopSpeed());
+            physicalComponent.velocity.y = (getPlayer().getCharacterData().getAttributes().getFullHopSpeed());
 
             enterState(State.AIRBORNE);
             enterSubstate(State.SUBSTATE_DEFAULT);

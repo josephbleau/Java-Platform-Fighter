@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.esotericsoftware.spine.*;
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
@@ -95,10 +96,12 @@ public class Character extends Entity {
 
     @Override
     public void update(float delta) {
+        super.update(delta);
 
-        skeleton.setX(Math.round(xPos));
-        skeleton.setY(Math.round(yPos));
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
+        skeleton.setX(Math.round(physicalComponent.position.x));
+        skeleton.setY(Math.round(physicalComponent.position.y));
         skeleton.updateWorldTransform();
 
         if (getFacingRight()) {
@@ -122,8 +125,6 @@ public class Character extends Entity {
         animationState.apply(skeleton);
 
         shield.update(delta);
-
-        super.update(delta);
     }
 
     @Override
@@ -172,25 +173,27 @@ public class Character extends Entity {
     }
 
     private void updateGravity(float delta) {
-        float proposedyVel = Math.max(characterData.getAttributes().fallSpeed, yVel - stage.getGravity());
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
-        if (yVel > characterData.getAttributes().fallSpeed) {
-            yVel = proposedyVel;
+        float proposedyVel = Math.max(characterData.getAttributes().fallSpeed, physicalComponent.velocity.y - stage.getGravity());
+
+        if (physicalComponent.velocity.y > characterData.getAttributes().fallSpeed) {
+            physicalComponent.velocity.y = proposedyVel;
         }
 
         if (inState(State.WALLSLIDING)) {
-            yVel = proposedyVel/3;
+            physicalComponent.velocity.y = proposedyVel/3;
         }
 
-        if (yVel < 0 && fastFalling) {
-            yVel = proposedyVel * 2;
+        if (physicalComponent.velocity.y < 0 && fastFalling) {
+            physicalComponent.velocity.y = proposedyVel * 2;
         }
 
         if (!activeControl) {
                 if (inState(State.AIRBORNE)) {
-                    xVel /= getCharacterData().getAttributes().getAirFriction();
+                    physicalComponent.velocity.x /= getCharacterData().getAttributes().getAirFriction();
                 } else if (inState(State.STANDING)) {
-                    xVel /= getCharacterData().getAttributes().getGroundFriction();
+                    physicalComponent.velocity.x /= getCharacterData().getAttributes().getGroundFriction();
                 }
         }
     }
@@ -249,10 +252,12 @@ public class Character extends Entity {
     }
 
     private void updateDirection(float delta) {
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         if (!inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
-            if (xVel > 0) {
+            if (physicalComponent.velocity.x > 0) {
                 facingRight = true;
-            } else if (xVel < 0) {
+            } else if (physicalComponent.velocity.x < 0) {
                 facingRight = false;
             }
         }
@@ -290,10 +295,12 @@ public class Character extends Entity {
     }
 
     public void enterKnockback(Attack attack) {
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         knockbackModifier += attack.getKnockbackModifierIncrease();
 
-        xVel = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier/50f);
-        yVel = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier/100f);
+        physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier/50f);
+        physicalComponent.velocity.y = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier/100f);
 
         characterTimers.setKnockbackTimeRemaining(attack.getKnockbackInduced());
 
@@ -302,9 +309,11 @@ public class Character extends Entity {
     }
 
     public void startAttack(Attack attack) {
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         getStageScreen().registerEntity(attack);
 
-        attack.spawn(xPos, yPos);
+        attack.spawn(physicalComponent.position.x, physicalComponent.position.y);
 
         if (attack.isPlaying()) {
             enterSubstate(State.SUBSTATE_ATTACKING);
