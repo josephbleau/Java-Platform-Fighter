@@ -1,13 +1,15 @@
-package com.nighto.weebu.entity.character;
+package com.nighto.weebu.component.character;
+
+import com.nighto.weebu.component.CharacterDataComponent;
 
 public class CharacterTimers {
 
-    public CharacterTimers(CharacterData characterData) {
-        jumpSquatTimeRemaining = characterData.getAttributes().jumpSquatDuration;;
-        jumpSquatTime = characterData.getAttributes().jumpSquatDuration;
+    public CharacterTimers(CharacterDataComponent characterDataComponent) {
+        jumpSquatTimeRemaining = characterDataComponent.getActiveAttributes().getJumpSquatDuration();
+        jumpSquatTime = characterDataComponent.getActiveAttributes().getJumpSquatDuration();
 
-        sidestepTimeRemaining = characterData.getAttributes().sidestepDuration;
-        sidestepTime = characterData.getAttributes().sidestepDuration;
+        sidestepTimeRemaining = characterDataComponent.getActiveAttributes().getSidestepDuration();
+        sidestepTime = characterDataComponent.getActiveAttributes().getSidestepDuration();
 
         knockbackTimeRemaining = 0;
     }

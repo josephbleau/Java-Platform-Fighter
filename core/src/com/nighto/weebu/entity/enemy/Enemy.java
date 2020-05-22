@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.player.Shield;
-import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.screen.StageScreen;
 
 public class Enemy extends Character {
@@ -13,12 +12,7 @@ public class Enemy extends Character {
     public Enemy(StageScreen parentScreen) {
         super(parentScreen);
 
-        getRects().add(new Rectangle(
-                0, 0,
-                getCharacterData().getHurtboxes().get(State.DEFAULT).width,
-                getCharacterData().getHurtboxes().get(State.DEFAULT).height
-
-        ));
+        getRects().add(new Rectangle(0, 0, width, height));
 
         shield = new Shield(
                 getStageScreen(),

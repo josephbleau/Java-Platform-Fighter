@@ -2,7 +2,6 @@ package com.nighto.weebu.screen;
 
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
@@ -10,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.esotericsoftware.spine.SkeletonRenderer;
+import com.nighto.weebu.component.ControllerComponent;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.controller.NoopGamecubeController;
@@ -21,6 +21,7 @@ import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.event.events.DeathEvent;
 import com.nighto.weebu.system.PositionSystem;
 import com.nighto.weebu.system.System;
+import com.nighto.weebu.system.StateBasedInputSystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +68,12 @@ public class StageScreen implements Screen {
 
         stage = new TestStage(this);
 
-        player = new Player(this, new GameController(gamecubeController, false));
-        enemy = new Player(this, new GameController(new NoopGamecubeController(), true));
+        // TODO: Controller plug/unplug system with dynamic controller registration
+        player = new Player(this);
+        player.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, false)));
+
+        enemy = new Player(this);
+        enemy.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, false)));
 
         entities = new ArrayList<>();
         entitiesToRemove = new ArrayList<>();
@@ -90,6 +95,7 @@ public class StageScreen implements Screen {
         eventPublisher.registerListeners(entities);
 
         systems = new ArrayList<>();
+        systems.add(StateBasedInputSystem.getInstance());
         systems.add(PositionSystem.getInstance());
     }
 
@@ -101,9 +107,6 @@ public class StageScreen implements Screen {
     /** Primary game loop **/
     @Override
     public void render(float delta) {
-        player.handleInput();
-        enemy.handleInput();
-
         /* Update Loop: All entities will run their physics calculations here. */
         for (Entity entity : entities) {
             entity.update(delta);

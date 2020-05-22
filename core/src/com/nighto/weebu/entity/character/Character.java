@@ -6,7 +6,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.esotericsoftware.spine.*;
+import com.nighto.weebu.component.CharacterDataComponent;
+import com.nighto.weebu.component.ControllerComponent;
 import com.nighto.weebu.component.PhysicalComponent;
+import com.nighto.weebu.component.StateComponent;
+import com.nighto.weebu.component.character.CharacterTimers;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
@@ -25,7 +29,6 @@ import java.util.List;
 
 public class Character extends Entity {
 
-    protected CharacterData characterData;
     protected CharacterTimers characterTimers;
     protected GameController gameController;
 
@@ -40,11 +43,6 @@ public class Character extends Entity {
     protected Shield shield;
     protected Stage stage;
 
-    protected State state;
-    protected State subState;
-    protected State prevState;
-    protected State prevSubstate;
-
     protected Color sidestepColor;
 
     protected boolean facingRight = true;
@@ -58,30 +56,20 @@ public class Character extends Entity {
     protected Skeleton skeleton;
     protected AnimationState animationState;
 
+    // Components
+    protected StateComponent stateComponent;
+
     public Character(StageScreen parentScreen) {
         super(parentScreen);
 
-        this.stage = parentScreen.getStage();
+        stage = parentScreen.getStage();
 
-        characterData = CharacterLoader.loadCharacterData();
-        characterTimers = new CharacterTimers(characterData);
-
+        // Spine animation
         textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
         skeletonJson = new SkeletonJson(textureAtlas);
         skeletonData = skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/sunflower/skeleton.json"));
         skeletonData.setFps(60);
         animationStateData = new AnimationStateData(skeletonData);
-
-        sidestepColor = Color.LIGHT_GRAY;
-
-        width = getCharacterData().getHurtboxes().get(State.DEFAULT).width;
-        height = getCharacterData().getHurtboxes().get(State.DEFAULT).height;
-
-        registerEventHandler(new CollisionEventHandler(this));
-        registerEventHandler(new DeathhEventHandler(this));
-
-        enterState(State.DEFAULT);
-        enterSubstate(State.SUBSTATE_DEFAULT);
 
         skeleton = new Skeleton(skeletonData);
         skeleton.setScale(.2f, .2f);
@@ -89,10 +77,23 @@ public class Character extends Entity {
         animationState = new AnimationState(animationStateData);
         animationState.setAnimation(0, "idle", true);
 
-        state = State.AIRBORNE;
-    }
+        sidestepColor = Color.LIGHT_GRAY;
 
-    private int x = 0;
+        stateComponent = new StateComponent();
+
+        registerComponent(CharacterDataComponent.class, CharacterAttributesLoader.loadCharacterData());
+        registerComponent(StateComponent.class, stateComponent);
+        registerComponent(ControllerComponent.class, new ControllerComponent(gameController));
+
+        registerEventHandler(new CollisionEventHandler(this));
+        registerEventHandler(new DeathhEventHandler(this));
+
+        ((StateComponent)getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+
+        // TODO: Fix w/h, should be a part of the physical component
+        width = 20;
+        height = 60;
+    }
 
     @Override
     public void update(float delta) {
@@ -110,7 +111,7 @@ public class Character extends Entity {
             skeleton.setScale(-0.2f, skeleton.getScaleY());
         }
 
-        if (inState(State.CROUCHING)) {
+        if (stateComponent.inState(State.CROUCHING)) {
             skeleton.setScale(skeleton.getScaleX(), .2f/1.5f);
         } else {
             skeleton.setScale(skeleton.getScaleX(), .2f);
@@ -131,13 +132,13 @@ public class Character extends Entity {
     public void render(ShapeRenderer shapeRenderer) {
         super.render(shapeRenderer);
 
-        if (inState(State.SIDESTEPPING)) {
+        if (stateComponent.inState(State.SIDESTEPPING)) {
             currentColor = sidestepColor;
         } else {
             currentColor = defaultColor;
         }
 
-        if (inState(State.SHIELDING)) {
+        if (stateComponent.inState(State.SHIELDING)) {
             shield.setActive(true);
         } else {
             shield.setActive(false);
@@ -168,68 +169,76 @@ public class Character extends Entity {
     public void spawn(float x, float y) {
         super.spawn(x, y);
 
+        CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
+
         knockbackModifier = 0;
-        characterTimers.resetTimers();
+        characterData.getTimers().resetTimers();
     }
 
     private void updateGravity(float delta) {
-        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+        PhysicalComponent physical = getComponent(PhysicalComponent.class);
+        CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
 
-        float proposedyVel = Math.max(characterData.getAttributes().fallSpeed, physicalComponent.velocity.y - stage.getGravity());
+        float proposedyVel = Math.max(characterData.getActiveAttributes().getFallSpeed(), physical.velocity.y - stage.getGravity());
 
-        if (physicalComponent.velocity.y > characterData.getAttributes().fallSpeed) {
-            physicalComponent.velocity.y = proposedyVel;
+        if (physical.velocity.y > characterData.getActiveAttributes().getFallSpeed()) {
+            physical.velocity.y = proposedyVel;
         }
 
-        if (inState(State.WALLSLIDING)) {
-            physicalComponent.velocity.y = proposedyVel/3;
+        if (stateComponent.inState(State.WALLSLIDING)) {
+            physical.velocity.y = proposedyVel/3;
         }
 
-        if (physicalComponent.velocity.y < 0 && fastFalling) {
-            physicalComponent.velocity.y = proposedyVel * 2;
+        if (physical.velocity.y < 0 && fastFalling) {
+            physical.velocity.y = proposedyVel * 2;
         }
 
         if (!activeControl) {
-                if (inState(State.AIRBORNE)) {
-                    physicalComponent.velocity.x /= getCharacterData().getAttributes().getAirFriction();
-                } else if (inState(State.STANDING)) {
-                    physicalComponent.velocity.x /= getCharacterData().getAttributes().getGroundFriction();
+                if (stateComponent.inState(State.AIRBORNE)) {
+                    physical.velocity.x /= characterData.getActiveAttributes().getAirFriction();
+                } else if (stateComponent.inState(State.STANDING)) {
+                    physical.velocity.x /= characterData.getActiveAttributes().getGroundFriction();
                 }
         }
     }
 
+    // TODO: Timer system
     private void updateTimers(float delta) {
+        CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
+        CharacterTimers characterTimers = characterData.getTimers();
+
         characterTimers.tickTimers(delta);
 
-        if (state == State.JUMPSQUAT) {
+        if (stateComponent.inState(State.JUMPSQUAT)) {
             if (characterTimers.getJumpSquatTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
-                enterState(State.EXIT_JUMPSQUAT);
+                stateComponent.enterState(State.EXIT_JUMPSQUAT);
             }
         }
 
-        if (state == State.SIDESTEPPING) {
+        if (stateComponent.inState(State.SIDESTEPPING)) {
             if (characterTimers.getSidestepTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
 
                 currentColor = defaultColor;
 
-                enterState(prevState);
+                stateComponent.revertState();
 
-                if (inState(State.SHIELDING)) {
-                    enterState(State.STANDING);
+                if (stateComponent.inState(State.SHIELDING)) {
+                    stateComponent.enterState(State.STANDING);
                 }
             }
         }
 
-        if (subState == State.SUBSTATE_KNOCKBACK) {
+        if (stateComponent.inSubState(State.SUBSTATE_KNOCKBACK)) {
             if (characterTimers.getKnockbackTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
-                enterSubstate(State.DEFAULT);
+                stateComponent.enterSubState(State.DEFAULT);
             }
         }
     }
 
+    // TODO: Attack processing system
     private void updateAttacks(float delta) {
         boolean attackPlaying = false;
 
@@ -246,15 +255,16 @@ public class Character extends Entity {
             }
         }
 
-        if (!attackPlaying && inSubState(State.SUBSTATE_ATTACKING)) {
-            enterSubstate(State.SUBSTATE_DEFAULT);
+        if (!attackPlaying && stateComponent.inSubState(State.SUBSTATE_ATTACKING)) {
+            stateComponent.enterSubState(State.SUBSTATE_DEFAULT);
         }
     }
 
+    // TODO: This should go in the PositionSystem
     private void updateDirection(float delta) {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
-        if (!inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
+        if (!stateComponent.inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
             if (physicalComponent.velocity.x > 0) {
                 facingRight = true;
             } else if (physicalComponent.velocity.x < 0) {
@@ -263,37 +273,7 @@ public class Character extends Entity {
         }
     }
 
-    public void handleInput() {}
-
-    public void enterState(State newState) {
-        prevState = state;
-        state = newState;
-    }
-
-    public void enterSubstate(State newSubstate) {
-        prevSubstate = subState;
-        subState = newSubstate;
-    }
-
-    public boolean inState(State ... states) {
-        boolean outcome = false;
-
-        for (State checkingState : states) {
-            outcome |= state == checkingState;
-        }
-
-        return outcome;
-    }
-
-    public boolean inSubState(State... substates) {
-        for(State checkingState : substates) {
-            if (subState.equals(checkingState)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    // TODO: Attack system
     public void enterKnockback(Attack attack) {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
@@ -304,8 +284,8 @@ public class Character extends Entity {
 
         characterTimers.setKnockbackTimeRemaining(attack.getKnockbackInduced());
 
-        enterState(State.AIRBORNE);
-        enterSubstate(State.SUBSTATE_KNOCKBACK);
+        stateComponent.enterState(State.AIRBORNE);
+        stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
     }
 
     public void startAttack(Attack attack) {
@@ -316,57 +296,34 @@ public class Character extends Entity {
         attack.spawn(physicalComponent.position.x, physicalComponent.position.y);
 
         if (attack.isPlaying()) {
-            enterSubstate(State.SUBSTATE_ATTACKING);
+            stateComponent.enterSubState(State.SUBSTATE_ATTACKING);
         }
 
         attacks.add(attack);
     }
 
+    public void spawnShield() {
+        PhysicalComponent physical = getComponent(PhysicalComponent.class);
+        shield.spawn(physical.position.x, physical.position.y);
+    }
+
     public void snapToLedge(Ledge ledge) {
-        enterState(State.HANGING);
+        stateComponent.enterState(State.HANGING);
 
         Rectangle playerRect = getRects().get(0);
         jumpCount = 0;
 
         if (ledge.hangLeft) {
-            subState = State.SUBSTATE_HANGING_LEFT;
+            stateComponent.enterSubState(State.SUBSTATE_HANGING_LEFT);
             teleport(ledge.x - playerRect.width + ledge.width, ledge.y + ledge.height - playerRect.height, false);
         } else {
-            subState = State.SUBSTATE_HANGING_RIGHT;
+            stateComponent.enterSubState(State.SUBSTATE_HANGING_RIGHT);
             teleport(ledge.x, ledge.y + ledge.height - playerRect.height, false);
         }
     }
 
-    public CharacterData getCharacterData() {
-        return characterData;
-    }
-
-    public void resetTimers() {
-        characterTimers.resetTimers();
-    }
-
     public boolean getFacingRight() {
         return facingRight;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public State getSubState() {
-        return subState;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public int getJumpCount() {
-        return jumpCount;
-    }
-
-    public void setJumpCount(int jumpCount) {
-        this.jumpCount = jumpCount;
     }
 
     public Stage getStage() {
@@ -379,17 +336,5 @@ public class Character extends Entity {
 
     public float getWidth() {
         return width;
-    }
-
-    public void setFastFalling(boolean fastFalling) {
-        this.fastFalling = fastFalling;
-    }
-
-    public boolean isFastFalling() {
-        return fastFalling;
-    }
-
-    public void setActiveControl(boolean activeControl) {
-        this.activeControl = activeControl;
     }
 }

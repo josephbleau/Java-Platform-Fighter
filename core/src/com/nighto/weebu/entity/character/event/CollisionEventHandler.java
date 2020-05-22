@@ -2,7 +2,9 @@ package com.nighto.weebu.entity.character.event;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
+import com.nighto.weebu.component.CharacterDataComponent;
 import com.nighto.weebu.component.PhysicalComponent;
+import com.nighto.weebu.component.StateComponent;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
@@ -50,51 +52,53 @@ public class CollisionEventHandler implements EventHandler {
 
         // TODO: Refactor differing types of collision into their own handlers
         if (them == character.getStage()) {
-            PhysicalComponent physicalComponent = character.getComponent(PhysicalComponent.class);
+            PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
+            CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
+            StateComponent state = character.getComponent(StateComponent.class);
 
             /* Determine which direction we were heading so that we can set our position correctly. */
-            boolean falling = physicalComponent.velocity.y < 0;
+            boolean falling = physical.velocity.y < 0;
             Rectangle stageRect = ((Rectangle)theirShape);
 
             /* Reset our x/y to be the x/y of the top of the rect that we collided with (so x, y+height) */
-            if (falling && physicalComponent.prevPosition.y >= stageRect.y + stageRect.height && physicalComponent.position.y <= stageRect.y + stageRect.height && character.getStage().isGround(stageRect)) {
-                physicalComponent.position.y = (stageRect.y + stageRect.height);
-                character.setJumpCount(0);
+            if (falling && physical.prevPosition.y >= stageRect.y + stageRect.height && physical.position.y <= stageRect.y + stageRect.height && character.getStage().isGround(stageRect)) {
+                physical.position.y = (stageRect.y + stageRect.height);
+                characterData.getActiveAttributes().setNumberOfJumps(characterData.getInitialAttributes().getNumberOfJumps());
 
-                if (character.inState(State.AIRBORNE)) {
-                    character.enterState(State.STANDING);
-                    character.enterSubstate(State.SUBSTATE_DEFAULT);
+                if (state.inState(State.AIRBORNE)) {
+                    state.enterState(State.STANDING);
+                    state.enterSubState(State.SUBSTATE_DEFAULT);
                 }
 
-                physicalComponent.velocity.y = 0;
+                physical.velocity.y = 0;
             } else if (falling && theirShape instanceof Ledge && character.getStage().isLedge((Ledge) theirShape)){
                 character.snapToLedge((Ledge) theirShape);
             } else {
-                if (physicalComponent.velocity.x < 0) {
+                if (physical.velocity.x < 0) {
                     if(falling && (character.getGameController().isPressed(GameInput.ControlLeftLight) || character.getGameController().isPressed(GameInput.ControlLeftHard))) {
-                        character.enterState(State.WALLSLIDING);
-                        character.enterSubstate(State.SUBSTATE_WALLSLIDING_LEFT);
+                        state.enterState(State.WALLSLIDING);
+                        state.enterSubState(State.SUBSTATE_WALLSLIDING_LEFT);
                     } else {
-                        character.inState(State.AIRBORNE);
-                        character.inState(State.SUBSTATE_DEFAULT);
+                        state.inState(State.AIRBORNE);
+                        state.inState(State.SUBSTATE_DEFAULT);
                     }
 
-                    physicalComponent.position.x = (stageRect.x + stageRect.width);
-                } else if (physicalComponent.velocity.x > 0) {
+                    physical.position.x = (stageRect.x + stageRect.width);
+                } else if (physical.velocity.x > 0) {
                     // Move character out of the wall
-                    float difference = Math.abs((physicalComponent.position.x + character.getWidth()) - stageRect.x);
-                    physicalComponent.position.x -= difference;
+                    float difference = Math.abs((physical.position.x + character.getWidth()) - stageRect.x);
+                    physical.position.x -= difference;
 
                     if(falling && (character.getGameController().isPressed(GameInput.ControlRightLight) || character.getGameController().isPressed(GameInput.ControlRightHard))) {
-                        character.enterState(State.WALLSLIDING);
-                        character.enterSubstate(State.SUBSTATE_WALLSLIDING_RIGHT);
+                        state.enterState(State.WALLSLIDING);
+                        state.enterSubState(State.SUBSTATE_WALLSLIDING_RIGHT);
                     } else {
-                        character.inState(State.AIRBORNE);
-                        character.inState(State.SUBSTATE_DEFAULT);
+                        state.inState(State.AIRBORNE);
+                        state.inState(State.SUBSTATE_DEFAULT);
                     }
                 }
 
-                physicalComponent.velocity.x = 0;
+                physical.velocity.x = 0;
             }
         }
 

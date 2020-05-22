@@ -1,0 +1,4 @@
+{
+  "DEFAULT":  {"width": 20, "height": 60},
+  "CROUCHING": {"width": 20, "height": 30}
+}
