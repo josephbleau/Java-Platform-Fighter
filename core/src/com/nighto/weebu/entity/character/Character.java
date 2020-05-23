@@ -10,7 +10,6 @@ import com.nighto.weebu.component.CharacterDataComponent;
 import com.nighto.weebu.component.ControllerComponent;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.StateComponent;
-import com.nighto.weebu.component.character.CharacterTimers;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
@@ -37,8 +36,6 @@ public class Character extends Entity {
 
     protected float width;
     protected float height;
-    protected boolean fastFalling;
-    protected boolean activeControl;
 
     protected Shield shield;
     protected Stage stage;
@@ -115,7 +112,6 @@ public class Character extends Entity {
             skeleton.setScale(skeleton.getScaleX(), .2f);
         }
 
-        updateGravity(delta);
         updateAttacks(delta);
 
         animationState.update(delta);
@@ -169,33 +165,6 @@ public class Character extends Entity {
 
         knockbackModifier = 0;
         characterData.getTimers().resetTimers();
-    }
-
-    private void updateGravity(float delta) {
-        PhysicalComponent physical = getComponent(PhysicalComponent.class);
-        CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
-
-        float proposedyVel = Math.max(characterData.getActiveAttributes().getFallSpeed(), physical.velocity.y - stage.getGravity());
-
-        if (physical.velocity.y > characterData.getActiveAttributes().getFallSpeed()) {
-            physical.velocity.y = proposedyVel;
-        }
-
-        if (stateComponent.inState(State.WALLSLIDING)) {
-            physical.velocity.y = proposedyVel/3;
-        }
-
-        if (physical.velocity.y < 0 && fastFalling) {
-            physical.velocity.y = proposedyVel * 2;
-        }
-
-        if (!activeControl) {
-                if (stateComponent.inState(State.AIRBORNE)) {
-                    physical.velocity.x /= characterData.getActiveAttributes().getAirFriction();
-                } else if (stateComponent.inState(State.STANDING)) {
-                    physical.velocity.x /= characterData.getActiveAttributes().getGroundFriction();
-                }
-        }
     }
 
     // TODO: Attack processing system
