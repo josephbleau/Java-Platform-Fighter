@@ -3,6 +3,7 @@ package com.nighto.weebu.entity.character.event;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.component.CharacterDataComponent;
+import com.nighto.weebu.component.ControllerComponent;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.StateComponent;
 import com.nighto.weebu.controller.GameInput;
@@ -55,6 +56,7 @@ public class CollisionEventHandler implements EventHandler {
             PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
             CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
             StateComponent state = character.getComponent(StateComponent.class);
+            ControllerComponent controller = character.getComponent(ControllerComponent.class);
 
             /* Determine which direction we were heading so that we can set our position correctly. */
             boolean falling = physical.velocity.y < 0;
@@ -75,7 +77,7 @@ public class CollisionEventHandler implements EventHandler {
                 character.snapToLedge((Ledge) theirShape);
             } else {
                 if (physical.velocity.x < 0) {
-                    if(falling && (character.getGameController().isPressed(GameInput.ControlLeftLight) || character.getGameController().isPressed(GameInput.ControlLeftHard))) {
+                    if(falling && (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard))) {
                         state.enterState(State.WALLSLIDING);
                         state.enterSubState(State.SUBSTATE_WALLSLIDING_LEFT);
                     } else {
@@ -89,7 +91,7 @@ public class CollisionEventHandler implements EventHandler {
                     float difference = Math.abs((physical.position.x + character.getWidth()) - stageRect.x);
                     physical.position.x -= difference;
 
-                    if(falling && (character.getGameController().isPressed(GameInput.ControlRightLight) || character.getGameController().isPressed(GameInput.ControlRightHard))) {
+                    if(falling && (controller.isPressed(GameInput.ControlRightLight) || controller.isPressed(GameInput.ControlRightHard))) {
                         state.enterState(State.WALLSLIDING);
                         state.enterSubState(State.SUBSTATE_WALLSLIDING_RIGHT);
                     } else {

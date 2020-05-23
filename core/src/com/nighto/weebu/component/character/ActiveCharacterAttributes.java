@@ -6,7 +6,7 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
     public ActiveCharacterAttributes(InitialCharacterAttributes initialCharacterAttributes) {
         this.numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
         this.fallSpeed = initialCharacterAttributes.getFallSpeed();
-        this.groundFriction = initialCharacterAttributes.getGroundSpeed();
+        this.groundSpeed = initialCharacterAttributes.getGroundSpeed();
         this.airSpeed = initialCharacterAttributes.getAirSpeed();
         this.shortHopSpeed = initialCharacterAttributes.getShortHopSpeed();
         this.fullHopSpeed = initialCharacterAttributes.getFullHopSpeed();

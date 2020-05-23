@@ -8,6 +8,8 @@ public class PhysicalComponent extends Component {
     public Vector2 velocity;
     public Vector2 prevVelocity;
 
+    public boolean facingRight;
+
     public PhysicalComponent() {
         position = new Vector2();
         prevPosition = new Vector2();

@@ -45,8 +45,6 @@ public class Character extends Entity {
 
     protected Color sidestepColor;
 
-    protected boolean facingRight = true;
-
     protected List<Attack> attacks = new ArrayList<>();
 
     protected TextureAtlas textureAtlas;
@@ -105,7 +103,7 @@ public class Character extends Entity {
         skeleton.setY(Math.round(physicalComponent.position.y));
         skeleton.updateWorldTransform();
 
-        if (getFacingRight()) {
+        if (physicalComponent.facingRight) {
             skeleton.setScale(0.2f, skeleton.getScaleY());
         } else {
             skeleton.setScale(-0.2f, skeleton.getScaleY());
@@ -120,7 +118,6 @@ public class Character extends Entity {
         updateGravity(delta);
         updateTimers(delta);
         updateAttacks(delta);
-        updateDirection(delta);
 
         animationState.update(delta);
         animationState.apply(skeleton);
@@ -260,18 +257,6 @@ public class Character extends Entity {
         }
     }
 
-    // TODO: This should go in the PositionSystem
-    private void updateDirection(float delta) {
-        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
-
-        if (!stateComponent.inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
-            if (physicalComponent.velocity.x > 0) {
-                facingRight = true;
-            } else if (physicalComponent.velocity.x < 0) {
-                facingRight = false;
-            }
-        }
-    }
 
     // TODO: Attack system
     public void enterKnockback(Attack attack) {
@@ -322,16 +307,8 @@ public class Character extends Entity {
         }
     }
 
-    public boolean getFacingRight() {
-        return facingRight;
-    }
-
     public Stage getStage() {
         return stage;
-    }
-
-    public GameController getGameController() {
-        return gameController;
     }
 
     public float getWidth() {

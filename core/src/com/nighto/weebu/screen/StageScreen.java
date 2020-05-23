@@ -33,7 +33,9 @@ public class StageScreen implements Screen {
     final Player player;
     final Player enemy;
 
+
     private List<Entity> entities;
+    private List<Entity> entitiesToAdd;
     private List<Entity> entitiesToRemove;
 
     private ShapeRenderer shapeRenderer;
@@ -77,6 +79,7 @@ public class StageScreen implements Screen {
 
         entities = new ArrayList<>();
         entitiesToRemove = new ArrayList<>();
+        entitiesToAdd = new ArrayList<>();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1920, 1080);
@@ -107,6 +110,9 @@ public class StageScreen implements Screen {
     /** Primary game loop **/
     @Override
     public void render(float delta) {
+        entities.addAll(entitiesToAdd);
+        entitiesToAdd.clear();
+
         /* Update Loop: All entities will run their physics calculations here. */
         for (Entity entity : entities) {
             entity.update(delta);
@@ -186,7 +192,7 @@ public class StageScreen implements Screen {
     }
 
     public void registerEntity(Entity entity) {
-        entities.add(entity);
+        entitiesToAdd.add(entity);
     }
 
     public void removeEntity(Entity entity) { entitiesToRemove.add(entity); }
