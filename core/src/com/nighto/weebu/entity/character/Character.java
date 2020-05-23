@@ -30,7 +30,6 @@ import java.util.List;
 
 public class Character extends Entity {
 
-    protected CharacterTimers characterTimers;
     protected GameController gameController;
 
     protected int jumpCount = 0;
