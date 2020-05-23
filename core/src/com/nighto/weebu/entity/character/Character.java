@@ -117,7 +117,6 @@ public class Character extends Entity {
         }
 
         updateGravity(delta);
-        updateTimers(delta);
         updateAttacks(delta);
 
         animationState.update(delta);
@@ -200,42 +199,6 @@ public class Character extends Entity {
         }
     }
 
-    // TODO: Timer system
-    private void updateTimers(float delta) {
-        CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
-        CharacterTimers characterTimers = characterData.getTimers();
-
-        characterTimers.tickTimers(delta);
-
-        if (stateComponent.inState(State.JUMPSQUAT)) {
-            if (characterTimers.getJumpSquatTimeRemaining() <= 0) {
-                characterTimers.resetTimers();
-                stateComponent.enterState(State.EXIT_JUMPSQUAT);
-            }
-        }
-
-        if (stateComponent.inState(State.SIDESTEPPING)) {
-            if (characterTimers.getSidestepTimeRemaining() <= 0) {
-                characterTimers.resetTimers();
-
-                currentColor = defaultColor;
-
-                stateComponent.revertState();
-
-                if (stateComponent.inState(State.SHIELDING)) {
-                    stateComponent.enterState(State.STANDING);
-                }
-            }
-        }
-
-        if (stateComponent.inSubState(State.SUBSTATE_KNOCKBACK)) {
-            if (characterTimers.getKnockbackTimeRemaining() <= 0) {
-                characterTimers.resetTimers();
-                stateComponent.enterSubState(State.DEFAULT);
-            }
-        }
-    }
-
     // TODO: Attack processing system
     private void updateAttacks(float delta) {
         boolean attackPlaying = false;
@@ -257,7 +220,6 @@ public class Character extends Entity {
             stateComponent.enterSubState(State.SUBSTATE_DEFAULT);
         }
     }
-
 
     // TODO: Attack system
     public void enterKnockback(Attack attack) {
