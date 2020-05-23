@@ -4,6 +4,10 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
     private boolean fastFalling;
 
     public ActiveCharacterAttributes(InitialCharacterAttributes initialCharacterAttributes) {
+        resetValues(initialCharacterAttributes);
+    }
+
+    public void resetValues(InitialCharacterAttributes initialCharacterAttributes) {
         this.numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
         this.fallSpeed = initialCharacterAttributes.getFallSpeed();
         this.groundSpeed = initialCharacterAttributes.getGroundSpeed();
@@ -14,6 +18,9 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
         this.sidestepDuration = initialCharacterAttributes.getSidestepDuration();
         this.airFriction = initialCharacterAttributes.getAirFriction();
         this.groundFriction = initialCharacterAttributes.getGroundFriction();
+        this.knockbackModifier = initialCharacterAttributes.getKnockbackModifier();
+
+        this.fastFalling = false;
     }
 
     public boolean isFastFalling() {
@@ -63,4 +70,6 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
     public void setGroundFriction(float groundFriction) {
         this.groundFriction = groundFriction;
     }
+
+    public void setKnockbackModifier(float knockbackModifier) { this.knockbackModifier = knockbackModifier; }
 }

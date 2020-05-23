@@ -49,7 +49,25 @@ public class StateComponent extends Component{
         this.subState = subState;
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public State getPreviousState() {
+        return previousState;
+    }
+
+    public State getSubState() {
+        return subState;
+    }
+
+    public State getPreviousSubState() {
+        return previousSubState;
+    }
+
     public void revertState() {
         state = previousState;
+
+
     }
 }

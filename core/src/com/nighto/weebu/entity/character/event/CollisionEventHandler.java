@@ -88,7 +88,9 @@ public class CollisionEventHandler implements EventHandler {
                     physical.position.x = (stageRect.x + stageRect.width);
                 } else if (physical.velocity.x > 0) {
                     // Move character out of the wall
-                    float difference = Math.abs((physical.position.x + character.getWidth()) - stageRect.x);
+                    float characterWidth = 20;
+                    float difference = Math.abs((physical.position.x + characterWidth) - stageRect.x);
+
                     physical.position.x -= difference;
 
                     if(falling && (controller.isPressed(GameInput.ControlRightLight) || controller.isPressed(GameInput.ControlRightHard))) {

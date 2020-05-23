@@ -8,5 +8,6 @@
 	"jumpSquatDuration": 0.05,
 	"sidestepDuration": 0.37,
 	"airFriction": 1.1,
-	"groundFriction": 2
+	"groundFriction": 2,
+	"knockbackModifier": 0
 }

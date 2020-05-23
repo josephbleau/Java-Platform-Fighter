@@ -1,9 +1,7 @@
 package com.nighto.weebu.entity.character;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.AnimationStateData;
@@ -20,7 +18,6 @@ import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.events.CollisionEvent;
-import com.nighto.weebu.screen.StageScreen;
 import com.nighto.weebu.system.GameContext;
 
 import java.util.ArrayList;
@@ -31,32 +28,20 @@ public class Character extends Entity {
 
     protected GameController gameController;
 
-    protected int jumpCount = 0;
-    protected float knockbackModifier = 0;
-
-    protected float width;
-    protected float height;
-
-    protected Shield shield;
-    protected Stage stage;
-
-    protected Color sidestepColor;
-
     protected List<Attack> attacks = new ArrayList<>();
+    protected Shield shield;
 
     // Components
     protected StateComponent stateComponent;
     protected AnimationDataComponent animationDataComponent;
+    protected CharacterDataComponent characterDataComponent;
 
-    public Character(StageScreen parentScreen, GameContext gameContext) {
-        super(parentScreen, gameContext);
+    public Character(GameContext gameContext) {
+        super(gameContext);
 
-        stage = parentScreen.getStage();
-        sidestepColor = Color.LIGHT_GRAY;
-
-        // Spine animation
-        // TODO: Factor out animation / skeleton loading, should not be in character ctor
         animationDataComponent = new AnimationDataComponent();
+        stateComponent = new StateComponent();
+        characterDataComponent = CharacterAttributesLoader.loadCharacterData();
 
         animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
         animationDataComponent.skeletonJson = new SkeletonJson(animationDataComponent.textureAtlas);
@@ -68,8 +53,7 @@ public class Character extends Entity {
         animationDataComponent.animationState = new AnimationState(animationDataComponent.animationStateData);
         animationDataComponent.animationState.setAnimation(0, "idle", true);
 
-        stateComponent = new StateComponent();
-        registerComponent(CharacterDataComponent.class, CharacterAttributesLoader.loadCharacterData());
+        registerComponent(CharacterDataComponent.class, characterDataComponent);
         registerComponent(StateComponent.class, stateComponent);
         registerComponent(ControllerComponent.class, new ControllerComponent(gameController));
         registerComponent(AnimationDataComponent.class, animationDataComponent);
@@ -77,39 +61,14 @@ public class Character extends Entity {
         registerEventHandler(new CollisionEventHandler(this));
         registerEventHandler(new DeathhEventHandler(this));
 
-        ((StateComponent)getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
-
-        // TODO: Fix w/h, should be a part of the physical component
-        width = 20;
-        height = 60;
+        ((StateComponent) getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
     }
 
     @Override
     public void update(float delta) {
         updateAttacks(delta);
+        updateShield(delta);
         shield.update(delta);
-    }
-
-    // TODO: Move to debug renderer
-    @Override
-    public void render(ShapeRenderer shapeRenderer) {
-        super.render(shapeRenderer);
-
-        if (stateComponent.inState(State.SIDESTEPPING)) {
-            currentColor = sidestepColor;
-        } else {
-            currentColor = defaultColor;
-        }
-
-        if (stateComponent.inState(State.SHIELDING)) {
-            shield.setActive(true);
-        } else {
-            shield.setActive(false);
-        }
-
-        shield.render(shapeRenderer);
-
-        attacks.forEach(attack -> attack.render(shapeRenderer));
     }
 
     @Override
@@ -126,14 +85,18 @@ public class Character extends Entity {
     @Override
     public void teleport(float x, float y) {
         super.teleport(x, y);
-
         CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
-
-        knockbackModifier = 0;
         characterData.getTimers().resetTimers();
     }
 
-    // TODO: Attack processing system
+    public void updateShield(float delta) {
+        if (stateComponent.inState(State.SHIELDING)) {
+            shield.setActive(true);
+        } else {
+            shield.setActive(false);
+        }
+    }
+
     private void updateAttacks(float delta) {
         boolean attackPlaying = false;
 
@@ -160,10 +123,11 @@ public class Character extends Entity {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
         CharacterDataComponent characterDataComponent = getComponent(CharacterDataComponent.class);
 
-        knockbackModifier += attack.getKnockbackModifierIncrease();
+        float knockbackModifier = characterDataComponent.getActiveAttributes().getKnockbackModifier();
+        characterDataComponent.getActiveAttributes().setKnockbackModifier(knockbackModifier + attack.getKnockbackModifierIncrease());
 
-        physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier/50f);
-        physicalComponent.velocity.y = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier/100f);
+        physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier / 50f);
+        physicalComponent.velocity.y = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier / 100f);
 
         characterDataComponent.getTimers().setKnockbackTimeRemaining(attack.getKnockbackInduced());
 
@@ -175,7 +139,7 @@ public class Character extends Entity {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
         getGameContext().registerEntity(attack);
-        attack.teleport(physicalComponent.position.x, physicalComponent.position.y);
+        attack.teleport(physicalComponent.position.x, physicalComponent.position.y, true);
 
         if (attack.isPlaying()) {
             stateComponent.enterSubState(State.SUBSTATE_ATTACKING);
@@ -184,8 +148,9 @@ public class Character extends Entity {
         attacks.add(attack);
     }
 
-    public void spawnShield() {
+    public void startShielding() {
         PhysicalComponent physical = getComponent(PhysicalComponent.class);
+        getGameContext().registerEntity(shield);
         shield.teleport(physical.position.x, physical.position.y);
     }
 
@@ -193,7 +158,7 @@ public class Character extends Entity {
         stateComponent.enterState(State.HANGING);
 
         Rectangle playerRect = getRects().get(0);
-        jumpCount = 0;
+        characterDataComponent.getActiveAttributes().setNumberOfJumps(characterDataComponent.getInitialAttributes().getNumberOfJumps());
 
         if (ledge.hangLeft) {
             stateComponent.enterSubState(State.SUBSTATE_HANGING_LEFT);
@@ -205,10 +170,6 @@ public class Character extends Entity {
     }
 
     public Stage getStage() {
-        return stage;
-    }
-
-    public float getWidth() {
-        return width;
+        return getGameContext().getStage();
     }
 }

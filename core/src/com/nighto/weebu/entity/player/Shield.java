@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.event.events.CollisionEvent;
-import com.nighto.weebu.screen.StageScreen;
 import com.nighto.weebu.system.GameContext;
 
 import java.util.ArrayList;
@@ -27,8 +26,8 @@ public class Shield extends Entity {
 
     private float size = 1.0f;
 
-    public Shield(StageScreen stageScreen, GameContext gameContext, Circle circle, Color color) {
-        super(stageScreen, gameContext);
+    public Shield(GameContext gameContext, Circle circle, Color color) {
+        super(gameContext);
 
         this.circle = circle;
         this.color = color;

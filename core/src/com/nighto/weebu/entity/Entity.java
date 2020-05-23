@@ -4,14 +4,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.esotericsoftware.spine.Skeleton;
 import com.nighto.weebu.component.Component;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
 import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.event.events.Event;
-import com.nighto.weebu.screen.StageScreen;
 import com.nighto.weebu.system.GameContext;
 
 import java.util.ArrayList;
@@ -49,10 +47,9 @@ public abstract class Entity implements EventListener {
 
     private final List<EventHandler> eventHandlers;
 
-    private final StageScreen stageScreen;
-    private final GameContext gameContext;
+    private GameContext gameContext;
 
-    public Entity(StageScreen stageScreen, GameContext gameContext) {
+    public Entity(GameContext gameContext) {
         components = new HashMap<>();
         registerComponent(PhysicalComponent.class, new PhysicalComponent());
 
@@ -65,7 +62,6 @@ public abstract class Entity implements EventListener {
         this.collidable = true;
 
         this.eventHandlers = new ArrayList<>();
-        this.stageScreen = stageScreen;
         this.gameContext = gameContext;
     }
 
@@ -174,11 +170,11 @@ public abstract class Entity implements EventListener {
         this.hidden = hidden;
     }
 
-    public StageScreen getStageScreen() {
-        return stageScreen;
-    }
-
     public GameContext getGameContext() {
         return gameContext;
+    }
+
+    public void setGameContext(GameContext gameContext) {
+        this.gameContext = gameContext;
     }
 }

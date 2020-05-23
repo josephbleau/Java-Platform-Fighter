@@ -25,8 +25,16 @@ public class InitialCharacterAttributes {
     /** The total amount of time spent in sidestep **/
     protected float sidestepDuration;
 
+    /** Amount of velocity added to your current x-velocity to counter-act it while in the air and not
+     * actively controlling your character. */
     protected float airFriction;
+
+    /** Amount of velocity addedf to your current x-velocity to counter-act it while on the ground
+     * and not actievly controlling your character*/
     protected float groundFriction;
+
+    /** Factor in how far you are sent back **/
+    protected float knockbackModifier;
 
     public int getNumberOfJumps() {
         return numberOfJumps;
@@ -66,5 +74,9 @@ public class InitialCharacterAttributes {
 
     public float getGroundFriction() {
         return groundFriction;
+    }
+
+    public float getKnockbackModifier() {
+        return knockbackModifier;
     }
 }

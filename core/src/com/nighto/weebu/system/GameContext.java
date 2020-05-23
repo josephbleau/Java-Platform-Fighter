@@ -10,7 +10,7 @@ import java.util.ListIterator;
 
 public class GameContext {
     private final List<Entity> entities;
-    private List<Entity> entitiesToRemove;
+    private final List<Entity> entitiesToRemove;
     private ListIterator<Entity> entityIterator;
 
     private final Stage stage;
@@ -52,6 +52,7 @@ public class GameContext {
     }
 
     public void registerEntity(Entity entity) {
+        entity.setGameContext(this);
         entityIterator.add(entity);
     }
 

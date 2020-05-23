@@ -49,14 +49,14 @@ public class StageScreen implements Screen {
             gamecubeController = controllers.get(0);
         }
 
-        stage = new TestStage(this, gameContext);
+        stage = new TestStage(gameContext);
 
         // TODO: Controller plug/unplug system with dynamic controller registration
-        player = new Player(this, gameContext);
-        player.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, false)));
+        player = new Player(gameContext);
+        enemy = new Player(gameContext);
 
-        enemy = new Player(this, gameContext);
-        enemy.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, false)));
+        player.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, false)));
+        enemy.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, true)));
 
         gameContext = new GameContext(stage);
         gameContext.registerEntity(player);

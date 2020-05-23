@@ -27,7 +27,7 @@ public class Attack extends Entity {
     private Color hitBoxColor;
 
     protected Attack(GameContext gameContext, Character owner, List<Rectangle> hitBoxes) {
-        super(owner.getStageScreen(), gameContext);
+        super(gameContext);
         setHidden(true);
 
         this.owner = owner;
