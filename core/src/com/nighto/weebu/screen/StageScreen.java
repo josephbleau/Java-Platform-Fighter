@@ -68,6 +68,7 @@ public class StageScreen implements Screen {
         systems = new ArrayList<>();
         systems.add(new StateBasedInputSystem(gameContext, eventPublisher));
         systems.add(new CharacterTimerSystem(gameContext, eventPublisher));
+        systems.add(new AnimationSystem(gameContext, eventPublisher));
         systems.add(new PhysicsSystem(gameContext, eventPublisher));
         systems.add(new CollisionSystem(gameContext, eventPublisher));
         systems.add(new RenderingSystem(gameContext, eventPublisher));

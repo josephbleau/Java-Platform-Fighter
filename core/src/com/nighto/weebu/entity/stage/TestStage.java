@@ -13,9 +13,12 @@ public class TestStage extends Stage {
         this.getRects().add(new Rectangle(-200, 0, 20, 300));
 
         this.blastZone = new Rectangle(60, 60, 1920 - 120, 1080 - 120);
-        this.spawn((1920 - 1000) / 2, 200);
+        this.teleport((1920 - 1000) / 2, 200);
 
         this.ledges.add(new Ledge(((1920 - 1000) / 2)-5, 240, 5, 10, true));
         this.ledges.add(new Ledge(((1920 - 1000) / 2) + 1000, 240, 5, 10, false));
     }
+
+    @Override
+    public void update(float delta) {}
 }

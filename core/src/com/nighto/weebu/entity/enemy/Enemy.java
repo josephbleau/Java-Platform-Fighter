@@ -24,6 +24,6 @@ public class Enemy extends Character {
 
         defaultColor = Color.FIREBRICK;
 
-        spawn(1920/2, 400);
+        teleport(1920/2, 400);
     }
 }

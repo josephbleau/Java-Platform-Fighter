@@ -9,7 +9,6 @@ import com.nighto.weebu.component.Component;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
-import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.event.events.Event;
 import com.nighto.weebu.screen.StageScreen;
@@ -24,9 +23,9 @@ import java.util.Map;
  * Entity is the base object representing all "things" in the game, whether it be a player, a stage, an item, or some
  * other interactive element. It has various properties that affect the way the game interprets, renders, and updates them.
  */
-public class Entity implements EventListener {
+public abstract class Entity implements EventListener {
 
-    private Map<Class<?>, Component> components;
+    private final Map<Class<?>, Component> components;
 
     /** Color that the shape is rendered as by default **/
     protected Color defaultColor;
@@ -37,7 +36,7 @@ public class Entity implements EventListener {
     protected ShapeRenderer.ShapeType shapeType = ShapeRenderer.ShapeType.Line;
 
     /** Rectangles representing the shape of the entity **/
-    private List<Rectangle> rects;
+    private final List<Rectangle> rects;
 
     /** Active being set to true means update() will process **/
     private boolean active;
@@ -48,10 +47,10 @@ public class Entity implements EventListener {
     /** Collidable being set to true means that collisions are registered and published **/
     private boolean collidable;
 
-    private List<EventHandler> eventHandlers;
+    private final List<EventHandler> eventHandlers;
 
-    private StageScreen stageScreen;
-    private GameContext gameContext;
+    private final StageScreen stageScreen;
+    private final GameContext gameContext;
 
     public Entity(StageScreen stageScreen, GameContext gameContext) {
         components = new HashMap<>();
@@ -74,7 +73,6 @@ public class Entity implements EventListener {
         if (hidden) {
             return;
         }
-
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
         for (Rectangle rect : rects) {
@@ -93,26 +91,13 @@ public class Entity implements EventListener {
         return (T) components.get(componentType);
     }
 
-    public Skeleton getSkeleton() {
-        return null;
-    }
+    public abstract void update(float delta);
 
-    public void update(float delta) {
-        if (!active) {
-            return;
-        }
-    }
-
-    public void spawn(float x, float y) {
-        hidden = false;
-        active = true;
-
-        // TODO: Move to PhysicalSystem
-        registerComponent(PhysicalComponent.class, new PhysicalComponent(new Vector2(x, y), Vector2.Zero));
+    public void teleport(float x, float y) {
+        teleport(x, y, false);
     }
 
     public void teleport(float x, float y, boolean keepVelocity) {
-        // TODO: Move to PhysicalSystem
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
         if (!keepVelocity) {

@@ -38,8 +38,6 @@ public class Attack extends Entity {
 
     @Override
     public void update(float delta) {
-        super.update(delta);
-
         if (startupTime > 0) {
             startupTime -= delta;
 
@@ -79,7 +77,7 @@ public class Attack extends Entity {
     }
 
     @Override
-    public void spawn(float x, float y) {
+    public void teleport(float x, float y) {
         teleport(x, y, true);
     }
 

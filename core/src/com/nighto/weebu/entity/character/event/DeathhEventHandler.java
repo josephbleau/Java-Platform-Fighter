@@ -20,7 +20,7 @@ public class DeathhEventHandler implements EventHandler {
     @Override
     public void handle(Event event) {
         if (((DeathEvent) event).entity == character) {
-            character.spawn(1920/2, 400);
+            character.teleport(1920/2, 400);
         }
     }
 }

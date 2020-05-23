@@ -31,6 +31,6 @@ public class Player extends Character {
         );
 
         getRects().add(rect);
-        spawn(1920/2, 400);
+        teleport(1920/2, 400);
     }
 }

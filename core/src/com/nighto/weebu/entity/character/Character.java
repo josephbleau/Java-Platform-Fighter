@@ -5,11 +5,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.esotericsoftware.spine.*;
-import com.nighto.weebu.component.CharacterDataComponent;
-import com.nighto.weebu.component.ControllerComponent;
-import com.nighto.weebu.component.PhysicalComponent;
-import com.nighto.weebu.component.StateComponent;
+import com.esotericsoftware.spine.AnimationState;
+import com.esotericsoftware.spine.AnimationStateData;
+import com.esotericsoftware.spine.Skeleton;
+import com.esotericsoftware.spine.SkeletonJson;
+import com.nighto.weebu.component.*;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
@@ -44,41 +44,35 @@ public class Character extends Entity {
 
     protected List<Attack> attacks = new ArrayList<>();
 
-    protected TextureAtlas textureAtlas;
-    protected SkeletonJson skeletonJson;
-    protected SkeletonData skeletonData;
-    protected AnimationStateData animationStateData;
-    protected Skeleton skeleton;
-    protected AnimationState animationState;
-
     // Components
     protected StateComponent stateComponent;
+    protected AnimationDataComponent animationDataComponent;
 
     public Character(StageScreen parentScreen, GameContext gameContext) {
         super(parentScreen, gameContext);
 
         stage = parentScreen.getStage();
-
-        // Spine animation
-        textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
-        skeletonJson = new SkeletonJson(textureAtlas);
-        skeletonData = skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/sunflower/skeleton.json"));
-        skeletonData.setFps(60);
-        animationStateData = new AnimationStateData(skeletonData);
-
-        skeleton = new Skeleton(skeletonData);
-        skeleton.setScale(.2f, .2f);
-
-        animationState = new AnimationState(animationStateData);
-        animationState.setAnimation(0, "idle", true);
-
         sidestepColor = Color.LIGHT_GRAY;
 
-        stateComponent = new StateComponent();
+        // Spine animation
+        // TODO: Factor out animation / skeleton loading, should not be in character ctor
+        animationDataComponent = new AnimationDataComponent();
 
+        animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
+        animationDataComponent.skeletonJson = new SkeletonJson(animationDataComponent.textureAtlas);
+        animationDataComponent.skeletonData = animationDataComponent.skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/sunflower/skeleton.json"));
+        animationDataComponent.skeletonData.setFps(60);
+        animationDataComponent.animationStateData = new AnimationStateData(animationDataComponent.skeletonData);
+        animationDataComponent.skeleton = new Skeleton(animationDataComponent.skeletonData);
+        animationDataComponent.skeleton.setScale(.2f, .2f);
+        animationDataComponent.animationState = new AnimationState(animationDataComponent.animationStateData);
+        animationDataComponent.animationState.setAnimation(0, "idle", true);
+
+        stateComponent = new StateComponent();
         registerComponent(CharacterDataComponent.class, CharacterAttributesLoader.loadCharacterData());
         registerComponent(StateComponent.class, stateComponent);
         registerComponent(ControllerComponent.class, new ControllerComponent(gameController));
+        registerComponent(AnimationDataComponent.class, animationDataComponent);
 
         registerEventHandler(new CollisionEventHandler(this));
         registerEventHandler(new DeathhEventHandler(this));
@@ -92,34 +86,11 @@ public class Character extends Entity {
 
     @Override
     public void update(float delta) {
-        super.update(delta);
-
-        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
-
-        skeleton.setX(Math.round(physicalComponent.position.x));
-        skeleton.setY(Math.round(physicalComponent.position.y));
-        skeleton.updateWorldTransform();
-
-        if (physicalComponent.facingRight) {
-            skeleton.setScale(0.2f, skeleton.getScaleY());
-        } else {
-            skeleton.setScale(-0.2f, skeleton.getScaleY());
-        }
-
-        if (stateComponent.inState(State.CROUCHING)) {
-            skeleton.setScale(skeleton.getScaleX(), .2f/1.5f);
-        } else {
-            skeleton.setScale(skeleton.getScaleX(), .2f);
-        }
-
         updateAttacks(delta);
-
-        animationState.update(delta);
-        animationState.apply(skeleton);
-
         shield.update(delta);
     }
 
+    // TODO: Move to debug renderer
     @Override
     public void render(ShapeRenderer shapeRenderer) {
         super.render(shapeRenderer);
@@ -142,11 +113,6 @@ public class Character extends Entity {
     }
 
     @Override
-    public Skeleton getSkeleton() {
-        return skeleton;
-    }
-
-    @Override
     public List<CollisionEvent> intersects(Entity otherEntity) {
         List<CollisionEvent> shieldCollision = shield.intersects(otherEntity);
 
@@ -158,8 +124,8 @@ public class Character extends Entity {
     }
 
     @Override
-    public void spawn(float x, float y) {
-        super.spawn(x, y);
+    public void teleport(float x, float y) {
+        super.teleport(x, y);
 
         CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
 
@@ -209,7 +175,7 @@ public class Character extends Entity {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
         getGameContext().registerEntity(attack);
-        attack.spawn(physicalComponent.position.x, physicalComponent.position.y);
+        attack.teleport(physicalComponent.position.x, physicalComponent.position.y);
 
         if (attack.isPlaying()) {
             stateComponent.enterSubState(State.SUBSTATE_ATTACKING);
@@ -220,7 +186,7 @@ public class Character extends Entity {
 
     public void spawnShield() {
         PhysicalComponent physical = getComponent(PhysicalComponent.class);
-        shield.spawn(physical.position.x, physical.position.y);
+        shield.teleport(physical.position.x, physical.position.y);
     }
 
     public void snapToLedge(Ledge ledge) {

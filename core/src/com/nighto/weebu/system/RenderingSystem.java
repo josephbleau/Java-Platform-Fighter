@@ -3,6 +3,7 @@ package com.nighto.weebu.system;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.spine.SkeletonRenderer;
+import com.nighto.weebu.component.AnimationDataComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.event.EventPublisher;
 
@@ -25,8 +26,15 @@ public class RenderingSystem extends System {
 
     @Override
     protected void process(Entity entity) {
-        if (entity.getSkeleton() != null) {
-            skeletonRenderer.draw(spriteBatch, entity.getSkeleton());
+        AnimationDataComponent animationData = entity.getComponent(AnimationDataComponent.class);
+
+        // Required component
+        if(animationData == null) {
+            return;
+        }
+
+        if (animationData.skeleton != null) {
+            skeletonRenderer.draw(spriteBatch, animationData.skeleton);
         }
     }
 
