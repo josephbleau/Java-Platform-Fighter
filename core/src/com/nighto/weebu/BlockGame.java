@@ -8,9 +8,10 @@ import com.nighto.weebu.screen.StageScreen;
 public class BlockGame extends Game {
 	@Override
 	public void create () {
-		setScreen(new StageScreen(this));
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+		setScreen(new StageScreen(this));
 	}
 
 	@Override
@@ -19,10 +20,8 @@ public class BlockGame extends Game {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		super.render();
-
 	}
 	
 	@Override
-	public void dispose () {
-	}
+	public void dispose () {}
 }
