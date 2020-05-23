@@ -1,4 +1,4 @@
-package com.nighto.weebu.entity.player;
+package com.nighto.weebu.entity.shield;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;

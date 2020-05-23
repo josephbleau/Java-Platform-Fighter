@@ -6,7 +6,7 @@ import com.nighto.weebu.component.AnimationDataComponent;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.StateComponent;
 import com.nighto.weebu.entity.Entity;
-import com.nighto.weebu.entity.player.State;
+import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.event.EventPublisher;
 
 import java.util.Arrays;

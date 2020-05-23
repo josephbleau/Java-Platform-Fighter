@@ -8,7 +8,7 @@ import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.attack.MeleeAttack;
 import com.nighto.weebu.entity.attack.ProjectileAttack;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.entity.player.State;
+import com.nighto.weebu.entity.character.State;
 
 public class GroundedInputHandler extends StateBasedInputHandler {
 

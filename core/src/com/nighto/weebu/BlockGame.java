@@ -3,7 +3,7 @@ package com.nighto.weebu;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.nighto.weebu.screen.StageScreen;
+import com.nighto.weebu.screen.InGameScreen;
 
 public class BlockGame extends Game {
 	@Override
@@ -11,7 +11,7 @@ public class BlockGame extends Game {
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-		setScreen(new StageScreen(this));
+		setScreen(new InGameScreen());
 	}
 
 	@Override

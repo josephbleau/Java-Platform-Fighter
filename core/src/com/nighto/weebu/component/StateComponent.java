@@ -1,6 +1,6 @@
 package com.nighto.weebu.component;
 
-import com.nighto.weebu.entity.player.State;
+import com.nighto.weebu.entity.character.State;
 
 public class StateComponent extends Component{
     private State state;

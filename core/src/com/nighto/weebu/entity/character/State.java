@@ -1,4 +1,4 @@
-package com.nighto.weebu.entity.player;
+package com.nighto.weebu.entity.character;
 
 public enum State {
     DEFAULT,                  // Neutral state. State is cleared to this at the beginning of each input loop.
@@ -18,6 +18,5 @@ public enum State {
     SUBSTATE_HANGING_RIGHT, // Player is hanging from a ledge on the right
     SUBSTATE_KNOCKBACK,      // Player cannot act while in knockback, exit knockback on landing (for now)
     SUBSTATE_WALLSLIDING_LEFT,
-    SUBSTATE_WALLSLIDING_RIGHT
-    ;
+    SUBSTATE_WALLSLIDING_RIGHT;
 }

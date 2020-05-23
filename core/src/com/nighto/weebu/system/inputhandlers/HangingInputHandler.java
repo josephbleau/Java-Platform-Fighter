@@ -6,7 +6,7 @@ import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.StateComponent;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.entity.player.State;
+import com.nighto.weebu.entity.character.State;
 
 public class HangingInputHandler extends StateBasedInputHandler {
 

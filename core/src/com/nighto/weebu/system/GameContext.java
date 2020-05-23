@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class GameContext {
-    private final Stage stage;
+    private Stage stage;
 
     private final List<Entity> entities;
     private final List<Entity> entitiesToRemove;
@@ -17,12 +17,9 @@ public class GameContext {
 
     private float frameDelta;
 
-    public GameContext(Stage stage) {
-        this.stage = stage;
-
+    public GameContext() {
         entities = new LinkedList<>();
         entitiesToRemove = new LinkedList<>();
-
         entityIterator = entities.listIterator();
     }
 
@@ -52,6 +49,11 @@ public class GameContext {
     public void registerEntity(Entity entity) {
         entity.setGameContext(this);
         entityIterator.add(entity);
+    }
+
+    public void registerStage(Stage stage) {
+        this.stage = stage;
+        registerEntity(stage);
     }
 
     public void removeEntity(Entity entity) { entitiesToRemove.remove(entity); }

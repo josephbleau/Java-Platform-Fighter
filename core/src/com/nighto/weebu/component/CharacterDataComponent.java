@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.component.character.ActiveCharacterAttributes;
 import com.nighto.weebu.component.character.CharacterTimers;
 import com.nighto.weebu.component.character.InitialCharacterAttributes;
-import com.nighto.weebu.entity.player.State;
+import com.nighto.weebu.entity.character.State;
 
 import java.util.Map;
 

@@ -1,7 +1,9 @@
 package com.nighto.weebu.entity.character;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.AnimationStateData;
@@ -9,12 +11,13 @@ import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonJson;
 import com.nighto.weebu.component.*;
 import com.nighto.weebu.controller.GameController;
+import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
 import com.nighto.weebu.entity.character.event.CollisionEventHandler;
 import com.nighto.weebu.entity.character.event.DeathhEventHandler;
-import com.nighto.weebu.entity.player.Shield;
-import com.nighto.weebu.entity.player.State;
+import com.nighto.weebu.entity.character.loader.CharacterAttributesLoader;
+import com.nighto.weebu.entity.shield.Shield;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.events.CollisionEvent;
@@ -27,18 +30,23 @@ public class Character extends Entity {
 
     protected GameController gameController;
 
-    protected List<Attack> attacks = new ArrayList<>();
-    protected Shield shield;
+    protected final List<Attack> attacks;
+    protected final Shield shield;
 
     // Components
     protected StateComponent stateComponent;
     protected AnimationDataComponent animationDataComponent;
     protected CharacterDataComponent characterDataComponent;
+    protected ControllerComponent controllerComponent;
 
     public Character() {
+        shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
+        attacks = new ArrayList<>();
+
         animationDataComponent = new AnimationDataComponent();
         stateComponent = new StateComponent();
         characterDataComponent = CharacterAttributesLoader.loadCharacterData();
+        controllerComponent =  new ControllerComponent(new GameController(new NoopGamecubeController(), false));
 
         animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
         animationDataComponent.skeletonJson = new SkeletonJson(animationDataComponent.textureAtlas);
@@ -54,6 +62,7 @@ public class Character extends Entity {
         registerComponent(StateComponent.class, stateComponent);
         registerComponent(ControllerComponent.class, new ControllerComponent(gameController));
         registerComponent(AnimationDataComponent.class, animationDataComponent);
+        registerComponent(ControllerComponent.class, controllerComponent);
 
         registerEventHandler(new CollisionEventHandler(this));
         registerEventHandler(new DeathhEventHandler(this));
@@ -65,7 +74,6 @@ public class Character extends Entity {
     public void update(float delta) {
         updateAttacks(delta);
         updateShield(delta);
-        shield.update(delta);
     }
 
     @Override
@@ -87,6 +95,8 @@ public class Character extends Entity {
     }
 
     public void updateShield(float delta) {
+        shield.update(delta);
+
         if (stateComponent.inState(State.SHIELDING)) {
             shield.setActive(true);
         } else {

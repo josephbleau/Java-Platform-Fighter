@@ -10,7 +10,7 @@ import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.entity.player.State;
+import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.events.CollisionEvent;
