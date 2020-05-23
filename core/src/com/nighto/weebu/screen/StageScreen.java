@@ -27,15 +27,13 @@ public class StageScreen implements Screen {
     private GameContext gameContext;
     private EventPublisher eventPublisher;
 
-    private List<GamecubeController> controllers;
-
-    private List<System> systems;
+    private final List<System> systems;
 
     public StageScreen(Game game) {
         this.game = game;
 
         // Register controllers
-        controllers = new ArrayList<>();
+        List<GamecubeController> controllers = new ArrayList<>();
 
         for(Controller controller : Controllers.getControllers()) {
             if (controller.getName().equals(GamecubeController.MAYFLASH_ADAPTER_ID)) {
@@ -49,11 +47,9 @@ public class StageScreen implements Screen {
             gamecubeController = controllers.get(0);
         }
 
-        stage = new TestStage(gameContext);
-
-        // TODO: Controller plug/unplug system with dynamic controller registration
-        player = new Player(gameContext);
-        enemy = new Player(gameContext);
+        stage = new TestStage();
+        player = new Player();
+        enemy = new Player();
 
         player.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, false)));
         enemy.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, true)));
@@ -61,6 +57,7 @@ public class StageScreen implements Screen {
         gameContext = new GameContext(stage);
         gameContext.registerEntity(player);
         gameContext.registerEntity(enemy);
+        gameContext.registerEntity(stage);
 
         eventPublisher = new EventPublisher();
         eventPublisher.registerListeners(gameContext.getEntities());
@@ -101,8 +98,4 @@ public class StageScreen implements Screen {
 
     @Override
     public void dispose() {}
-
-    public Stage getStage() {
-        return stage;
-    }
 }

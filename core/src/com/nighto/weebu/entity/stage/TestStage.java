@@ -5,9 +5,7 @@ import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.system.GameContext;
 
 public class TestStage extends Stage {
-    public TestStage(GameContext gameContext) {
-        super(gameContext);
-
+    public TestStage() {
         this.getRects().add(new Rectangle(0, 0, 1000, 50));
         this.getRects().add(new Rectangle(-200, 0, 20, 300));
 

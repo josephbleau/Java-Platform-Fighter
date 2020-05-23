@@ -92,7 +92,7 @@ public class AirborneInputHandler extends StateBasedInputHandler {
 
         if(!state.inSubState(State.SUBSTATE_ATTACKING)) {
             if (controller.isPressed(GameInput.NeutralSpecial)) {
-                character.startAttack(new ProjectileAttack(character.getGameContext(), character,-30 , 30));
+                character.startAttack(new ProjectileAttack(character,-30 , 30));
                 return false;
             }
         }

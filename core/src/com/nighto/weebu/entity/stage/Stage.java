@@ -24,8 +24,7 @@ public abstract class Stage extends Entity {
     protected List<Rectangle> ledges;
     protected Color ledgeColor;
 
-    public Stage(GameContext gameContext) {
-        super(gameContext);
+    public Stage() {
         setActive(true);
 
         blastZoneColor = Color.RED;

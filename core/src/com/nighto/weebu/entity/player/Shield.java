@@ -26,9 +26,7 @@ public class Shield extends Entity {
 
     private float size = 1.0f;
 
-    public Shield(GameContext gameContext, Circle circle, Color color) {
-        super(gameContext);
-
+    public Shield(Circle circle, Color color) {
         this.circle = circle;
         this.color = color;
 

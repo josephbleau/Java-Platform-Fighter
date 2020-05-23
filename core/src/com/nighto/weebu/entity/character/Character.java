@@ -18,7 +18,6 @@ import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.events.CollisionEvent;
-import com.nighto.weebu.system.GameContext;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,9 +35,7 @@ public class Character extends Entity {
     protected AnimationDataComponent animationDataComponent;
     protected CharacterDataComponent characterDataComponent;
 
-    public Character(GameContext gameContext) {
-        super(gameContext);
-
+    public Character() {
         animationDataComponent = new AnimationDataComponent();
         stateComponent = new StateComponent();
         characterDataComponent = CharacterAttributesLoader.loadCharacterData();

@@ -16,8 +16,8 @@ public class ProjectileAttack extends Attack {
 
     private float timeToLive = 3;
 
-    public ProjectileAttack(GameContext gameContext, Character owner, float hitBoxOffsetX, float hitBoxOffsetY) {
-        super(gameContext, owner, Collections.singletonList(new Rectangle(hitBoxOffsetX, hitBoxOffsetY, 40, 5)));
+    public ProjectileAttack(Character owner, float hitBoxOffsetX, float hitBoxOffsetY) {
+        super(owner, Collections.singletonList(new Rectangle(hitBoxOffsetX, hitBoxOffsetY, 40, 5)));
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
         startupTime = STARTUP;

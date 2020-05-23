@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public abstract class Entity implements EventListener {
 
-    private final Map<Class<?>, Component> components;
+    private Map<Class<?>, Component> components;
 
     /** Color that the shape is rendered as by default **/
     protected Color defaultColor;
@@ -34,7 +34,7 @@ public abstract class Entity implements EventListener {
     protected ShapeRenderer.ShapeType shapeType = ShapeRenderer.ShapeType.Line;
 
     /** Rectangles representing the shape of the entity **/
-    private final List<Rectangle> rects;
+    private List<Rectangle> rects;
 
     /** Active being set to true means update() will process **/
     private boolean active;
@@ -45,15 +45,14 @@ public abstract class Entity implements EventListener {
     /** Collidable being set to true means that collisions are registered and published **/
     private boolean collidable;
 
-    private final List<EventHandler> eventHandlers;
+    private List<EventHandler> eventHandlers;
 
     private GameContext gameContext;
 
-    public Entity(GameContext gameContext) {
+    public Entity() {
         components = new HashMap<>();
         registerComponent(PhysicalComponent.class, new PhysicalComponent());
 
-        this.rects = new ArrayList<>();
         this.defaultColor = Color.BLACK;
         this.currentColor = this.defaultColor;
 
@@ -62,6 +61,11 @@ public abstract class Entity implements EventListener {
         this.collidable = true;
 
         this.eventHandlers = new ArrayList<>();
+        this.rects = new ArrayList<>();
+    }
+
+    public Entity(GameContext gameContext) {
+        super();
         this.gameContext = gameContext;
     }
 

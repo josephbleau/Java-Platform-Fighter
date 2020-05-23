@@ -121,7 +121,6 @@ public class GroundedInputHandler extends StateBasedInputHandler {
 
                 character.startAttack(
                         new MeleeAttack(
-                                character.getGameContext(),
                                 character,
                                 xOffset,
                                 30,
@@ -144,7 +143,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
 
         if (!state.inSubState(State.SUBSTATE_ATTACKING)) {
             if (controller.isPressed(GameInput.NeutralSpecial)) {
-                character.startAttack(new ProjectileAttack(character.getGameContext(), character, 0, 30));
+                character.startAttack(new ProjectileAttack(character, 0, 30));
                 physical.velocity.x = 0;
             }
         }

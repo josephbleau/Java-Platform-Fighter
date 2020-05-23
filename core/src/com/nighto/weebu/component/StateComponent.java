@@ -8,8 +8,8 @@ public class StateComponent extends Component{
     private State subState;
     private State previousSubState;
 
-    public Boolean inState(State... states) {
-        Boolean isInState = false;
+    public boolean inState(State... states) {
+        boolean isInState = false;
 
         for (State state : states) {
             isInState |= (this.state == state);
@@ -18,8 +18,8 @@ public class StateComponent extends Component{
         return isInState;
     }
 
-    public Boolean inSubState(State... subStates) {
-        Boolean isInSubState = false;
+    public boolean inSubState(State... subStates) {
+        boolean isInSubState = false;
 
         for (State subState : subStates) {
             isInSubState |= (this.subState == subState);
@@ -28,7 +28,7 @@ public class StateComponent extends Component{
         return isInSubState;
     }
 
-    public Boolean inStateAndSubState(State state, State subState) {
+    public boolean inStateAndSubState(State state, State subState) {
         return inState(state) && inSubState(subState);
     }
 
