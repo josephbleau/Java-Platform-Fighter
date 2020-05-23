@@ -7,6 +7,8 @@ import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.event.EventPublisher;
 
+import java.util.Arrays;
+
 /**
  * Responsible for processing all character timers and moving the character to
  * ann appropriate state or taking an appropriate action when they expire.
@@ -16,18 +18,13 @@ import com.nighto.weebu.event.EventPublisher;
  */
 public class CharacterTimerSystem extends System{
     public CharacterTimerSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher);
+        super(gameContext, eventPublisher, Arrays.asList(CharacterDataComponent.class, StateComponent.class));
     }
 
     @Override
     void process(Entity entity) {
         CharacterDataComponent characterData = entity.getComponent(CharacterDataComponent.class);
         StateComponent state = entity.getComponent(StateComponent.class);
-
-        // Required components
-        if (characterData == null || state == null) {
-            return;
-        }
 
         CharacterTimers characterTimers = characterData.getTimers();
         characterTimers.tickTimers(gameContext.getFrameDelta());

@@ -7,6 +7,8 @@ import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.system.inputhandlers.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ public class StateBasedInputSystem extends System {
     private final List<StateBasedInputHandler> stateBasedInputHandlers;
 
     public StateBasedInputSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher);
+        super(gameContext, eventPublisher, Collections.singletonList(ControllerComponent.class));
 
         stateBasedInputHandlers = new ArrayList<>();
 

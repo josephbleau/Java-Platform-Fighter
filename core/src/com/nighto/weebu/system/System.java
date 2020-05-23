@@ -1,17 +1,22 @@
 package com.nighto.weebu.system;
 
+import com.nighto.weebu.component.Component;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.event.EventPublisher;
 
 import java.util.Iterator;
+import java.util.List;
 
 public abstract class System {
     protected final GameContext gameContext;
     protected final EventPublisher eventPublisher;
 
-    protected System(GameContext gameContext, EventPublisher eventPublisher) {
+    protected List<Class<? extends Component>> requiredComponents;
+
+    protected System(GameContext gameContext, EventPublisher eventPublisher, List<Class<? extends Component>> requiredComponents) {
         this.gameContext = gameContext;
         this.eventPublisher = eventPublisher;
+        this.requiredComponents = requiredComponents;
     }
 
     public void process() {
@@ -21,7 +26,16 @@ public abstract class System {
             Entity entity = entityIterator.next();
 
             if (entity.isActive()) {
-                process(entity);
+                boolean componentsPresentAndEnabled = true;
+
+                for (Class requiredComponent : requiredComponents) {
+                    Component component = entity.getComponent(requiredComponent);
+                    componentsPresentAndEnabled &= component != null && component.isEnabled();
+                }
+
+                if (componentsPresentAndEnabled) {
+                    process(entity);
+                }
             }
         }
     }

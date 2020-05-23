@@ -9,6 +9,8 @@ import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.event.EventPublisher;
 
+import java.util.Arrays;
+
 /**
  * Process animated components by updating their scaling, transforms, and events triggered
  * by the animation being currently played.
@@ -18,7 +20,7 @@ import com.nighto.weebu.event.EventPublisher;
  */
 public class AnimationSystem extends System {
     public AnimationSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher);
+        super(gameContext, eventPublisher, Arrays.asList(AnimationDataComponent.class, PhysicalComponent.class, StateComponent.class));
     }
 
     @Override
@@ -26,11 +28,6 @@ public class AnimationSystem extends System {
         AnimationDataComponent animationData = entity.getComponent(AnimationDataComponent.class);
         PhysicalComponent physical = entity.getComponent(PhysicalComponent.class);
         StateComponent state = entity.getComponent(StateComponent.class);
-
-        // Required components
-        if (animationData == null || physical == null || state == null) {
-            return;
-        }
 
         Skeleton skeleton = animationData.skeleton;
         AnimationState animationState = animationData.animationState;

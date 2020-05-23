@@ -9,9 +9,11 @@ import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.player.State;
 import com.nighto.weebu.event.EventPublisher;
 
+import java.util.Arrays;
+
 public class PhysicsSystem extends System {
     public PhysicsSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher);
+        super(gameContext, eventPublisher, Arrays.asList(PhysicalComponent.class, StateComponent.class, ControllerComponent.class, CharacterDataComponent.class));
     }
 
     @Override
@@ -21,22 +23,10 @@ public class PhysicsSystem extends System {
         ControllerComponent controller = entity.getComponent(ControllerComponent.class);
         CharacterDataComponent characterData = entity.getComponent(CharacterDataComponent.class);
 
-        // Required components
-        if (physical == null || state == null || controller == null || characterData == null) {
-            return;
-        }
-
-        // TODO: Contemplate better way to enable that an entity supports certain components. Should it be
-        // TODO: all or nothing, or should systems partially work if one or some of the components are present?
-        // TODO: Should a system needing to interact with multiple components be an indication that the system
-        // TODO: should be broken into multiple components?
-        if (physical != null && physical.isEnabled()) {
+        if (physical.isEnabled()) {
             applyGravity(characterData, physical, state, controller);
             updatePosition(entity);
-
-            if (state != null && state.isEnabled()) {
-                updateDirection(physical, state);
-            }
+            updateDirection(physical, state);
         }
     }
 

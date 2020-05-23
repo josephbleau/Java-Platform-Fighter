@@ -7,13 +7,15 @@ import com.nighto.weebu.component.AnimationDataComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.event.EventPublisher;
 
+import java.util.Collections;
+
 public class RenderingSystem extends System {
     private final OrthographicCamera camera;
     private final SpriteBatch spriteBatch;
     private final SkeletonRenderer skeletonRenderer;
 
     public RenderingSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher);
+        super(gameContext, eventPublisher, Collections.emptyList());
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1920, 1080);

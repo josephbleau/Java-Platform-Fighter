@@ -4,9 +4,11 @@ import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.event.events.DeathEvent;
 
+import java.util.Collections;
+
 public class CollisionSystem extends System {
     public CollisionSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher);
+        super(gameContext, eventPublisher, Collections.emptyList());
     }
 
     @Override
