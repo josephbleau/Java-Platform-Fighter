@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.screen.StageScreen;
+import com.nighto.weebu.system.GameContext;
 import com.nighto.weebu.system.inputhandlers.StateBasedInputHandler;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ public class Player extends Character {
     private Rectangle rect;
     private List<StateBasedInputHandler> stateBasedInputHandlers;
 
-    public Player(StageScreen parentScreen) {
-        super(parentScreen);
+    public Player(StageScreen parentScreen, GameContext gameContext) {
+        super(parentScreen, gameContext);
 
         stateBasedInputHandlers = new ArrayList<>();
 
@@ -24,6 +25,7 @@ public class Player extends Character {
 
         shield = new Shield(
                 getStageScreen(),
+                gameContext,
                 new Circle(10, 30, 30),
                 new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f)
         );

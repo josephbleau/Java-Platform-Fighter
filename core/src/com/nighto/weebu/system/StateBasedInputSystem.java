@@ -3,6 +3,7 @@ package com.nighto.weebu.system;
 import com.nighto.weebu.component.ControllerComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
+import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.system.inputhandlers.*;
 
 import java.util.ArrayList;
@@ -14,11 +15,11 @@ import java.util.List;
  * enter a different state. These decisions are handled by a chain of StateInputHandler classes.
  */
 public class StateBasedInputSystem extends System {
+    private final List<StateBasedInputHandler> stateBasedInputHandlers;
 
-    private static System instance;
-    private List<StateBasedInputHandler> stateBasedInputHandlers;
+    public StateBasedInputSystem(GameContext gameContext, EventPublisher eventPublisher) {
+        super(gameContext, eventPublisher);
 
-    private StateBasedInputSystem() {
         stateBasedInputHandlers = new ArrayList<>();
 
         stateBasedInputHandlers.add(new NoInputInputHandler());
@@ -49,13 +50,5 @@ public class StateBasedInputSystem extends System {
                 }
             }
         }
-    }
-
-    public static System getInstance() {
-        if (instance == null) {
-            instance = new StateBasedInputSystem();
-        }
-
-        return instance;
     }
 }

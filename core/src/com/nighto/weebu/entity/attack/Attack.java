@@ -7,6 +7,7 @@ import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.event.events.Event;
+import com.nighto.weebu.system.GameContext;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,8 +26,8 @@ public class Attack extends Entity {
     private List<Rectangle> hitBoxes;
     private Color hitBoxColor;
 
-    protected Attack(Character owner, List<Rectangle> hitBoxes) {
-        super(owner.getStageScreen());
+    protected Attack(GameContext gameContext, Character owner, List<Rectangle> hitBoxes) {
+        super(owner.getStageScreen(), gameContext);
         setHidden(true);
 
         this.owner = owner;
@@ -52,6 +53,18 @@ public class Attack extends Entity {
 
         if (startupTime == 0) {
             attackTime -= delta;
+        }
+    }
+
+    @Override
+    public void render(ShapeRenderer shapeRenderer) {
+        PhysicalComponent physical = getComponent(PhysicalComponent.class);
+
+        for (Rectangle hitBox : hitBoxes) {
+            shapeRenderer.begin(shapeType);
+            shapeRenderer.setColor(hitBoxColor);
+            shapeRenderer.rect(physical.position.x + hitBox.x, physical.position.y + hitBox.y, hitBox.width, hitBox.height);
+            shapeRenderer.end();
         }
     }
 

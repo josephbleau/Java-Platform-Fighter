@@ -5,10 +5,12 @@ import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.StateComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.player.State;
+import com.nighto.weebu.event.EventPublisher;
 
-public class PositionSystem extends System {
-    private PositionSystem() {}
-    private static System instance;
+public class PhysicsSystem extends System {
+    public PhysicsSystem(GameContext gameContext, EventPublisher eventPublisher) {
+        super(gameContext, eventPublisher);
+    }
 
     @Override
     public void process(Entity entity) {
@@ -20,7 +22,7 @@ public class PositionSystem extends System {
         // TODO: Should a system needing to interact with multiple components be an indication that the system
         // TODO: should be broken into multiple components?
         if (physicalComponent != null && physicalComponent.isEnabled()) {
-            updatePosition(physicalComponent);
+            updatePosition(entity);
 
             if (stateComponent != null && stateComponent.isEnabled()) {
                 updateDirection(physicalComponent, stateComponent);
@@ -28,7 +30,11 @@ public class PositionSystem extends System {
         }
     }
 
-    private void updatePosition(PhysicalComponent physicalComponent) {
+    private void updatePosition(Entity entity) {
+        entity.update(gameContext.getFrameDelta());
+
+        PhysicalComponent physicalComponent = entity.getComponent(PhysicalComponent.class);
+
         physicalComponent.prevPosition = new Vector2(physicalComponent.position);
         physicalComponent.prevVelocity = new Vector2(physicalComponent.velocity);
         physicalComponent.position.add(physicalComponent.velocity);
@@ -42,13 +48,5 @@ public class PositionSystem extends System {
                 physicalComponent.facingRight = false;
             }
         }
-    }
-
-    public static System getInstance() {
-        if (instance == null) {
-            instance = new PositionSystem();
-        }
-
-        return instance;
     }
 }

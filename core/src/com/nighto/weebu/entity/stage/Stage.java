@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.screen.StageScreen;
+import com.nighto.weebu.system.GameContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,9 @@ public abstract class Stage extends Entity {
     protected List<Rectangle> ledges;
     protected Color ledgeColor;
 
-    public Stage(StageScreen stageScreen) {
-        super(stageScreen);
+    public Stage(StageScreen stageScreen, GameContext gameContext) {
+        super(stageScreen, gameContext);
+        setActive(true);
 
         blastZoneColor = Color.RED;
         ledgeColor = Color.BLUE;

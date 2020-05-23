@@ -9,9 +9,11 @@ import com.nighto.weebu.component.Component;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
+import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.event.events.Event;
 import com.nighto.weebu.screen.StageScreen;
+import com.nighto.weebu.system.GameContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +51,9 @@ public class Entity implements EventListener {
     private List<EventHandler> eventHandlers;
 
     private StageScreen stageScreen;
+    private GameContext gameContext;
 
-    public Entity(StageScreen stageScreen) {
+    public Entity(StageScreen stageScreen, GameContext gameContext) {
         components = new HashMap<>();
         registerComponent(PhysicalComponent.class, new PhysicalComponent());
 
@@ -64,6 +67,7 @@ public class Entity implements EventListener {
 
         this.eventHandlers = new ArrayList<>();
         this.stageScreen = stageScreen;
+        this.gameContext = gameContext;
     }
 
     public void render(ShapeRenderer shapeRenderer) {
@@ -187,5 +191,9 @@ public class Entity implements EventListener {
 
     public StageScreen getStageScreen() {
         return stageScreen;
+    }
+
+    public GameContext getGameContext() {
+        return gameContext;
     }
 }

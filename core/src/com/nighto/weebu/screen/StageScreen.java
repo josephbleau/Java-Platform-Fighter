@@ -5,27 +5,18 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.esotericsoftware.spine.SkeletonRenderer;
 import com.nighto.weebu.component.ControllerComponent;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GamecubeController;
-import com.nighto.weebu.controller.NoopGamecubeController;
-import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.player.Player;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.TestStage;
 import com.nighto.weebu.event.EventPublisher;
-import com.nighto.weebu.event.events.DeathEvent;
-import com.nighto.weebu.system.PositionSystem;
 import com.nighto.weebu.system.System;
-import com.nighto.weebu.system.StateBasedInputSystem;
+import com.nighto.weebu.system.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class StageScreen implements Screen {
     final Game game;
@@ -33,17 +24,7 @@ public class StageScreen implements Screen {
     final Player player;
     final Player enemy;
 
-
-    private List<Entity> entities;
-    private List<Entity> entitiesToAdd;
-    private List<Entity> entitiesToRemove;
-
-    private ShapeRenderer shapeRenderer;
-    private OrthographicCamera camera;
-
-    private SpriteBatch spriteBatch;
-    private SkeletonRenderer skeletonRenderer;
-
+    private GameContext gameContext;
     private EventPublisher eventPublisher;
 
     private List<GamecubeController> controllers;
@@ -68,134 +49,56 @@ public class StageScreen implements Screen {
             gamecubeController = controllers.get(0);
         }
 
-        stage = new TestStage(this);
+        stage = new TestStage(this, gameContext);
 
         // TODO: Controller plug/unplug system with dynamic controller registration
-        player = new Player(this);
+        player = new Player(this, gameContext);
         player.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, false)));
 
-        enemy = new Player(this);
+        enemy = new Player(this, gameContext);
         enemy.registerComponent(ControllerComponent.class, new ControllerComponent(new GameController(gamecubeController, false)));
 
-        entities = new ArrayList<>();
-        entitiesToRemove = new ArrayList<>();
-        entitiesToAdd = new ArrayList<>();
-
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1920, 1080);
-        shapeRenderer = new ShapeRenderer();
-        spriteBatch = new SpriteBatch();
-
-        skeletonRenderer = new SkeletonRenderer();
-        skeletonRenderer.setPremultipliedAlpha(true);
-        spriteBatch.setProjectionMatrix(camera.combined);
-
-        entities.add(stage);
-        entities.add(player);
-        entities.add(enemy);
+        gameContext = new GameContext(stage);
+        gameContext.registerEntity(player);
+        gameContext.registerEntity(enemy);
 
         eventPublisher = new EventPublisher();
-        eventPublisher.registerListeners(entities);
+        eventPublisher.registerListeners(gameContext.getEntities());
 
         systems = new ArrayList<>();
-        systems.add(StateBasedInputSystem.getInstance());
-        systems.add(PositionSystem.getInstance());
+        systems.add(new StateBasedInputSystem(gameContext, eventPublisher));
+        systems.add(new PhysicsSystem(gameContext, eventPublisher));
+        systems.add(new CollisionSystem(gameContext, eventPublisher));
+        systems.add(new RenderingSystem(gameContext, eventPublisher));
+        systems.add(new DebugRenderingSystem(gameContext, eventPublisher));
     }
 
-    @Override
-    public void show() {
-
-    }
-
-    /** Primary game loop **/
     @Override
     public void render(float delta) {
-        entities.addAll(entitiesToAdd);
-        entitiesToAdd.clear();
-
-        /* Update Loop: All entities will run their physics calculations here. */
-        for (Entity entity : entities) {
-            entity.update(delta);
-        }
+        gameContext.setFrameDelta(delta);
 
         for (System system : systems) {
-            system.process(entities);
+            system.process();
         }
-
-        /* Outcome Loop: Collisions and interactions will be resolved here. */
-        for (Entity outerEntity : getActiveEntities()) {
-            if (!stage.inBounds(outerEntity)) {
-                DeathEvent deathEvent = new DeathEvent(outerEntity);
-                eventPublisher.publish(deathEvent);
-            }
-
-            for (Entity innerEntity : getActiveEntities()) {
-                if (outerEntity == innerEntity) {
-                    continue;
-                }
-
-                if (innerEntity.isCollidable() && outerEntity.isCollidable()) {
-                    eventPublisher.publish(outerEntity.intersects(innerEntity));
-                }
-            }
-        }
-
-        /* Render Loop **/
-        spriteBatch.setProjectionMatrix(camera.combined);
-        spriteBatch.begin();
-
-        for (Entity entity : getActiveEntities()) {
-            if (entity.getSkeleton() != null) {
-                skeletonRenderer.draw(spriteBatch, entity.getSkeleton());
-            }
-        }
-
-        spriteBatch.end();
-
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        stage.render(shapeRenderer);
-        for (Entity entity : getActiveEntities()) {
-            entity.render(shapeRenderer);
-        }
-
-        // Remove inactive entities
-        entitiesToRemove.forEach(e -> entities.remove(e));
-    }
-
-    public List<Entity> getActiveEntities() {
-        return entities.stream().filter(e->e.isActive()).collect(Collectors.toList());
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
+    public void show() {}
 
     @Override
-    public void pause() {
-
-    }
+    public void resize(int width, int height) {}
 
     @Override
-    public void resume() {
-
-    }
+    public void pause() {}
 
     @Override
-    public void hide() {
-
-    }
+    public void resume() {}
 
     @Override
-    public void dispose() {
+    public void hide() {}
 
-    }
-
-    public void registerEntity(Entity entity) {
-        entitiesToAdd.add(entity);
-    }
-
-    public void removeEntity(Entity entity) { entitiesToRemove.add(entity); }
+    @Override
+    public void dispose() {}
 
     public Stage getStage() {
         return stage;

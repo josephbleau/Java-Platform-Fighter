@@ -3,6 +3,7 @@ package com.nighto.weebu.entity.attack;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.entity.character.Character;
+import com.nighto.weebu.system.GameContext;
 
 import java.util.Collections;
 
@@ -15,9 +16,8 @@ public class ProjectileAttack extends Attack {
 
     private float timeToLive = 3;
 
-    public ProjectileAttack(Character owner, float hitBoxOffsetX, float hitBoxOffsetY) {
-        super(owner, Collections.singletonList(new Rectangle(hitBoxOffsetX, hitBoxOffsetY, 40, 5)));
-
+    public ProjectileAttack(GameContext gameContext, Character owner, float hitBoxOffsetX, float hitBoxOffsetY) {
+        super(gameContext, owner, Collections.singletonList(new Rectangle(hitBoxOffsetX, hitBoxOffsetY, 40, 5)));
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
         startupTime = STARTUP;

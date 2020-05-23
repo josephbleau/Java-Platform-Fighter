@@ -22,6 +22,7 @@ import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.screen.StageScreen;
+import com.nighto.weebu.system.GameContext;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -57,8 +58,8 @@ public class Character extends Entity {
     // Components
     protected StateComponent stateComponent;
 
-    public Character(StageScreen parentScreen) {
-        super(parentScreen);
+    public Character(StageScreen parentScreen, GameContext gameContext) {
+        super(parentScreen, gameContext);
 
         stage = parentScreen.getStage();
 
@@ -247,7 +248,7 @@ public class Character extends Entity {
             attackPlaying = attack.isPlaying();
 
             if (!attack.isActive()) {
-                getStageScreen().removeEntity(attack);
+                getGameContext().removeEntity(attack);
                 attackIterator.remove();
             }
         }
@@ -261,13 +262,14 @@ public class Character extends Entity {
     // TODO: Attack system
     public void enterKnockback(Attack attack) {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+        CharacterDataComponent characterDataComponent = getComponent(CharacterDataComponent.class);
 
         knockbackModifier += attack.getKnockbackModifierIncrease();
 
         physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier/50f);
         physicalComponent.velocity.y = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier/100f);
 
-        characterTimers.setKnockbackTimeRemaining(attack.getKnockbackInduced());
+        characterDataComponent.getTimers().setKnockbackTimeRemaining(attack.getKnockbackInduced());
 
         stateComponent.enterState(State.AIRBORNE);
         stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
@@ -276,8 +278,7 @@ public class Character extends Entity {
     public void startAttack(Attack attack) {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
-        getStageScreen().registerEntity(attack);
-
+        getGameContext().registerEntity(attack);
         attack.spawn(physicalComponent.position.x, physicalComponent.position.y);
 
         if (attack.isPlaying()) {

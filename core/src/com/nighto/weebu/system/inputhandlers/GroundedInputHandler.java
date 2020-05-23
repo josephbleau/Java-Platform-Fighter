@@ -119,15 +119,16 @@ public class GroundedInputHandler extends StateBasedInputHandler {
                 float yImpulse = 20;
                 float knockbackInduced = 10f/60f;
 
-                character.startAttack(
-                        new MeleeAttack(
-                                character,
-                                xOffset,
-                                30,
-                                knockbackInduced,
-                                xImpulse, yImpulse
-                        )
-                );
+                // TODO: Refactor attack spawning
+//                character.startAttack(
+//                        new MeleeAttack(
+//                                character,
+//                                xOffset,
+//                                30,
+//                                knockbackInduced,
+//                                xImpulse, yImpulse
+//                        )
+//                );
 
                 physical.velocity.x = 0;
             }
@@ -143,7 +144,8 @@ public class GroundedInputHandler extends StateBasedInputHandler {
 
         if (!state.inSubState(State.SUBSTATE_ATTACKING)) {
             if (controller.isPressed(GameInput.NeutralSpecial)) {
-                character.startAttack(new ProjectileAttack(character, 0, 30));
+                // TODO: Refactor attack spawning
+//                character.startAttack(new ProjectileAttack(character, 0, 30));
                 physical.velocity.x = 0;
             }
         }
