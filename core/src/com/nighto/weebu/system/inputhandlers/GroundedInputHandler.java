@@ -113,9 +113,9 @@ public class GroundedInputHandler extends StateBasedInputHandler {
             if (controller.isPressed(GameInput.NeutralAttack)) {
                 float xOffsetDirectionMultiplier = (physical.facingRight) ? 1 : -1;
                 float xOffset = 30 * xOffsetDirectionMultiplier;
-                float xImpulse = 20 * xOffsetDirectionMultiplier;
-                float yImpulse = 40;
-                float knockbackInduced = 10f/60f;
+                float xImpulse = 10 * xOffsetDirectionMultiplier;
+                float yImpulse = 10;
+                float knockbackInduced = 3f/60f;
 
                 character.startAttack(
                         new MeleeAttack(

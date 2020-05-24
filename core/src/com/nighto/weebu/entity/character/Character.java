@@ -142,12 +142,12 @@ public class Character extends Entity {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
         CharacterDataComponent characterDataComponent = getComponent(CharacterDataComponent.class);
 
-        float knockbackModifier = characterDataComponent.getActiveAttributes().getKnockbackModifier();
-        characterDataComponent.getActiveAttributes().setKnockbackModifier(knockbackModifier + attack.getKnockbackModifierIncrease());
+        float knockbackModifier = characterDataComponent.getActiveAttributes().getKnockbackModifier() + attack.getKnockbackModifierIncrease();
+        characterDataComponent.getActiveAttributes().setKnockbackModifier(knockbackModifier);
 
         physicalComponent.prevVelocity.x = physicalComponent.velocity.x;
         physicalComponent.prevVelocity.y = physicalComponent.velocity.y;
-        physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier / 100f);
+        physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier / 50f);
         physicalComponent.velocity.y = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier / 100f);
 
         characterDataComponent.getTimers().setKnockbackTimeRemaining(attack.getKnockbackInduced());

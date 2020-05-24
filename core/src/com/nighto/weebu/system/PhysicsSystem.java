@@ -24,7 +24,9 @@ public class PhysicsSystem extends System {
         CharacterDataComponent characterData = entity.getComponent(CharacterDataComponent.class);
 
         if (entity.componentsEnabled(CharacterDataComponent.class, PhysicalComponent.class, StateComponent.class, ControllerComponent.class)) {
-            applyGravity(characterData, physical, state, controller);
+            if (!state.inState(State.STANDING, State.RUNNING, State.CROUCHING) && !state.inSubState(State.SUBSTATE_KNOCKBACK)) {
+                applyGravity(characterData, physical, state, controller);
+            }
         }
 
         if (entity.componentsEnabled(PhysicalComponent.class)) {
@@ -33,6 +35,18 @@ public class PhysicsSystem extends System {
 
         if (entity.componentsEnabled(PhysicalComponent.class, StateComponent.class)) {
             updateDirection(physical, state);
+        }
+
+        if (entity.componentsEnabled(PhysicalComponent.class, StateComponent.class)) {
+            // If a player is actively controlling (holding left or right) then do not apply air friction, velocity
+            // will be limited by air speed in those instances.
+            if (controller == null || !controller.isActivelyControlling()) {
+                if (state.inState(State.AIRBORNE)) {
+                    physical.velocity.x /= characterData.getActiveAttributes().getAirFriction();
+                } else if (state.inState(State.STANDING)) {
+                    physical.velocity.x /= characterData.getActiveAttributes().getGroundFriction();
+                }
+            }
         }
     }
 
@@ -49,16 +63,6 @@ public class PhysicsSystem extends System {
 
         if (physical.velocity.y < 0 && characterData.getActiveAttributes().isFastFalling()) {
             physical.velocity.y = proposedyVel * 2;
-        }
-
-        // If a player is actively controlling (holding left or right) then do not apply air friction, velocity
-        // will be limited by air speed in those instances.
-        if (!controller.isActivelyControlling()) {
-            if (state.inState(State.AIRBORNE)) {
-                physical.velocity.x /= characterData.getActiveAttributes().getAirFriction();
-            } else if (state.inState(State.STANDING)) {
-                physical.velocity.x /= characterData.getActiveAttributes().getGroundFriction();
-            }
         }
     }
 
