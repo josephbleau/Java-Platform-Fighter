@@ -3,38 +3,24 @@ package com.nighto.weebu.entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.esotericsoftware.spine.Skeleton;
-import com.esotericsoftware.spine.SkeletonRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.nighto.weebu.component.Component;
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
 import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.event.events.Event;
-import com.nighto.weebu.screen.StageScreen;
+import com.nighto.weebu.system.GameContext;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Entity is the base object representing all "things" in the game, whether it be a player, a stage, an item, or some
  * other interactive element. It has various properties that affect the way the game interprets, renders, and updates them.
  */
-public class Entity implements EventListener {
+public abstract class Entity implements EventListener {
 
-    /** Current x position **/
-    protected float xPos;
-
-    /** Current y position **/
-    protected float yPos;
-
-    protected float xPrevPos;
-
-    protected float yPrevPos;
-
-    /** Current x velocity **/
-    protected float xVel;
-
-    /** Current y velocity **/
-    protected float yVel;
+    private Map<Class<?>, Component> components;
 
     /** Color that the shape is rendered as by default **/
     protected Color defaultColor;
@@ -58,15 +44,18 @@ public class Entity implements EventListener {
 
     private List<EventHandler> eventHandlers;
 
-    private StageScreen stageScreen;
+    private GameContext gameContext;
 
-    public Entity(StageScreen stageScreen) {
-        this.xPos = 0;
-        this.yPos = 0;
-        this.xPrevPos = 0;
-        this.yPrevPos = 0;
+    private UUID uuid;
+    private String tag;
 
-        this.rects = new ArrayList<>();
+    public Entity() {
+        tag = "Unknown";
+        uuid = UUID.randomUUID();
+
+        components = new HashMap<>();
+        registerComponent(PhysicalComponent.class, new PhysicalComponent());
+
         this.defaultColor = Color.BLACK;
         this.currentColor = this.defaultColor;
 
@@ -75,59 +64,69 @@ public class Entity implements EventListener {
         this.collidable = true;
 
         this.eventHandlers = new ArrayList<>();
-        this.stageScreen = stageScreen;
+        this.rects = new ArrayList<>();
+    }
+
+    public Entity(GameContext gameContext) {
+        super();
+        this.gameContext = gameContext;
     }
 
     public void render(ShapeRenderer shapeRenderer) {
         if (hidden) {
             return;
         }
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
         for (Rectangle rect : rects) {
             shapeRenderer.begin(shapeType);
             shapeRenderer.setColor(currentColor);
-            shapeRenderer.rect(xPos + rect.x, yPos + rect.y, rect.width, rect.height);
+            shapeRenderer.rect(physicalComponent.position.x + rect.x, physicalComponent.position.y + rect.y, rect.width, rect.height);
             shapeRenderer.end();
         }
     }
 
-    public Skeleton getSkeleton() {
-        return null;
+    public void registerComponent(Class<?> componentType, Component component) {
+        components.put(componentType, component);
     }
 
-    public void update(float delta) {
-        if (!active) {
-            return;
+    public <T extends Component> T getComponent(Class<?> componentType) {
+        return (T) components.get(componentType);
+    }
+
+    public boolean componentEnabled(Class<? extends Component> component) {
+        return getComponent(component) != null && getComponent(component).isEnabled();
+    }
+
+    public boolean componentsEnabled(Class<? extends Component>... components ) {
+        boolean enabled = true;
+
+        for (Class<? extends Component> component : components) {
+            enabled &= componentEnabled(component);
         }
 
-        xPrevPos = xPos;
-        yPrevPos = yPos;
-        xPos += xVel;
-        yPos += yVel;
+        return enabled;
     }
 
-    public void spawn(float x, float y) {
-        hidden = false;
-        active = true;
+    public abstract void update(float delta);
 
-        xPrevPos = xPos;
-        yPrevPos = yPos;
-        xPos = x;
-        yPos = y;
-        xVel = 0;
-        yVel = 0;
+    public void teleport(float x, float y) {
+        teleport(x, y, false);
     }
 
     public void teleport(float x, float y, boolean keepVelocity) {
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         if (!keepVelocity) {
-            xVel = 0;
-            yVel = 0;
+            physicalComponent.velocity = new Vector2();
         }
 
-        xPrevPos = xPos;
-        yPrevPos = yPos;
-        xPos = x;
-        yPos = y;
+        physicalComponent.prevPosition.x = physicalComponent.position.x;
+        physicalComponent.prevPosition.y = physicalComponent.position.y;
+        physicalComponent.position.x = x;
+        physicalComponent.position.y = y;
+
+        physicalComponent.wallSlidingOn = null;
     }
 
     @Override
@@ -164,8 +163,11 @@ public class Entity implements EventListener {
     public List<Rectangle> getTranslatedRects() {
         List<Rectangle> translatedRects = new ArrayList<>();
 
+        // TODO: Move to RenderSystem
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         for (Rectangle rect : getRects()) {
-            translatedRects.add(new Rectangle(xPos + rect.x, yPos + rect.y, rect.width, rect.height));
+            translatedRects.add(new Rectangle(physicalComponent.position.x + rect.x, physicalComponent.position.y + rect.y, rect.width, rect.height));
         }
 
         return translatedRects;
@@ -191,49 +193,23 @@ public class Entity implements EventListener {
         this.hidden = hidden;
     }
 
-    public void setxVel(float xVel) {
-        this.xVel = xVel;
+    public GameContext getGameContext() {
+        return gameContext;
     }
 
-    public void setyVel(float yVel) {
-        this.yVel = yVel;
+    public void setGameContext(GameContext gameContext) {
+        this.gameContext = gameContext;
     }
 
-    public float getxPos() {
-        return xPos;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
-    public float getyPos() {
-        return yPos;
+    public String getTag() {
+        return tag;
     }
 
-    public float getxPrevPos() {
-        return xPrevPos;
-    }
-
-    public float getyPrevPos() {
-        return yPrevPos;
-    }
-
-    public float getxVel() {
-        return xVel;
-    }
-
-    public float getyVel() {
-        return yVel;
-    }
-
-    public void setxPos(float xPos) {
-        xPrevPos = xPos;
-        this.xPos = xPos;
-    }
-
-    public void setyPos(float yPos) {
-        yPrevPos = yPos;
-        this.yPos = yPos;
-    }
-
-    public StageScreen getStageScreen() {
-        return stageScreen;
+    public UUID getUuid() {
+        return uuid;
     }
 }

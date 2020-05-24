@@ -11,12 +11,14 @@ public class MeleeAttack extends Attack {
         super(owner, Collections.singletonList(new Rectangle(hitBoxOffsetX, hitBoxOffsetY, 20, 20)));
 
         startupTime = 1f/60f;
-        attackTime = 3f/60f;
+        attackTime = 10f/60f;
 
         this.knockbackInduced = knockbackInduced;
         this.xImpulse = xImpulse;
         this.yImpulse = yImpulse;
-        this.knockbackModifierIncrease = 15;
+        this.knockbackModifierIncrease = 1;
+
+        setTag("Melee Attack");
     }
 
     @Override

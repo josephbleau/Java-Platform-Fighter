@@ -3,20 +3,24 @@ package com.nighto.weebu.entity.character;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
-import com.esotericsoftware.spine.*;
+import com.esotericsoftware.spine.AnimationState;
+import com.esotericsoftware.spine.AnimationStateData;
+import com.esotericsoftware.spine.Skeleton;
+import com.esotericsoftware.spine.SkeletonJson;
+import com.nighto.weebu.component.*;
 import com.nighto.weebu.controller.GameController;
+import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
 import com.nighto.weebu.entity.character.event.CollisionEventHandler;
 import com.nighto.weebu.entity.character.event.DeathhEventHandler;
-import com.nighto.weebu.entity.player.Shield;
-import com.nighto.weebu.entity.player.State;
+import com.nighto.weebu.entity.character.loader.CharacterAttributesLoader;
+import com.nighto.weebu.entity.shield.Shield;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.events.CollisionEvent;
-import com.nighto.weebu.screen.StageScreen;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,206 +28,90 @@ import java.util.List;
 
 public class Character extends Entity {
 
-    protected CharacterData characterData;
-    protected CharacterTimers characterTimers;
     protected GameController gameController;
 
-    protected int jumpCount = 0;
-    protected float knockbackModifier = 0;
+    protected final List<Attack> attacks;
+    protected final Shield shield;
 
-    protected float width;
-    protected float height;
-    protected boolean fastFalling;
-    protected boolean activeControl;
+    // Components
+    protected StateComponent stateComponent;
+    protected AnimationDataComponent animationDataComponent;
+    protected CharacterDataComponent characterDataComponent;
+    protected ControllerComponent controllerComponent;
 
-    protected Shield shield;
-    protected Stage stage;
+    public Character() {
+        shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
+        attacks = new ArrayList<>();
 
-    protected State state;
-    protected State subState;
-    protected State prevState;
-    protected State prevSubstate;
+        animationDataComponent = new AnimationDataComponent();
+        stateComponent = new StateComponent();
+        characterDataComponent = CharacterAttributesLoader.loadCharacterData();
+        controllerComponent =  new ControllerComponent(new GameController(new NoopGamecubeController(), false));
 
-    protected Color sidestepColor;
+        animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
+        animationDataComponent.skeletonJson = new SkeletonJson(animationDataComponent.textureAtlas);
+        animationDataComponent.skeletonData = animationDataComponent.skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/sunflower/skeleton.json"));
+        animationDataComponent.skeletonData.setFps(60);
+        animationDataComponent.animationStateData = new AnimationStateData(animationDataComponent.skeletonData);
+        animationDataComponent.skeleton = new Skeleton(animationDataComponent.skeletonData);
+        animationDataComponent.skeleton.setScale(.2f, .2f);
+        animationDataComponent.animationState = new AnimationState(animationDataComponent.animationStateData);
+        animationDataComponent.animationState.setAnimation(0, "idle", true);
 
-    protected boolean facingRight = true;
-
-    protected List<Attack> attacks = new ArrayList<>();
-
-    protected TextureAtlas textureAtlas;
-    protected SkeletonJson skeletonJson;
-    protected SkeletonData skeletonData;
-    protected AnimationStateData animationStateData;
-    protected Skeleton skeleton;
-    protected AnimationState animationState;
-
-    public Character(StageScreen parentScreen) {
-        super(parentScreen);
-
-        this.stage = parentScreen.getStage();
-
-        characterData = CharacterLoader.loadCharacterData();
-        characterTimers = new CharacterTimers(characterData);
-
-        textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
-        skeletonJson = new SkeletonJson(textureAtlas);
-        skeletonData = skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/sunflower/skeleton.json"));
-        skeletonData.setFps(60);
-        animationStateData = new AnimationStateData(skeletonData);
-
-        sidestepColor = Color.LIGHT_GRAY;
-
-        width = getCharacterData().getHurtboxes().get(State.DEFAULT).width;
-        height = getCharacterData().getHurtboxes().get(State.DEFAULT).height;
+        registerComponent(CharacterDataComponent.class, characterDataComponent);
+        registerComponent(StateComponent.class, stateComponent);
+        registerComponent(ControllerComponent.class, new ControllerComponent(gameController));
+        registerComponent(AnimationDataComponent.class, animationDataComponent);
+        registerComponent(ControllerComponent.class, controllerComponent);
 
         registerEventHandler(new CollisionEventHandler(this));
         registerEventHandler(new DeathhEventHandler(this));
 
-        enterState(State.DEFAULT);
-        enterSubstate(State.SUBSTATE_DEFAULT);
+        // TODO: Stage spawn locations
+        teleport(1920/2, 400);
 
-        skeleton = new Skeleton(skeletonData);
-        skeleton.setScale(.2f, .2f);
+        // TODO: Hurtboxes need to be formalized (part of spine?)
+        ((StateComponent) getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+        Rectangle boundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).boundingBox;
+        Rectangle prevBoundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).prevBoundingBox;
 
-        animationState = new AnimationState(animationStateData);
-        animationState.setAnimation(0, "idle", true);
+        boundingBox.width = 20;
+        boundingBox.height = 150;
+        prevBoundingBox.width = 20;
+        prevBoundingBox.height = 150;
 
-        state = State.AIRBORNE;
+        getRects().add(boundingBox);
     }
-
-    private int x = 0;
 
     @Override
     public void update(float delta) {
-
-        skeleton.setX(Math.round(xPos));
-        skeleton.setY(Math.round(yPos));
-
-        skeleton.updateWorldTransform();
-
-        if (getFacingRight()) {
-            skeleton.setScale(0.2f, skeleton.getScaleY());
-        } else {
-            skeleton.setScale(-0.2f, skeleton.getScaleY());
-        }
-
-        if (inState(State.CROUCHING)) {
-            skeleton.setScale(skeleton.getScaleX(), .2f/1.5f);
-        } else {
-            skeleton.setScale(skeleton.getScaleX(), .2f);
-        }
-
-        updateGravity(delta);
-        updateTimers(delta);
         updateAttacks(delta);
-        updateDirection(delta);
-
-        animationState.update(delta);
-        animationState.apply(skeleton);
-
-        shield.update(delta);
-
-        super.update(delta);
-    }
-
-    @Override
-    public void render(ShapeRenderer shapeRenderer) {
-        super.render(shapeRenderer);
-
-        if (inState(State.SIDESTEPPING)) {
-            currentColor = sidestepColor;
-        } else {
-            currentColor = defaultColor;
-        }
-
-        if (inState(State.SHIELDING)) {
-            shield.setActive(true);
-        } else {
-            shield.setActive(false);
-        }
-
-        shield.render(shapeRenderer);
-
-        attacks.forEach(attack -> attack.render(shapeRenderer));
-    }
-
-    @Override
-    public Skeleton getSkeleton() {
-        return skeleton;
+        updateShield(delta);
     }
 
     @Override
     public List<CollisionEvent> intersects(Entity otherEntity) {
-        List<CollisionEvent> shieldCollision = shield.intersects(otherEntity);
+        List<CollisionEvent> collisionEvents = shield.intersects(otherEntity);
+        collisionEvents.addAll(super.intersects(otherEntity));
 
-        if (shieldCollision != null) {
-            return shieldCollision;
-        }
-
-        return super.intersects(otherEntity);
+        return collisionEvents;
     }
 
     @Override
-    public void spawn(float x, float y) {
-        super.spawn(x, y);
+    public void teleport(float x, float y) {
+        super.teleport(x, y);
 
-        knockbackModifier = 0;
-        characterTimers.resetTimers();
+        CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
+        characterData.getTimers().resetTimers();
     }
 
-    private void updateGravity(float delta) {
-        float proposedyVel = Math.max(characterData.getAttributes().fallSpeed, yVel - stage.getGravity());
+    public void updateShield(float delta) {
+        shield.update(delta);
 
-        if (yVel > characterData.getAttributes().fallSpeed) {
-            yVel = proposedyVel;
-        }
-
-        if (inState(State.WALLSLIDING)) {
-            yVel = proposedyVel/3;
-        }
-
-        if (yVel < 0 && fastFalling) {
-            yVel = proposedyVel * 2;
-        }
-
-        if (!activeControl) {
-                if (inState(State.AIRBORNE)) {
-                    xVel /= getCharacterData().getAttributes().getAirFriction();
-                } else if (inState(State.STANDING)) {
-                    xVel /= getCharacterData().getAttributes().getGroundFriction();
-                }
-        }
-    }
-
-    private void updateTimers(float delta) {
-        characterTimers.tickTimers(delta);
-
-        if (state == State.JUMPSQUAT) {
-            if (characterTimers.getJumpSquatTimeRemaining() <= 0) {
-                characterTimers.resetTimers();
-                enterState(State.EXIT_JUMPSQUAT);
-            }
-        }
-
-        if (state == State.SIDESTEPPING) {
-            if (characterTimers.getSidestepTimeRemaining() <= 0) {
-                characterTimers.resetTimers();
-
-                currentColor = defaultColor;
-
-                enterState(prevState);
-
-                if (inState(State.SHIELDING)) {
-                    enterState(State.STANDING);
-                }
-            }
-        }
-
-        if (subState == State.SUBSTATE_KNOCKBACK) {
-            if (characterTimers.getKnockbackTimeRemaining() <= 0) {
-                characterTimers.resetTimers();
-                enterSubstate(State.DEFAULT);
-            }
+        if (stateComponent.inState(State.SHIELDING)) {
+            shield.setActive(true);
+        } else {
+            shield.setActive(false);
         }
     }
 
@@ -238,149 +126,70 @@ public class Character extends Entity {
             attackPlaying = attack.isPlaying();
 
             if (!attack.isActive()) {
-                getStageScreen().removeEntity(attack);
+                getGameContext().removeEntity(attack);
                 attackIterator.remove();
             }
         }
 
-        if (!attackPlaying && inSubState(State.SUBSTATE_ATTACKING)) {
-            enterSubstate(State.SUBSTATE_DEFAULT);
+        if (!attackPlaying && stateComponent.inSubState(State.SUBSTATE_ATTACKING)) {
+            stateComponent.enterSubState(State.SUBSTATE_DEFAULT);
         }
     }
 
-    private void updateDirection(float delta) {
-        if (!inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
-            if (xVel > 0) {
-                facingRight = true;
-            } else if (xVel < 0) {
-                facingRight = false;
-            }
-        }
-    }
-
-    public void handleInput() {}
-
-    public void enterState(State newState) {
-        prevState = state;
-        state = newState;
-    }
-
-    public void enterSubstate(State newSubstate) {
-        prevSubstate = subState;
-        subState = newSubstate;
-    }
-
-    public boolean inState(State ... states) {
-        boolean outcome = false;
-
-        for (State checkingState : states) {
-            outcome |= state == checkingState;
-        }
-
-        return outcome;
-    }
-
-    public boolean inSubState(State... substates) {
-        for(State checkingState : substates) {
-            if (subState.equals(checkingState)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    // TODO: Attack system
     public void enterKnockback(Attack attack) {
-        knockbackModifier += attack.getKnockbackModifierIncrease();
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+        CharacterDataComponent characterDataComponent = getComponent(CharacterDataComponent.class);
 
-        xVel = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier/50f);
-        yVel = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier/100f);
+        float knockbackModifier = characterDataComponent.getActiveAttributes().getKnockbackModifier();
+        characterDataComponent.getActiveAttributes().setKnockbackModifier(knockbackModifier + attack.getKnockbackModifierIncrease());
 
-        characterTimers.setKnockbackTimeRemaining(attack.getKnockbackInduced());
+        physicalComponent.prevVelocity.x = physicalComponent.velocity.x;
+        physicalComponent.prevVelocity.y = physicalComponent.velocity.y;
+        physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier / 100f);
+        physicalComponent.velocity.y = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier / 100f);
 
-        enterState(State.AIRBORNE);
-        enterSubstate(State.SUBSTATE_KNOCKBACK);
+        characterDataComponent.getTimers().setKnockbackTimeRemaining(attack.getKnockbackInduced());
+
+        stateComponent.enterState(State.AIRBORNE);
+        stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
     }
 
     public void startAttack(Attack attack) {
-        getStageScreen().registerEntity(attack);
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
-        attack.spawn(xPos, yPos);
+        getGameContext().registerEntity(attack);
+        attack.teleport(physicalComponent.position.x, physicalComponent.position.y, true);
 
         if (attack.isPlaying()) {
-            enterSubstate(State.SUBSTATE_ATTACKING);
+            stateComponent.enterSubState(State.SUBSTATE_ATTACKING);
         }
 
         attacks.add(attack);
     }
 
+    public void startShielding() {
+        PhysicalComponent physical = getComponent(PhysicalComponent.class);
+        getGameContext().registerEntity(shield);
+        shield.teleport(physical.position.x, physical.position.y);
+    }
+
     public void snapToLedge(Ledge ledge) {
-        enterState(State.HANGING);
+        stateComponent.enterState(State.HANGING);
 
         Rectangle playerRect = getRects().get(0);
-        jumpCount = 0;
+        characterDataComponent.getActiveAttributes().setNumberOfJumps(characterDataComponent.getInitialAttributes().getNumberOfJumps());
 
         if (ledge.hangLeft) {
-            subState = State.SUBSTATE_HANGING_LEFT;
+            stateComponent.enterSubState(State.SUBSTATE_HANGING_LEFT);
             teleport(ledge.x - playerRect.width + ledge.width, ledge.y + ledge.height - playerRect.height, false);
         } else {
-            subState = State.SUBSTATE_HANGING_RIGHT;
+            stateComponent.enterSubState(State.SUBSTATE_HANGING_RIGHT);
             teleport(ledge.x, ledge.y + ledge.height - playerRect.height, false);
         }
     }
 
-    public CharacterData getCharacterData() {
-        return characterData;
-    }
-
-    public void resetTimers() {
-        characterTimers.resetTimers();
-    }
-
-    public boolean getFacingRight() {
-        return facingRight;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public State getSubState() {
-        return subState;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public int getJumpCount() {
-        return jumpCount;
-    }
-
-    public void setJumpCount(int jumpCount) {
-        this.jumpCount = jumpCount;
-    }
-
     public Stage getStage() {
-        return stage;
-    }
-
-    public GameController getGameController() {
-        return gameController;
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public void setFastFalling(boolean fastFalling) {
-        this.fastFalling = fastFalling;
-    }
-
-    public boolean isFastFalling() {
-        return fastFalling;
-    }
-
-    public void setActiveControl(boolean activeControl) {
-        this.activeControl = activeControl;
+        return getGameContext().getStage();
     }
 }

@@ -3,6 +3,7 @@ package com.nighto.weebu.entity.attack;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.event.events.Event;
@@ -25,7 +26,6 @@ public class Attack extends Entity {
     private Color hitBoxColor;
 
     protected Attack(Character owner, List<Rectangle> hitBoxes) {
-        super(owner.getStageScreen());
         setHidden(true);
 
         this.owner = owner;
@@ -36,8 +36,6 @@ public class Attack extends Entity {
 
     @Override
     public void update(float delta) {
-        super.update(delta);
-
         if (startupTime > 0) {
             startupTime -= delta;
 
@@ -56,10 +54,12 @@ public class Attack extends Entity {
 
     @Override
     public void render(ShapeRenderer shapeRenderer) {
+        PhysicalComponent physical = getComponent(PhysicalComponent.class);
+
         for (Rectangle hitBox : hitBoxes) {
             shapeRenderer.begin(shapeType);
             shapeRenderer.setColor(hitBoxColor);
-            shapeRenderer.rect(xPos + hitBox.x, yPos + hitBox.y, hitBox.width, hitBox.height);
+            shapeRenderer.rect(physical.position.x + hitBox.x, physical.position.y + hitBox.y, hitBox.width, hitBox.height);
             shapeRenderer.end();
         }
     }
@@ -75,15 +75,8 @@ public class Attack extends Entity {
     }
 
     @Override
-    public void spawn(float x, float y) {
-        // Keep velocity across spawns for attacks (this is a temp fix for lasers until I can refactor this)
-        float xVel = getxVel();
-        float yVel = getyVel();
-
-        super.spawn(x, y);
-
-        setxVel(xVel);
-        setyVel(yVel);
+    public void teleport(float x, float y) {
+        teleport(x, y, true);
     }
 
     public boolean isPlaying() {
@@ -91,8 +84,10 @@ public class Attack extends Entity {
     }
 
     public List<Rectangle> getHitBoxes() {
+        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
+
         // Translated by position
-        return hitBoxes.stream().map(r -> new Rectangle(r.x + xPos, r.y + yPos, r.width, r.height)).collect(Collectors.toList());
+        return hitBoxes.stream().map(r -> new Rectangle(r.x + physicalComponent.position.x, r.y + physicalComponent.position.y, r.width, r.height)).collect(Collectors.toList());
     }
 
     public float getKnockbackInduced() {
