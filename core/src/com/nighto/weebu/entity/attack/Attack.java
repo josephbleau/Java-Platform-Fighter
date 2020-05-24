@@ -7,7 +7,6 @@ import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.event.events.Event;
-import com.nighto.weebu.system.GameContext;
 
 import java.util.List;
 import java.util.stream.Collectors;

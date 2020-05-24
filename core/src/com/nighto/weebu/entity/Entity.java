@@ -91,6 +91,20 @@ public abstract class Entity implements EventListener {
         return (T) components.get(componentType);
     }
 
+    public boolean componentEnabled(Class<? extends Component> component) {
+        return getComponent(component) != null && getComponent(component).isEnabled();
+    }
+
+    public boolean componentsEnabled(Class<? extends Component>... components ) {
+        boolean enabled = true;
+
+        for (Class<? extends Component> component : components) {
+            enabled &= componentEnabled(component);
+        }
+
+        return enabled;
+    }
+
     public abstract void update(float delta);
 
     public void teleport(float x, float y) {

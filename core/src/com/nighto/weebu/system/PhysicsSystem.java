@@ -9,11 +9,11 @@ import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.event.EventPublisher;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 public class PhysicsSystem extends System {
     public PhysicsSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher, Arrays.asList(PhysicalComponent.class, StateComponent.class, ControllerComponent.class, CharacterDataComponent.class));
+        super(gameContext, eventPublisher, Collections.singletonList(PhysicalComponent.class));
     }
 
     @Override
@@ -23,9 +23,15 @@ public class PhysicsSystem extends System {
         ControllerComponent controller = entity.getComponent(ControllerComponent.class);
         CharacterDataComponent characterData = entity.getComponent(CharacterDataComponent.class);
 
-        if (physical.isEnabled()) {
+        if (entity.componentsEnabled(CharacterDataComponent.class, PhysicalComponent.class, StateComponent.class, ControllerComponent.class)) {
             applyGravity(characterData, physical, state, controller);
+        }
+
+        if (entity.componentsEnabled(PhysicalComponent.class)) {
             updatePosition(entity);
+        }
+
+        if (entity.componentsEnabled(PhysicalComponent.class, StateComponent.class)) {
             updateDirection(physical, state);
         }
     }

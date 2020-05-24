@@ -22,7 +22,8 @@ public class ProjectileAttack extends Attack {
 
         startupTime = STARTUP;
         attackTime = ANIMATION_TIME;
-        physicalComponent.velocity.x = physicalComponent.facingRight ? SPEED : -SPEED;
+
+        physicalComponent.velocity.x = ((PhysicalComponent)owner.getComponent(PhysicalComponent.class)).facingRight ? SPEED : -SPEED;
 
         getRects().addAll(getHitBoxes());
     }
