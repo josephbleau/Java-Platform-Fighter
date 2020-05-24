@@ -100,6 +100,7 @@ public class Character extends Entity {
     @Override
     public void teleport(float x, float y) {
         super.teleport(x, y);
+
         CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
         characterData.getTimers().resetTimers();
     }

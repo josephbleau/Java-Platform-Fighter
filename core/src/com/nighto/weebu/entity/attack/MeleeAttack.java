@@ -3,7 +3,6 @@ package com.nighto.weebu.entity.attack;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.system.GameContext;
 
 import java.util.Collections;
 

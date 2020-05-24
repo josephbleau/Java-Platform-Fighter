@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.event.events.CollisionEvent;
-import com.nighto.weebu.system.GameContext;
 
 import java.util.ArrayList;
 import java.util.List;

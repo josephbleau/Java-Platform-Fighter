@@ -112,18 +112,18 @@ public class CollisionEventHandler implements EventHandler {
                 physical.position.y = stageRect.y - r1.height;
 
                 state.enterState(State.AIRBORNE);
-            }
-            else if (collidedFromRight(r1, pr1, stageRect)) {
+            } else if (collidedFromRight(r1, pr1, stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
                 if (falling && (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard))) {
                     state.enterState(State.WALLSLIDING, State.SUBSTATE_WALLSLIDING_LEFT);
                 } else {
-                    state.enterState(State.AIRBORNE);
+                    state.inState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
                 }
 
                 physical.velocity.x = 0;
                 physical.position.x = (stageRect.x + stageRect.width);
+                physical.wallSlidingOn = stageRect;
             } else if (collidedFromLeft(r1, pr1, stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
@@ -137,10 +137,11 @@ public class CollisionEventHandler implements EventHandler {
                     state.enterState(State.WALLSLIDING);
                     state.enterSubState(State.SUBSTATE_WALLSLIDING_RIGHT);
                 } else {
-                    state.inState(State.AIRBORNE);
+                    state.inState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
                 }
 
                 physical.velocity.x = 0;
+                physical.wallSlidingOn = stageRect;
             }
         }
 

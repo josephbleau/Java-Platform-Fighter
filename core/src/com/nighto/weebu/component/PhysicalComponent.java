@@ -12,6 +12,8 @@ public class PhysicalComponent extends Component {
     public Rectangle boundingBox;
     public Rectangle prevBoundingBox;
 
+    public Rectangle wallSlidingOn;
+
     public boolean facingRight;
 
     public PhysicalComponent() {

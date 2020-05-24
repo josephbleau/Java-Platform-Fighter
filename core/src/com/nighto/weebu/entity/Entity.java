@@ -125,6 +125,8 @@ public abstract class Entity implements EventListener {
         physicalComponent.prevPosition.y = physicalComponent.position.y;
         physicalComponent.position.x = x;
         physicalComponent.position.y = y;
+
+        physicalComponent.wallSlidingOn = null;
     }
 
     @Override
