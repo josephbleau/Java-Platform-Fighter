@@ -113,7 +113,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
             if (controller.isPressed(GameInput.NeutralAttack)) {
                 float xOffsetDirectionMultiplier = (physical.facingRight) ? 1 : -1;
                 float xOffset = 30 * xOffsetDirectionMultiplier;
-                float xImpulse = 5 * xOffsetDirectionMultiplier;
+                float xImpulse = 20 * xOffsetDirectionMultiplier;
                 float yImpulse = 40;
                 float knockbackInduced = 10f/60f;
 

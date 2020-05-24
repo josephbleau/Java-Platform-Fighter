@@ -67,13 +67,20 @@ public class Character extends Entity {
         registerEventHandler(new CollisionEventHandler(this));
         registerEventHandler(new DeathhEventHandler(this));
 
-        ((StateComponent) getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
-
         // TODO: Stage spawn locations
         teleport(1920/2, 400);
 
         // TODO: Hurtboxes need to be formalized (part of spine?)
-        getRects().add(new Rectangle(0, 0, 20, 60));
+        ((StateComponent) getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+        Rectangle boundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).boundingBox;
+        Rectangle prevBoundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).prevBoundingBox;
+
+        boundingBox.width = 20;
+        boundingBox.height = 60;
+        prevBoundingBox.width = 20;
+        prevBoundingBox.height = 60;
+
+        getRects().add(boundingBox);
     }
 
     @Override

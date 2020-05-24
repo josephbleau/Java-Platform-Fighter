@@ -18,8 +18,6 @@ import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.event.events.Event;
 
-import java.util.Set;
-
 public class CollisionEventHandler implements EventHandler {
     private Character character;
 
@@ -59,75 +57,123 @@ public class CollisionEventHandler implements EventHandler {
         Gdx.app.debug("Collision", collisionEvent.entity1.getTag() + " collided with " + collisionEvent.entity2.getTag());
 
         // TODO: Refactor differing types of collision into their own handlers
-        if (them == character.getStage()) {
-            PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
-            CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
-            StateComponent state = character.getComponent(StateComponent.class);
-            ControllerComponent controller = character.getComponent(ControllerComponent.class);
+        if (us != null) {
+            if (them instanceof Stage) {
+                handleCollisionWithStage(us, (Stage) them, theirShape);
+            }
 
-            /* Determine which direction we were heading so that we can set our position correctly. */
-            boolean falling = physical.velocity.y < 0;
-            Rectangle stageRect = ((Rectangle)theirShape);
+            if (them instanceof Attack) {
+                Attack attack = (Attack) them;
+                Character character = (Character) us;
 
-            /* Reset our x/y to be the x/y of the top of the rect that we collided with (so x, y+height) */
-            if (falling && physical.prevPosition.y >= stageRect.y + stageRect.height && physical.position.y <= stageRect.y + stageRect.height && character.getStage().isGround(stageRect)) {
+                if (!attack.getOwner().equals(character)) {
+                    Gdx.app.debug("Attack", character.getTag() + " was struck by an attack.");
+                    character.enterKnockback(attack);
+                }
+            }
+        }
+    }
+
+    private void handleCollisionWithStage(Entity entity, Stage stage, Shape2D stageShape) {
+        PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
+        CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
+        StateComponent state = character.getComponent(StateComponent.class);
+        ControllerComponent controller = character.getComponent(ControllerComponent.class);
+
+        /* Determine which direction we were heading so that we can set our position correctly. */
+        boolean falling = physical.velocity.y < 0;
+
+        Rectangle r1 = new Rectangle(physical.position.x, physical.position.y, physical.boundingBox.width, physical.boundingBox.height);
+        Rectangle pr1 = new Rectangle(physical.prevPosition.x, physical.prevPosition.y, physical.prevBoundingBox.width, physical.prevBoundingBox.height);
+
+        Rectangle stageRect = ((Rectangle) stageShape);
+
+        /* Collide with the stage from the top */
+        if (stage.isGround(stageShape)) {
+            if (collidedFromTop(r1, pr1, stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " landed on the stage.");
 
+                physical.prevPosition.y = physical.position.y;
                 physical.position.y = (stageRect.y + stageRect.height);
+
                 characterData.getActiveAttributes().setNumberOfJumps(characterData.getInitialAttributes().getNumberOfJumps());
 
                 if (state.inState(State.AIRBORNE)) {
                     state.enterState(State.STANDING);
                     state.enterSubState(State.SUBSTATE_DEFAULT);
                 }
+            }
 
-                physical.velocity.y = 0;
-            } else if (falling && theirShape instanceof Ledge && character.getStage().isLedge((Ledge) theirShape)){
-                Gdx.app.debug("Collision", character.getTag() + " snapped to a ledge.");
-                character.snapToLedge((Ledge) theirShape);
-            } else {
-                if (physical.velocity.x < 0) {
-                    Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
+            if (collidedFromRight(r1, pr1, stageRect)) {
+                Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
-                    if(falling && (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard))) {
-                        state.enterState(State.WALLSLIDING);
-                        state.enterSubState(State.SUBSTATE_WALLSLIDING_LEFT);
-                    } else {
-                        state.inState(State.AIRBORNE);
-                        state.inState(State.SUBSTATE_DEFAULT);
-                    }
+                if (falling && (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard))) {
+                    state.enterState(State.WALLSLIDING);
+                    state.enterSubState(State.SUBSTATE_WALLSLIDING_LEFT);
+                } else {
+                    state.inState(State.AIRBORNE);
+                    state.inState(State.SUBSTATE_DEFAULT);
+                }
 
-                    physical.position.x = (stageRect.x + stageRect.width);
-                } else if (physical.velocity.x > 0) {
-                    Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
+                physical.velocity.x = 0;
+                physical.position.x = (stageRect.x + stageRect.width);
+            } else if (collidedFromLeft(r1, pr1, stageRect)) {
+                Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
-                    // Move character out of the wall
-                    float characterWidth = 20;
-                    float difference = Math.abs((physical.position.x + characterWidth) - stageRect.x);
+                // Move character out of the wall
+                float characterWidth = physical.boundingBox.width;
+                float difference = Math.abs((physical.position.x + characterWidth) - stageRect.x);
 
-                    physical.position.x -= difference;
+                physical.position.x -= difference;
 
-                    if(falling && (controller.isPressed(GameInput.ControlRightLight) || controller.isPressed(GameInput.ControlRightHard))) {
-                        state.enterState(State.WALLSLIDING);
-                        state.enterSubState(State.SUBSTATE_WALLSLIDING_RIGHT);
-                    } else {
-                        state.inState(State.AIRBORNE);
-                        state.inState(State.SUBSTATE_DEFAULT);
-                    }
+                if (falling && (controller.isPressed(GameInput.ControlRightLight) || controller.isPressed(GameInput.ControlRightHard))) {
+                    state.enterState(State.WALLSLIDING);
+                    state.enterSubState(State.SUBSTATE_WALLSLIDING_RIGHT);
+                } else {
+                    state.inState(State.AIRBORNE);
+                    state.inState(State.SUBSTATE_DEFAULT);
                 }
 
                 physical.velocity.x = 0;
             }
         }
 
-        if (them instanceof Attack) {
-            Attack attack = (Attack) them;
-            Character character = (Character) us;
-
-            if (!attack.getOwner().equals(character)) {
-                Gdx.app.debug("Attack", character.getTag() + " was struck by an attack.");
-                character.enterKnockback(attack);
-            }
+        if (stage.isLedge(stageShape) && falling) {
+            Gdx.app.debug("Collision", character.getTag() + " snapped to a ledge.");
+            character.snapToLedge((Ledge) stageShape);
         }
+    }
+
+    private boolean collidedFromLeft(Rectangle r1, Rectangle pr1, Rectangle r2) {
+        float leftSide = r2.x;
+
+        return
+                /* Was */ pr1.x + pr1.width <= leftSide &&
+                /* Now */ r1.x + r1.width > leftSide;
+    }
+
+    private boolean collidedFromRight(Rectangle r1, Rectangle pr1, Rectangle r2) {
+        float rightSide = r2.x + r2.width;
+
+        return
+                /* Was */ pr1.x >= rightSide &&
+                /* Now */ r1.x < rightSide;
+    }
+
+    private boolean collidedFromTop(Rectangle r1, Rectangle pr1, Rectangle r2) {
+        float top = r2.y + r2.height;
+
+        return
+                /* Was */ pr1.y >= top &&
+                /* Now */ r1.y < top;
+
+    }
+
+    private boolean collidedFromBottom(Rectangle r1, Rectangle pr1, Rectangle r2) {
+        float bottom = r2.y;
+
+        return
+                /* Was */ pr1.y + pr1.height <= bottom &&
+                /* Now */ r1.y + r1.height > bottom;
     }
 }

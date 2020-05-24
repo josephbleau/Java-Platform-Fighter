@@ -3,9 +3,8 @@ package com.nighto.weebu.entity.stage;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.entity.Entity;
-import com.nighto.weebu.entity.stage.parts.Ledge;
-import com.nighto.weebu.system.GameContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +71,7 @@ public abstract class Stage extends Entity {
         return false;
     }
 
-    public boolean isGround(Rectangle rect) {
+    public boolean isGround(Shape2D rect) {
         for (Rectangle rectangle : getTranslatedRects()) {
             if (rect.equals(rectangle)) {
                 return true;
@@ -82,7 +81,7 @@ public abstract class Stage extends Entity {
         return false;
     }
 
-    public boolean isLedge(Ledge ledge) {
+    public boolean isLedge(Shape2D ledge) {
         for (Rectangle rectangle : ledges) {
             if (ledge.equals(rectangle)) {
                 return true;
