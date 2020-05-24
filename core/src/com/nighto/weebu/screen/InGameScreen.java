@@ -1,7 +1,6 @@
 package com.nighto.weebu.screen;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
@@ -24,11 +23,15 @@ public class InGameScreen implements Screen {
 
     public InGameScreen() {
         Character player = new Character();
+        player.setTag("Player");
         registerControllerForPlayer(player);
+
+        Character computer = new Character();
+        computer.setTag("Computer");
 
         gameContext = new GameContext();
         gameContext.registerEntity(player);
-        gameContext.registerEntity(new Character());
+        gameContext.registerEntity(computer);
         gameContext.registerStage(new TestStage());
 
         EventPublisher eventPublisher = new EventPublisher();

@@ -84,13 +84,10 @@ public class Character extends Entity {
 
     @Override
     public List<CollisionEvent> intersects(Entity otherEntity) {
-        List<CollisionEvent> shieldCollision = shield.intersects(otherEntity);
+        List<CollisionEvent> collisionEvents = shield.intersects(otherEntity);
+        collisionEvents.addAll(super.intersects(otherEntity));
 
-        if (shieldCollision != null) {
-            return shieldCollision;
-        }
-
-        return super.intersects(otherEntity);
+        return collisionEvents;
     }
 
     @Override

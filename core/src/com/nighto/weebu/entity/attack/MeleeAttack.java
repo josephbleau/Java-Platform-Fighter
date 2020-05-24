@@ -17,7 +17,9 @@ public class MeleeAttack extends Attack {
         this.knockbackInduced = knockbackInduced;
         this.xImpulse = xImpulse;
         this.yImpulse = yImpulse;
-        this.knockbackModifierIncrease = 15;
+        this.knockbackModifierIncrease = 1;
+
+        setTag("Melee Attack");
     }
 
     @Override

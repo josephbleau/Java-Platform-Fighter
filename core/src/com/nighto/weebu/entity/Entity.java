@@ -12,10 +12,7 @@ import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.event.events.Event;
 import com.nighto.weebu.system.GameContext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Entity is the base object representing all "things" in the game, whether it be a player, a stage, an item, or some
@@ -49,7 +46,13 @@ public abstract class Entity implements EventListener {
 
     private GameContext gameContext;
 
+    private UUID uuid;
+    private String tag;
+
     public Entity() {
+        tag = "Unknown";
+        uuid = UUID.randomUUID();
+
         components = new HashMap<>();
         registerComponent(PhysicalComponent.class, new PhysicalComponent());
 
@@ -194,5 +197,17 @@ public abstract class Entity implements EventListener {
 
     public void setGameContext(GameContext gameContext) {
         this.gameContext = gameContext;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 }

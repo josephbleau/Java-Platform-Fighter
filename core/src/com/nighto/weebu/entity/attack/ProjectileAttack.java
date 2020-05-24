@@ -26,6 +26,7 @@ public class ProjectileAttack extends Attack {
         physicalComponent.velocity.x = ((PhysicalComponent)owner.getComponent(PhysicalComponent.class)).facingRight ? SPEED : -SPEED;
 
         getRects().addAll(getHitBoxes());
+        setTag("Projectile Attack");
     }
 
     @Override

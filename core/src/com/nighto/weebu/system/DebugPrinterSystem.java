@@ -23,13 +23,13 @@ public class DebugPrinterSystem extends System {
             StateComponent stateComponent = entity.getComponent(StateComponent.class);
 
             if (stateComponent != null && stateComponent.isEnabled() && showState) {
-                Gdx.app.log("State", "" + stateComponent.getState());
+                Gdx.app.debug("State", "" + stateComponent.getState());
             }
 
             PhysicalComponent physicalComponent = entity.getComponent(PhysicalComponent.class);
 
             if (physicalComponent != null && physicalComponent.isEnabled() && showVelocity) {
-                Gdx.app.log("Velocity", physicalComponent.velocity.toString());
+                Gdx.app.debug("Velocity", physicalComponent.velocity.toString());
             }
         }
     }

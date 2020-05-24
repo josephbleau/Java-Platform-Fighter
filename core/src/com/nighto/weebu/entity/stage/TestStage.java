@@ -14,6 +14,8 @@ public class TestStage extends Stage {
 
         this.ledges.add(new Ledge(((1920 - 1000) / 2)-5, 240, 5, 10, true));
         this.ledges.add(new Ledge(((1920 - 1000) / 2) + 1000, 240, 5, 10, false));
+
+        setTag("Test Stage");
     }
 
     @Override
