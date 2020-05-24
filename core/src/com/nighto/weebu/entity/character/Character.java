@@ -47,6 +47,7 @@ public class Character extends Entity {
         stateComponent = new StateComponent();
         characterDataComponent = CharacterAttributesLoader.loadCharacterData();
         controllerComponent =  new ControllerComponent(new GameController(new NoopGamecubeController(), false));
+        controllerComponent.registerController(new GameController(new NoopGamecubeController(), true));
 
         animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
         animationDataComponent.skeletonJson = new SkeletonJson(animationDataComponent.textureAtlas);

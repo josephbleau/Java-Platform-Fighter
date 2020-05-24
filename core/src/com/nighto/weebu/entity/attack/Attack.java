@@ -75,6 +75,11 @@ public class Attack extends Entity {
     }
 
     @Override
+    public List<Rectangle> getTranslatedRects() {
+        return getHitBoxes();
+    }
+
+    @Override
     public void teleport(float x, float y) {
         teleport(x, y, true);
     }

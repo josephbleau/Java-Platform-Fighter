@@ -78,7 +78,7 @@ public class InGameScreen implements Screen {
             gamecubeController = controllers.get(0);
         }
 
-        ((ControllerComponent)player.getComponent(ControllerComponent.class)).registerController(new GameController(gamecubeController, true));
+        ((ControllerComponent)player.getComponent(ControllerComponent.class)).registerController(new GameController(gamecubeController, false));
     }
 
     @Override

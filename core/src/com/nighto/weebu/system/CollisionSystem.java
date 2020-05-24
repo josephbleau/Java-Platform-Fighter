@@ -17,7 +17,7 @@ public class CollisionSystem extends System {
 
     @Override
     public void process() {
-        for (int i = 0; i < gameContext.getEntities().size(); ++i) {
+        for (int i = 0; i < gameContext.getEntities().size(); i++) {
             Entity e1 = gameContext.getEntities().get(i);
 
             if (!gameContext.getStage().inBounds(e1)) {
@@ -30,7 +30,7 @@ public class CollisionSystem extends System {
                 continue;
             }
 
-            for (int j = i+1; j < gameContext.getEntities().size(); ++j) {
+            for (int j = i+1; j < gameContext.getEntities().size(); j++) {
                 Entity e2 = gameContext.getEntities().get(j);
                 Gdx.app.debug("Collision", "Checking " + e1.getTag() + " and " + e2.getTag());
 
