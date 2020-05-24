@@ -1,6 +1,7 @@
 package com.nighto.weebu.screen;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
@@ -41,6 +42,7 @@ public class InGameScreen implements Screen {
         systems.add(new CollisionSystem(gameContext, eventPublisher));
         systems.add(new RenderingSystem(gameContext, eventPublisher));
         systems.add(new DebugRenderingSystem(gameContext, eventPublisher));
+        systems.add(new DebugPrinterSystem(gameContext, eventPublisher));
     }
 
     @Override

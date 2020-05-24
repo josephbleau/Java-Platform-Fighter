@@ -68,6 +68,12 @@ public class Character extends Entity {
         registerEventHandler(new DeathhEventHandler(this));
 
         ((StateComponent) getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+
+        // TODO: Stage spawn locations
+        teleport(1920/2, 400);
+
+        // TODO: Hurtboxes need to be formalized (part of spine?)
+        getRects().add(new Rectangle(0, 0, 20, 60));
     }
 
     @Override
