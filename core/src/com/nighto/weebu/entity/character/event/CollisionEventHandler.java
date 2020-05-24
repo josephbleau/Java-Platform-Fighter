@@ -105,6 +105,7 @@ public class CollisionEventHandler implements EventHandler {
 
                 physical.prevVelocity.y = physical.velocity.y;
                 physical.velocity.y = Math.max(0, physical.velocity.y);
+                physical.floorStandingOn = stageRect;
             } else if (collidedFromBottom(r1, pr1, stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " bumped their head.");
 

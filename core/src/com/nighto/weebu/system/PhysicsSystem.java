@@ -23,8 +23,28 @@ public class PhysicsSystem extends System {
         ControllerComponent controller = entity.getComponent(ControllerComponent.class);
         CharacterDataComponent characterData = entity.getComponent(CharacterDataComponent.class);
 
+        if (entity.componentsEnabled(PhysicalComponent.class)) {
+            if (physical.floorStandingOn != null) {
+                float stageRight = physical.floorStandingOn.x + physical.floorStandingOn.width;
+                float stageLeft = physical.floorStandingOn.x;
+                float playerRight = physical.position.x + physical.boundingBox.width;
+                float playerLeft = physical.position.x;
+
+                boolean standingOnSurface =
+                        (stageRight < playerRight && stageRight > playerLeft) ||
+                                (stageLeft < playerRight && stageLeft > playerLeft) ||
+                                (playerRight < stageRight && playerRight > stageLeft) ||
+                                (playerLeft < stageRight && playerLeft > stageLeft);
+
+                if (!standingOnSurface) {
+                    physical.floorStandingOn = null;
+                    state.enterState(State.AIRBORNE);
+                }
+            }
+        }
+
         if (entity.componentsEnabled(CharacterDataComponent.class, PhysicalComponent.class, StateComponent.class, ControllerComponent.class)) {
-            if (!state.inState(State.STANDING, State.RUNNING, State.CROUCHING) && !state.inSubState(State.SUBSTATE_KNOCKBACK)) {
+            if (state.inState(State.AIRBORNE, State.WALLSLIDING) && !state.inSubState(State.SUBSTATE_KNOCKBACK)) {
                 applyGravity(characterData, physical, state, controller);
             }
         }
