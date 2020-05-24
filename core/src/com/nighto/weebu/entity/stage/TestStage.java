@@ -8,6 +8,7 @@ public class TestStage extends Stage {
     public TestStage() {
         this.getRects().add(new Rectangle(0, 0, 1000, 50));
         this.getRects().add(new Rectangle(-200, 0, 20, 300));
+        this.getRects().add(new Rectangle(900, 300, 300, 20));
 
         this.blastZone = new Rectangle(60, 60, 1920 - 120, 1080 - 120);
         this.teleport((1920 - 1000) / 2, 200);

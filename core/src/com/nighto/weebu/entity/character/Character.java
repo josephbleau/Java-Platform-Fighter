@@ -76,9 +76,9 @@ public class Character extends Entity {
         Rectangle prevBoundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).prevBoundingBox;
 
         boundingBox.width = 20;
-        boundingBox.height = 60;
+        boundingBox.height = 150;
         prevBoundingBox.width = 20;
-        prevBoundingBox.height = 60;
+        prevBoundingBox.height = 150;
 
         getRects().add(boundingBox);
     }
@@ -143,7 +143,9 @@ public class Character extends Entity {
         float knockbackModifier = characterDataComponent.getActiveAttributes().getKnockbackModifier();
         characterDataComponent.getActiveAttributes().setKnockbackModifier(knockbackModifier + attack.getKnockbackModifierIncrease());
 
-        physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier / 50f);
+        physicalComponent.prevVelocity.x = physicalComponent.velocity.x;
+        physicalComponent.prevVelocity.y = physicalComponent.velocity.y;
+        physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier / 100f);
         physicalComponent.velocity.y = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier / 100f);
 
         characterDataComponent.getTimers().setKnockbackTimeRemaining(attack.getKnockbackInduced());

@@ -56,5 +56,5 @@ public class GameContext {
         registerEntity(stage);
     }
 
-    public void removeEntity(Entity entity) { entitiesToRemove.remove(entity); }
+    public void removeEntity(Entity entity) { entitiesToRemove.add(entity); }
 }

@@ -102,17 +102,24 @@ public class CollisionEventHandler implements EventHandler {
                     state.enterState(State.STANDING);
                     state.enterSubState(State.SUBSTATE_DEFAULT);
                 }
-            }
 
-            if (collidedFromRight(r1, pr1, stageRect)) {
+                physical.prevVelocity.y = physical.velocity.y;
+                physical.velocity.y = Math.max(0, physical.velocity.y);
+            } else if (collidedFromBottom(r1, pr1, stageRect)) {
+                Gdx.app.debug("Collision", character.getTag() + " bumped their head.");
+
+                physical.prevPosition.y = physical.position.y;
+                physical.position.y = stageRect.y - r1.height;
+
+                state.enterState(State.AIRBORNE);
+            }
+            else if (collidedFromRight(r1, pr1, stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
                 if (falling && (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard))) {
-                    state.enterState(State.WALLSLIDING);
-                    state.enterSubState(State.SUBSTATE_WALLSLIDING_LEFT);
+                    state.enterState(State.WALLSLIDING, State.SUBSTATE_WALLSLIDING_LEFT);
                 } else {
-                    state.inState(State.AIRBORNE);
-                    state.inState(State.SUBSTATE_DEFAULT);
+                    state.enterState(State.AIRBORNE);
                 }
 
                 physical.velocity.x = 0;
@@ -131,7 +138,6 @@ public class CollisionEventHandler implements EventHandler {
                     state.enterSubState(State.SUBSTATE_WALLSLIDING_RIGHT);
                 } else {
                     state.inState(State.AIRBORNE);
-                    state.inState(State.SUBSTATE_DEFAULT);
                 }
 
                 physical.velocity.x = 0;

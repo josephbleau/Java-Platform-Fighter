@@ -9,5 +9,5 @@
 	"sidestepDuration": 0.37,
 	"airFriction": 1.1,
 	"groundFriction": 2,
-	"knockbackModifier": 0
+	"knockbackModifier": 1
 }
