@@ -125,6 +125,7 @@ public class CollisionEventHandler implements EventHandler {
                 physical.velocity.x = 0;
                 physical.position.x = (stageRect.x + stageRect.width);
                 physical.wallSlidingOn = stageRect;
+                characterData.getActiveAttributes().incrementJumps();
             } else if (collidedFromLeft(r1, pr1, stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 

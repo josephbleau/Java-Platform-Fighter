@@ -34,7 +34,7 @@ public class AirborneInputHandler extends StateBasedInputHandler {
 
         if (jumpChanged && jumpCount > 0) {
             if (controller.isPressed(GameInput.Jump)) {
-                characterData.getActiveAttributes().setNumberOfJumps(jumpCount-1);
+                characterData.getActiveAttributes().decrementJumps();
                 state.enterState(State.JUMPSQUAT);
             }
         }

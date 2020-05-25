@@ -41,6 +41,14 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
         this.numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
     }
 
+    public void decrementJumps() {
+        this.numberOfJumps--;
+    }
+
+    public void incrementJumps() {
+        this.numberOfJumps++;
+    }
+
     public void setFallSpeed(float fallSpeed) {
         this.fallSpeed = fallSpeed;
     }

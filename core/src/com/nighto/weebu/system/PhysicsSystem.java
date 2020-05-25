@@ -39,6 +39,8 @@ public class PhysicsSystem extends System {
                 if (!standingOnSurface) {
                     physical.floorStandingOn = null;
                     state.enterState(State.AIRBORNE);
+
+                    characterData.getActiveAttributes().decrementJumps();
                 }
             }
         }
