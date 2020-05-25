@@ -1,13 +1,15 @@
 {
 	"numberOfJumps": 2,
+	"numberOfAirDodges": 1,
 	"fallSpeed": -10,
 	"groundSpeed": 10,
 	"airSpeed": 4.5,
 	"shortHopSpeed": 35,
 	"fullHopSpeed": 50,
 	"jumpSquatDuration": 0.05,
-	"sidestepDuration": 0.37,
+	"sidestepDuration": 0.8,
 	"airFriction": 1.1,
 	"groundFriction": 2,
-	"knockbackModifier": 1
+	"knockbackModifier": 1,
+	"airDodgeVelocity": 20
 }

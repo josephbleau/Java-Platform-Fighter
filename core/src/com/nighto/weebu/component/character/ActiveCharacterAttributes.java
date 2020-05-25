@@ -11,6 +11,7 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
 
     public void resetValues() {
         numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
+        numberOfAirDodges = initialCharacterAttributes.getNumberOfAirDodges();
         fallSpeed = initialCharacterAttributes.getFallSpeed();
         groundSpeed = initialCharacterAttributes.getGroundSpeed();
         airSpeed = initialCharacterAttributes.getAirSpeed();
@@ -21,6 +22,8 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
         airFriction = initialCharacterAttributes.getAirFriction();
         groundFriction = initialCharacterAttributes.getGroundFriction();
         knockbackModifier = initialCharacterAttributes.getKnockbackModifier();
+        airDodgeVelocity = initialCharacterAttributes.airDodgeVelocity;
+        numberOfAirDodges = initialCharacterAttributes.numberOfAirDodges;
 
         fastFalling = false;
     }
@@ -40,6 +43,7 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
     public void resetJumps() {
         this.numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
     }
+
 
     public void decrementJumps() {
         this.numberOfJumps--;
@@ -86,4 +90,20 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
     }
 
     public void setKnockbackModifier(float knockbackModifier) { this.knockbackModifier = knockbackModifier; }
+
+    public void setAirDodgeVelocity(float velocity) {
+        airDodgeVelocity = velocity;
+    }
+
+    public void setNumberOfAirDodges(int airDodges) {
+        this.numberOfAirDodges = airDodges;
+    }
+
+    public void resetAirDodges() {
+        this.numberOfAirDodges = initialCharacterAttributes.getNumberOfAirDodges();
+    }
+
+    public void decrementAirDodges() {
+        this.numberOfAirDodges--;
+    }
 }

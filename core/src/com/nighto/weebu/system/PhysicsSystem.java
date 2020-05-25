@@ -63,7 +63,10 @@ public class PhysicsSystem extends System {
             // If a player is actively controlling (holding left or right) then do not apply air friction, velocity
             // will be limited by air speed in those instances.
             if (controller == null || !controller.isActivelyControlling()) {
-                if (state.inState(State.AIRBORNE)) {
+                if (state.inState(State.DIRECTIONAL_AIRDODGE)) {
+                    physical.velocity.x /= characterData.getActiveAttributes().getAirFriction();
+                    physical.velocity.y /= characterData.getActiveAttributes().getAirFriction();
+                } else if (state.inState(State.AIRBORNE)) {
                     physical.velocity.x /= characterData.getActiveAttributes().getAirFriction();
                 } else if (state.inState(State.STANDING)) {
                     physical.velocity.x /= characterData.getActiveAttributes().getGroundFriction();

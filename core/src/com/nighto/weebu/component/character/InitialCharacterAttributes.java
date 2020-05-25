@@ -36,6 +36,12 @@ public class InitialCharacterAttributes {
     /** Factor in how far you are sent back **/
     protected float knockbackModifier;
 
+    /** Velocity assigned when air-dodging **/
+    protected float airDodgeVelocity;
+
+    /** Number of air-dodges allowed before landing **/
+    protected float numberOfAirDodges;
+
     public int getNumberOfJumps() {
         return numberOfJumps;
     }
@@ -78,5 +84,13 @@ public class InitialCharacterAttributes {
 
     public float getKnockbackModifier() {
         return knockbackModifier;
+    }
+
+    public float getAirDodgeVelocity() {
+        return airDodgeVelocity;
+    }
+
+    public float getNumberOfAirDodges() {
+        return numberOfAirDodges;
     }
 }

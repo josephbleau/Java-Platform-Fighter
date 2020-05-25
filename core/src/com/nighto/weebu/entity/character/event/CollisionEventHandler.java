@@ -96,7 +96,8 @@ public class CollisionEventHandler implements EventHandler {
                 physical.prevPosition.y = physical.position.y;
                 physical.position.y = (stageRect.y + stageRect.height);
 
-                characterData.getActiveAttributes().setNumberOfJumps(characterData.getInitialAttributes().getNumberOfJumps());
+                characterData.getActiveAttributes().resetJumps();
+                characterData.getActiveAttributes().resetAirDodges();
 
                 if (state.inState(State.AIRBORNE)) {
                     state.enterState(State.STANDING);
@@ -106,6 +107,13 @@ public class CollisionEventHandler implements EventHandler {
                 physical.prevVelocity.y = physical.velocity.y;
                 physical.velocity.y = Math.max(0, physical.velocity.y);
                 physical.floorStandingOn = stageRect;
+
+                // Reduce sidestep timer additionally when touching ground
+                // TODO: Change to separate timer?
+                if (state.inState(State.DIRECTIONAL_AIRDODGE)) {
+                    float t = characterData.getTimers().getSidestepTimeRemaining();
+                    characterData.getTimers().setSidestepTimeRemaining(t/4f);
+                }
             } else if (collidedFromBottom(r1, pr1, stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " bumped their head.");
 

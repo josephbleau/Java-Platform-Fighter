@@ -39,11 +39,14 @@ public class CharacterTimerSystem extends System{
         if (state.inState(State.SIDESTEPPING)) {
             if (characterTimers.getSidestepTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
-                state.revertState();
+                state.enterState(State.STANDING);
+            }
+        }
 
-                if (state.inState(State.SHIELDING)) {
-                    state.enterState(State.STANDING);
-                }
+        if (state.inState(State.AIRDODGE, State.DIRECTIONAL_AIRDODGE)) {
+            if (characterTimers.getSidestepTimeRemaining() <= 0) {
+                characterTimers.resetTimers();
+                state.enterState(State.AIRBORNE);
             }
         }
 

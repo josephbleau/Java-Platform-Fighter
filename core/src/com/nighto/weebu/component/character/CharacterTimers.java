@@ -60,4 +60,8 @@ public class CharacterTimers {
     public void setKnockbackTimeRemaining(float knockbackTimeRemaining) {
         this.knockbackTimeRemaining = knockbackTimeRemaining;
     }
+
+    public void setSidestepTimeRemaining(float sidestepTimeRemaining) {
+        this.sidestepTimeRemaining = sidestepTimeRemaining;
+    }
 }
