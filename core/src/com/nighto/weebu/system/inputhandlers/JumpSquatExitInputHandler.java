@@ -23,7 +23,7 @@ public class JumpSquatExitInputHandler extends StateBasedInputHandler {
 
         state.enterState(State.AIRBORNE);
 
-        if (characterData.getActiveAttributes().getNumberOfJumps() > 0){
+        if (characterData.getActiveAttributes().getNumberOfJumps() >= 0){
             if (controller.isPressed(GameInput.Jump)) {
                 physical.velocity.y = characterData.getActiveAttributes().getFullHopSpeed();
             } else {

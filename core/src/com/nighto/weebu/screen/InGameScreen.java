@@ -1,13 +1,18 @@
 package com.nighto.weebu.screen;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
+import com.nighto.weebu.component.CharacterDataComponent;
 import com.nighto.weebu.component.ControllerComponent;
+import com.nighto.weebu.component.StateComponent;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GamecubeController;
+import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
+import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.entity.stage.TestStage;
 import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.system.System;

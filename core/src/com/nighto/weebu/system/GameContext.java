@@ -57,4 +57,14 @@ public class GameContext {
     }
 
     public void removeEntity(Entity entity) { entitiesToRemove.add(entity); }
+
+    public Entity getEntityByTag(String tag) {
+        for (Entity entity : entities) {
+            if (entity.getTag().equals(tag)) {
+                return entity;
+            }
+        }
+
+        return null;
+    }
 }

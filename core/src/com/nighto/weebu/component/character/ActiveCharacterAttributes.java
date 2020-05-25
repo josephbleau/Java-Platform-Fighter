@@ -2,25 +2,27 @@ package com.nighto.weebu.component.character;
 
 public class ActiveCharacterAttributes extends InitialCharacterAttributes {
     private boolean fastFalling;
+    private final InitialCharacterAttributes initialCharacterAttributes;
 
     public ActiveCharacterAttributes(InitialCharacterAttributes initialCharacterAttributes) {
-        resetValues(initialCharacterAttributes);
+        this.initialCharacterAttributes = initialCharacterAttributes;
+        resetValues();
     }
 
-    public void resetValues(InitialCharacterAttributes initialCharacterAttributes) {
-        this.numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
-        this.fallSpeed = initialCharacterAttributes.getFallSpeed();
-        this.groundSpeed = initialCharacterAttributes.getGroundSpeed();
-        this.airSpeed = initialCharacterAttributes.getAirSpeed();
-        this.shortHopSpeed = initialCharacterAttributes.getShortHopSpeed();
-        this.fullHopSpeed = initialCharacterAttributes.getFullHopSpeed();
-        this.jumpSquatDuration = initialCharacterAttributes.getJumpSquatDuration();
-        this.sidestepDuration = initialCharacterAttributes.getSidestepDuration();
-        this.airFriction = initialCharacterAttributes.getAirFriction();
-        this.groundFriction = initialCharacterAttributes.getGroundFriction();
-        this.knockbackModifier = initialCharacterAttributes.getKnockbackModifier();
+    public void resetValues() {
+        numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
+        fallSpeed = initialCharacterAttributes.getFallSpeed();
+        groundSpeed = initialCharacterAttributes.getGroundSpeed();
+        airSpeed = initialCharacterAttributes.getAirSpeed();
+        shortHopSpeed = initialCharacterAttributes.getShortHopSpeed();
+        fullHopSpeed = initialCharacterAttributes.getFullHopSpeed();
+        jumpSquatDuration = initialCharacterAttributes.getJumpSquatDuration();
+        sidestepDuration = initialCharacterAttributes.getSidestepDuration();
+        airFriction = initialCharacterAttributes.getAirFriction();
+        groundFriction = initialCharacterAttributes.getGroundFriction();
+        knockbackModifier = initialCharacterAttributes.getKnockbackModifier();
 
-        this.fastFalling = false;
+        fastFalling = false;
     }
 
     public boolean isFastFalling() {
@@ -33,6 +35,10 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
 
     public void setNumberOfJumps(int numberOfJumps) {
         this.numberOfJumps = numberOfJumps;
+    }
+
+    public void resetJumps() {
+        this.numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
     }
 
     public void setFallSpeed(float fallSpeed) {

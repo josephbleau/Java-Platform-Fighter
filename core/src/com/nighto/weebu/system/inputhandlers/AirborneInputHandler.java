@@ -37,9 +37,6 @@ public class AirborneInputHandler extends StateBasedInputHandler {
                 characterData.getActiveAttributes().setNumberOfJumps(jumpCount-1);
                 state.enterState(State.JUMPSQUAT);
             }
-        } else {
-            // TODO: Contemplate reset method / not sure if I even like this entire attribute structure...
-            characterData.getActiveAttributes().setNumberOfJumps(characterData.getInitialAttributes().getNumberOfJumps());
         }
 
         return true;
