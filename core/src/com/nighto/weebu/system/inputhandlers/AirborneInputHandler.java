@@ -12,7 +12,7 @@ import com.nighto.weebu.entity.character.State;
 public class AirborneInputHandler extends StateBasedInputHandler {
 
     public AirborneInputHandler() {
-        super(new State[]{State.AIRBORNE}, new State[]{State.SUBSTATE_KNOCKBACK, State.AIRDODGE});
+        super(new State[]{State.AIRBORNE}, new State[]{State.SUBSTATE_KNOCKBACK, State.SUBSTATE_TUMBLE, State.AIRDODGE});
     }
 
     @Override

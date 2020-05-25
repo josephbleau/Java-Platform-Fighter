@@ -51,7 +51,7 @@ public class AnimationSystem extends System {
     private void setCurrentAnimation(AnimationDataComponent animationData, StateComponent state) {
         AnimationState animationState = animationData.animationState;
 
-        String animName = animationData.getAnimationForState(state.getState());
+        String animName = animationData.getAnimationForState(state.getState(), state.getSubState());
         String currentAnimName = animationState.getCurrent(0).getAnimation().getName();
 
         if (!animName.equals(currentAnimName)) {

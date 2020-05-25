@@ -50,7 +50,7 @@ public class CharacterTimerSystem extends System{
             }
         }
 
-        if (state.inSubState(State.SUBSTATE_KNOCKBACK)) {
+        if (state.inSubState(State.SUBSTATE_KNOCKBACK, State.SUBSTATE_TUMBLE)) {
             if (characterTimers.getKnockbackTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
                 state.enterSubState(State.DEFAULT);

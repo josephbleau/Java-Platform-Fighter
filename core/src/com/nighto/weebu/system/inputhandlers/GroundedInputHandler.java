@@ -21,7 +21,8 @@ public class GroundedInputHandler extends StateBasedInputHandler {
                 },
                 new State[] {
                         State.SUBSTATE_ATTACKING,
-                        State.SUBSTATE_KNOCKBACK
+                        State.SUBSTATE_KNOCKBACK,
+                        State.SUBSTATE_TUMBLE
                 }
         );
     }
@@ -114,8 +115,8 @@ public class GroundedInputHandler extends StateBasedInputHandler {
                 float xOffsetDirectionMultiplier = (physical.facingRight) ? 1 : -1;
                 float xOffset = 30 * xOffsetDirectionMultiplier;
                 float xImpulse = 10 * xOffsetDirectionMultiplier;
-                float yImpulse = 10;
-                float knockbackInduced = 3f/60f;
+                float yImpulse = 20;
+                float knockbackInduced = 10f/60f;
 
                 character.startAttack(
                         new MeleeAttack(

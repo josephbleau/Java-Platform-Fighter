@@ -9,7 +9,7 @@ import com.nighto.weebu.entity.character.State;
 public class CrouchingInputHandler extends StateBasedInputHandler {
 
     public CrouchingInputHandler() {
-        super(new State[]{State.CROUCHING}, new State[]{State.SUBSTATE_KNOCKBACK});
+        super(new State[]{State.CROUCHING}, new State[]{State.SUBSTATE_KNOCKBACK, State.SUBSTATE_TUMBLE});
     }
 
     @Override

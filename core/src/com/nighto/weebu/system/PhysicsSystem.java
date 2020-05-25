@@ -46,7 +46,7 @@ public class PhysicsSystem extends System {
         }
 
         if (entity.componentsEnabled(CharacterDataComponent.class, PhysicalComponent.class, StateComponent.class, ControllerComponent.class)) {
-            if (state.inState(State.AIRBORNE, State.WALLSLIDING) && !state.inSubState(State.SUBSTATE_KNOCKBACK)) {
+            if (state.inState(State.AIRBORNE, State.WALLSLIDING)) {
                 applyGravity(characterData, physical, state, controller);
             }
         }

@@ -62,6 +62,12 @@ public class Character extends Entity {
 
         animationDataComponent.registerAnimationForState(State.RUNNING, "run");
         animationDataComponent.registerAnimationForState(State.DEFAULT, "idle");
+        animationDataComponent.registerAnimationForState(State.JUMPSQUAT, "jumpsquat");
+        animationDataComponent.registerAnimationForState(State.AIRBORNE, "airborne");
+        animationDataComponent.registerAnimationForState(State.AIRDODGE, "airborne");
+        animationDataComponent.registerAnimationForState(State.DIRECTIONAL_AIRDODGE, "airborne");
+        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_TUMBLE, "tumble");
+        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING, "jab");
 
         registerComponent(CharacterDataComponent.class, characterDataComponent);
         registerComponent(StateComponent.class, stateComponent);
@@ -157,7 +163,12 @@ public class Character extends Entity {
         characterDataComponent.getTimers().setKnockbackTimeRemaining(attack.getKnockbackInduced());
 
         stateComponent.enterState(State.AIRBORNE);
-        stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
+
+        if (attack.getKnockbackInduced() >= 30f/60f) {
+            stateComponent.enterSubState(State.SUBSTATE_TUMBLE);
+        } else {
+            stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
+        }
     }
 
     public void startAttack(Attack attack) {

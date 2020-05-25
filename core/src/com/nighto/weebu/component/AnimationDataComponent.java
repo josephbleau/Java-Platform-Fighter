@@ -17,23 +17,27 @@ public class AnimationDataComponent extends Component {
     public AnimationStateData animationStateData;
     public AnimationState animationState;
 
-    private Map<State, String> animationMap;
+    private final Map<State, String> animationStateMap;
+    private final Map<State, String> animationSubStateMap;
 
     public AnimationDataComponent() {
-        animationMap = new HashMap<>();
+        animationStateMap = new HashMap<>();
+        animationSubStateMap = new HashMap<>();
     }
 
     public void registerAnimationForState(State state, String animationName) {
-        animationMap.put(state, animationName);
+        animationStateMap.put(state, animationName);
     }
 
-    public String getAnimationForState(State state) {
-        String animName = animationMap.get(state);
+    public void registerAnimationForSubState(State state, String animationName) {
+        animationSubStateMap.put(state, animationName);
+    }
 
-        if (animName == null) {
-            animName = animationMap.get(State.DEFAULT);
-        }
+    public String getAnimationForState(State state, State subState) {
+        String stateAnimName = animationStateMap.get(state);
+        String subStateAnimName = animationSubStateMap.get(subState);
 
-        return animName;
+        // Substate anims take priority
+        return (subStateAnimName != null) ? subStateAnimName : (stateAnimName != null) ? stateAnimName : animationStateMap.get(State.DEFAULT);
     }
 }
