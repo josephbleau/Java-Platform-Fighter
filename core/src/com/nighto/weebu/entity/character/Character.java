@@ -44,6 +44,7 @@ public class Character extends Entity {
         attacks = new ArrayList<>();
 
         animationDataComponent = new AnimationDataComponent();
+
         stateComponent = new StateComponent();
         characterDataComponent = CharacterAttributesLoader.loadCharacterData();
         controllerComponent =  new ControllerComponent(new GameController(new NoopGamecubeController(), false));
@@ -58,6 +59,9 @@ public class Character extends Entity {
         animationDataComponent.skeleton.setScale(.2f, .2f);
         animationDataComponent.animationState = new AnimationState(animationDataComponent.animationStateData);
         animationDataComponent.animationState.setAnimation(0, "idle", true);
+
+        animationDataComponent.registerAnimationForState(State.RUNNING, "run");
+        animationDataComponent.registerAnimationForState(State.DEFAULT, "idle");
 
         registerComponent(CharacterDataComponent.class, characterDataComponent);
         registerComponent(StateComponent.class, stateComponent);

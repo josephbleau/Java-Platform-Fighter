@@ -2,6 +2,7 @@ package com.nighto.weebu.system;
 
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.Skeleton;
+import com.esotericsoftware.spine.SkeletonRenderer;
 import com.nighto.weebu.component.AnimationDataComponent;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.StateComponent;
@@ -29,26 +30,55 @@ public class AnimationSystem extends System {
         PhysicalComponent physical = entity.getComponent(PhysicalComponent.class);
         StateComponent state = entity.getComponent(StateComponent.class);
 
-        Skeleton skeleton = animationData.skeleton;
+        if (entity.componentsEnabled(AnimationDataComponent.class, PhysicalComponent.class, StateComponent.class)) {
+            Skeleton skeleton = animationData.skeleton;
+            AnimationState animationState = animationData.animationState;
+
+            setCurrentAnimation(animationData, state);
+
+            // Update position, facing, and crouching status
+            updatePosition(physical, skeleton);
+            updateFacing(physical, skeleton);
+            updateCrouching(state, skeleton);
+
+            // Progress animation
+            animationState.update(gameContext.getFrameDelta());
+
+            // Apply animation to skeleton
+            animationState.apply(skeleton);
+        }
+    }
+
+    private void setCurrentAnimation(AnimationDataComponent animationData, StateComponent state) {
         AnimationState animationState = animationData.animationState;
 
+        String animName = animationData.getAnimationForState(state.getState());
+        String currentAnimName = animationState.getCurrent(0).getAnimation().getName();
+
+        if (!animName.equals(currentAnimName)) {
+            animationState.setAnimation(0, animName, true);
+        }
+    }
+
+    private void updatePosition(PhysicalComponent physical, Skeleton skeleton) {
         skeleton.setX(Math.round(physical.position.x));
         skeleton.setY(Math.round(physical.position.y));
         skeleton.updateWorldTransform();
+    }
 
+    private void updateFacing(PhysicalComponent physical, Skeleton skeleton) {
         if (physical.facingRight) {
             skeleton.setScale(0.2f, skeleton.getScaleY());
         } else {
             skeleton.setScale(-0.2f, skeleton.getScaleY());
         }
+    }
 
+    private void updateCrouching(StateComponent state, Skeleton skeleton) {
         if (state.inState(State.CROUCHING)) {
             skeleton.setScale(skeleton.getScaleX(), .2f/1.5f);
         } else {
             skeleton.setScale(skeleton.getScaleX(), .2f);
         }
-
-        animationState.update(gameContext.getFrameDelta());
-        animationState.apply(skeleton);
     }
 }
