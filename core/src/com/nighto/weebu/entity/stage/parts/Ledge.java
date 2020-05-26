@@ -2,11 +2,13 @@ package com.nighto.weebu.entity.stage.parts;
 
 import com.badlogic.gdx.math.Rectangle;
 
-public class Ledge extends Rectangle {
-    public boolean hangLeft;
+public class Ledge {
+    private static final String leftSide = "left";
 
-    public Ledge(float x, float y, float width, float height, boolean hangLeft) {
-        super(x,y,width,height);
-        this.hangLeft = hangLeft;
+    public String side;
+    public Rectangle boundingBox;
+
+    public boolean isHangLeft() {
+        return leftSide.equalsIgnoreCase(side);
     }
 }

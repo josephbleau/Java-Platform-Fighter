@@ -3,7 +3,7 @@ package com.nighto.weebu.system;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.spine.SkeletonRenderer;
-import com.nighto.weebu.component.AnimationDataComponent;
+import com.nighto.weebu.component.character.AnimationDataComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.event.EventPublisher;
 

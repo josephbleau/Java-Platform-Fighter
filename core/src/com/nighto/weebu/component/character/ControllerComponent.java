@@ -1,5 +1,6 @@
-package com.nighto.weebu.component;
+package com.nighto.weebu.component.character;
 
+import com.nighto.weebu.component.Component;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GameInput;
 

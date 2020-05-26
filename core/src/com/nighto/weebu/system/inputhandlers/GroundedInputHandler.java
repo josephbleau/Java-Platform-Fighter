@@ -1,9 +1,9 @@
 package com.nighto.weebu.system.inputhandlers;
 
-import com.nighto.weebu.component.CharacterDataComponent;
-import com.nighto.weebu.component.ControllerComponent;
 import com.nighto.weebu.component.PhysicalComponent;
-import com.nighto.weebu.component.StateComponent;
+import com.nighto.weebu.component.character.CharacterDataComponent;
+import com.nighto.weebu.component.character.ControllerComponent;
+import com.nighto.weebu.component.character.StateComponent;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.attack.MeleeAttack;
 import com.nighto.weebu.entity.attack.ProjectileAttack;

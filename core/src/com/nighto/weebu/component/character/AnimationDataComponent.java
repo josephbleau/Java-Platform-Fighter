@@ -1,7 +1,8 @@
-package com.nighto.weebu.component;
+package com.nighto.weebu.component.character;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.esotericsoftware.spine.*;
+import com.nighto.weebu.component.Component;
 import com.nighto.weebu.entity.character.State;
 
 import java.util.HashMap;

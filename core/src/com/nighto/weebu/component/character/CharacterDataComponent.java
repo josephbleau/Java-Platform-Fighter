@@ -1,9 +1,7 @@
-package com.nighto.weebu.component;
+package com.nighto.weebu.component.character;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.nighto.weebu.component.character.ActiveCharacterAttributes;
-import com.nighto.weebu.component.character.CharacterTimers;
-import com.nighto.weebu.component.character.InitialCharacterAttributes;
+import com.nighto.weebu.component.Component;
 import com.nighto.weebu.entity.character.State;
 
 import java.util.Map;

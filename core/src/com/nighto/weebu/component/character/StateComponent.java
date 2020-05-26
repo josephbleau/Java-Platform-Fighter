@@ -1,8 +1,9 @@
-package com.nighto.weebu.component;
+package com.nighto.weebu.component.character;
 
+import com.nighto.weebu.component.Component;
 import com.nighto.weebu.entity.character.State;
 
-public class StateComponent extends Component{
+public class StateComponent extends Component {
     private State state;
     private State previousState;
     private State subState;

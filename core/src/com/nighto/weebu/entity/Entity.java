@@ -76,6 +76,7 @@ public abstract class Entity implements EventListener {
         if (hidden) {
             return;
         }
+
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
 
         for (Rectangle rect : rects) {

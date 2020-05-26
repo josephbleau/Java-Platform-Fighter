@@ -1,7 +1,5 @@
 package com.nighto.weebu.component.character;
 
-import com.nighto.weebu.component.CharacterDataComponent;
-
 public class CharacterTimers {
 
     public CharacterTimers(CharacterDataComponent characterDataComponent) {

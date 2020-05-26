@@ -2,7 +2,7 @@ package com.nighto.weebu.system;
 
 import com.badlogic.gdx.Gdx;
 import com.nighto.weebu.component.PhysicalComponent;
-import com.nighto.weebu.component.StateComponent;
+import com.nighto.weebu.component.character.StateComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.ProjectileAttack;
 import com.nighto.weebu.event.EventPublisher;

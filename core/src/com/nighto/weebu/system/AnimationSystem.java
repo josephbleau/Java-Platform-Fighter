@@ -2,9 +2,9 @@ package com.nighto.weebu.system;
 
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.Skeleton;
-import com.nighto.weebu.component.AnimationDataComponent;
 import com.nighto.weebu.component.PhysicalComponent;
-import com.nighto.weebu.component.StateComponent;
+import com.nighto.weebu.component.character.AnimationDataComponent;
+import com.nighto.weebu.component.character.StateComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.event.EventPublisher;

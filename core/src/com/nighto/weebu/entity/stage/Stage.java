@@ -4,66 +4,67 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
+import com.nighto.weebu.component.stage.StageDataComponent;
 import com.nighto.weebu.entity.Entity;
+import com.nighto.weebu.entity.stage.parts.Ledge;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Stage extends Entity {
-    /** Gravity determines how fast an entity falls (in px/seconds) **/
-    protected float gravity = 4.5f;
-
-    /** Rect representing the blast zone (if a player exits this rect they die) **/
-    protected Rectangle blastZone;
-    protected Color blastZoneColor;
-
-    /** List of rects that represent ledges in the level. When a player touches a ledge with their hitbox they
-     * will "snap" to it (the top of their bounding-box will become aligned with the top of the ledge, and they
-     * will protrude to the side of the ledge not touching the stage. */
-    protected List<Rectangle> ledges;
     protected Color ledgeColor;
+    protected Color stageColor;
+    protected Color blastZoneColor;
 
     public Stage() {
         setActive(true);
 
+        stageColor = Color.BLACK;
         blastZoneColor = Color.RED;
         ledgeColor = Color.BLUE;
-        ledges = new ArrayList<>();
     }
 
     public void render(ShapeRenderer shapeRenderer) {
-        super.render(shapeRenderer);
+        StageDataComponent stageData = getComponent(StageDataComponent.class);
+
+        // Draw the platforms
+        for (Rectangle platform : stageData.getPlatformBoundingBoxes()) {
+            shapeRenderer.begin(shapeType);
+            shapeRenderer.setColor(stageColor);
+            shapeRenderer.rect(platform.x, platform.y, platform.width, platform.height);
+            shapeRenderer.end();
+        }
 
         // Draw the blast zone in red.
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(blastZoneColor);
-        shapeRenderer.rect(blastZone.x, blastZone.y, blastZone.width, blastZone.height);
+        shapeRenderer.rect(stageData.blastZone.x, stageData.blastZone.y, stageData.blastZone.width, stageData.blastZone.height);
         shapeRenderer.end();
 
-        for (Rectangle ledge : ledges) {
+        for (Ledge ledge : stageData.ledges) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(ledgeColor);
-            shapeRenderer.rect(ledge.x, ledge.y, ledge.width, ledge.height);
+            shapeRenderer.rect(ledge.boundingBox.x, ledge.boundingBox.y, ledge.boundingBox.width, ledge.boundingBox.height);
             shapeRenderer.end();
         }
     }
 
     public float getGravity() {
-        return gravity;
+        StageDataComponent stageData = getComponent(StageDataComponent.class);
+        return stageData.gravity;
     }
 
     @Override
     public List<Rectangle> getCollidables() {
-        List<Rectangle> collidables = super.getCollidables();
-        collidables.addAll(ledges);
-
-        return collidables;
+        StageDataComponent stageData = getComponent(StageDataComponent.class);
+        return stageData.getAllBoundingBoxes();
     }
 
     /** Returns true if the entity is completely outside of the blast zone **/
     public boolean inBounds(Entity entity) {
+        StageDataComponent stageData = getComponent(StageDataComponent.class);
+
         for (Rectangle rect : entity.getTranslatedRects()) {
-            if (blastZone.contains(rect)) {
+            if (stageData.blastZone.contains(rect)) {
                 return true;
             }
         }
@@ -72,7 +73,9 @@ public abstract class Stage extends Entity {
     }
 
     public boolean isGround(Shape2D rect) {
-        for (Rectangle rectangle : getTranslatedRects()) {
+        StageDataComponent stageData = getComponent(StageDataComponent.class);
+
+        for (Rectangle rectangle : stageData.getPlatformBoundingBoxes()) {
             if (rect.equals(rectangle)) {
                 return true;
             }
@@ -81,13 +84,18 @@ public abstract class Stage extends Entity {
         return false;
     }
 
-    public boolean isLedge(Shape2D ledge) {
-        for (Rectangle rectangle : ledges) {
-            if (ledge.equals(rectangle)) {
-                return true;
+    /**
+     * Returns a handle to a stage ledge if the shape passed in is from that ledge.
+     */
+    public Ledge ifLedgeGetLedge(Shape2D shape) {
+        StageDataComponent stageData = getComponent(StageDataComponent.class);
+
+        for (Ledge ledge : stageData.ledges) {
+            if (ledge.boundingBox.equals(shape)) {
+                return ledge;
             }
         }
 
-        return false;
+        return null;
     }
 }

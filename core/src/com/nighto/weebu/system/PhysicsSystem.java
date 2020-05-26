@@ -1,15 +1,14 @@
 package com.nighto.weebu.system;
 
 import com.badlogic.gdx.math.Vector2;
-import com.nighto.weebu.component.CharacterDataComponent;
-import com.nighto.weebu.component.ControllerComponent;
 import com.nighto.weebu.component.PhysicalComponent;
-import com.nighto.weebu.component.StateComponent;
+import com.nighto.weebu.component.character.CharacterDataComponent;
+import com.nighto.weebu.component.character.ControllerComponent;
+import com.nighto.weebu.component.character.StateComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.event.EventPublisher;
 
-import javax.naming.ldap.Control;
 import java.util.Collections;
 
 public class PhysicsSystem extends System {

@@ -2,7 +2,7 @@ package com.nighto.weebu.entity.character.loader;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.google.gson.Gson;
-import com.nighto.weebu.component.CharacterDataComponent;
+import com.nighto.weebu.component.character.CharacterDataComponent;
 import com.nighto.weebu.component.character.InitialCharacterAttributes;
 import com.nighto.weebu.entity.character.State;
 

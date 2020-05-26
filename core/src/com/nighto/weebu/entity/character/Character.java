@@ -9,7 +9,11 @@ import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.AnimationStateData;
 import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonJson;
-import com.nighto.weebu.component.*;
+import com.nighto.weebu.component.PhysicalComponent;
+import com.nighto.weebu.component.character.AnimationDataComponent;
+import com.nighto.weebu.component.character.CharacterDataComponent;
+import com.nighto.weebu.component.character.ControllerComponent;
+import com.nighto.weebu.component.character.StateComponent;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
@@ -198,12 +202,12 @@ public class Character extends Entity {
         Rectangle playerRect = getRects().get(0);
         characterDataComponent.getActiveAttributes().setNumberOfJumps(characterDataComponent.getInitialAttributes().getNumberOfJumps());
 
-        if (ledge.hangLeft) {
+        if (ledge.isHangLeft()) {
             stateComponent.enterSubState(State.SUBSTATE_HANGING_LEFT);
-            teleport(ledge.x - playerRect.width + ledge.width, ledge.y + ledge.height - playerRect.height, false);
+            teleport(ledge.boundingBox.x - playerRect.width + ledge.boundingBox.width, ledge.boundingBox.y + ledge.boundingBox.height - playerRect.height, false);
         } else {
             stateComponent.enterSubState(State.SUBSTATE_HANGING_RIGHT);
-            teleport(ledge.x, ledge.y + ledge.height - playerRect.height, false);
+            teleport(ledge.boundingBox.x, ledge.boundingBox.y + ledge.boundingBox.height - playerRect.height, false);
         }
     }
 

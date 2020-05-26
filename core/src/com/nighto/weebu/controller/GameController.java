@@ -2,7 +2,6 @@ package com.nighto.weebu.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.nighto.weebu.system.GameContext;
 
 import java.util.HashMap;
 import java.util.Map;
