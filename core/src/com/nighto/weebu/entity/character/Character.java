@@ -50,9 +50,9 @@ public class Character extends Entity {
         controllerComponent =  new ControllerComponent(new GameController(new NoopGamecubeController(), false));
         controllerComponent.registerController(new GameController(new NoopGamecubeController(), true));
 
-        animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/sunflower/spine.atlas"));
+        animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/robby/spine.atlas"));
         animationDataComponent.skeletonJson = new SkeletonJson(animationDataComponent.textureAtlas);
-        animationDataComponent.skeletonData = animationDataComponent.skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/sunflower/skeleton.json"));
+        animationDataComponent.skeletonData = animationDataComponent.skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/robby/skeleton.json"));
         animationDataComponent.skeletonData.setFps(60);
         animationDataComponent.animationStateData = new AnimationStateData(animationDataComponent.skeletonData);
         animationDataComponent.skeleton = new Skeleton(animationDataComponent.skeletonData);
@@ -63,6 +63,8 @@ public class Character extends Entity {
         animationDataComponent.registerAnimationForState(State.RUNNING, "run");
         animationDataComponent.registerAnimationForState(State.DEFAULT, "idle");
         animationDataComponent.registerAnimationForState(State.JUMPSQUAT, "jumpsquat");
+        animationDataComponent.registerAnimationForState(State.EXIT_JUMPSQUAT, "jumpsquat");
+        animationDataComponent.registerAnimationForState(State.CROUCHING, "crouch");
         animationDataComponent.registerAnimationForState(State.AIRBORNE, "airborne");
         animationDataComponent.registerAnimationForState(State.AIRDODGE, "airborne");
         animationDataComponent.registerAnimationForState(State.DIRECTIONAL_AIRDODGE, "airborne");

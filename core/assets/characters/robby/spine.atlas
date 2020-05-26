@@ -1,0 +1,125 @@
+
+spine.png
+size: 265,363
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Antanae1
+  rotate: false
+  xy: 250, 315
+  size: 9, 46
+  orig: 39, 57
+  offset: 18, 3
+  index: -1
+Antanae2
+  rotate: false
+  xy: 2, 5
+  size: 76, 50
+  orig: 108, 69
+  offset: 14, 11
+  index: -1
+Back Arm
+  rotate: false
+  xy: 87, 56
+  size: 47, 70
+  orig: 58, 79
+  offset: 5, 3
+  index: -1
+Back Foot
+  rotate: false
+  xy: 154, 319
+  size: 94, 42
+  orig: 105, 48
+  offset: 7, 4
+  index: -1
+Back Forearm
+  rotate: true
+  xy: 224, 69
+  size: 69, 21
+  orig: 73, 30
+  offset: 2, 3
+  index: -1
+Back Hand
+  rotate: true
+  xy: 80, 9
+  size: 45, 51
+  orig: 59, 62
+  offset: 4, 6
+  index: -1
+Back Leg
+  rotate: true
+  xy: 2, 57
+  size: 69, 83
+  orig: 99, 97
+  offset: 10, 9
+  index: -1
+Back Shin
+  rotate: true
+  xy: 154, 210
+  size: 63, 91
+  orig: 80, 98
+  offset: 7, 2
+  index: -1
+Body
+  rotate: true
+  xy: 2, 259
+  size: 102, 150
+  orig: 119, 178
+  offset: 11, 18
+  index: -1
+Face
+  rotate: false
+  xy: 231, 140
+  size: 32, 68
+  orig: 121, 104
+  offset: 64, 21
+  index: -1
+Front Arm
+  rotate: true
+  xy: 136, 25
+  size: 47, 70
+  orig: 58, 79
+  offset: 5, 3
+  index: -1
+Front Foot
+  rotate: false
+  xy: 154, 275
+  size: 94, 42
+  orig: 105, 48
+  offset: 7, 4
+  index: -1
+Front Forearm
+  rotate: false
+  xy: 133, 2
+  size: 69, 21
+  orig: 73, 30
+  offset: 2, 3
+  index: -1
+Front Hand
+  rotate: true
+  xy: 208, 22
+  size: 45, 51
+  orig: 59, 62
+  offset: 4, 6
+  index: -1
+Front Leg
+  rotate: true
+  xy: 138, 74
+  size: 69, 84
+  orig: 99, 97
+  offset: 10, 9
+  index: -1
+Front Shin
+  rotate: true
+  xy: 138, 145
+  size: 63, 91
+  orig: 80, 98
+  offset: 7, 2
+  index: -1
+Head
+  rotate: true
+  xy: 2, 128
+  size: 129, 134
+  orig: 162, 161
+  offset: 13, 17
+  index: -1

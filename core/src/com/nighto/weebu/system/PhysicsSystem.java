@@ -9,6 +9,7 @@ import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.event.EventPublisher;
 
+import javax.naming.ldap.Control;
 import java.util.Collections;
 
 public class PhysicsSystem extends System {
@@ -55,8 +56,8 @@ public class PhysicsSystem extends System {
             updatePosition(entity);
         }
 
-        if (entity.componentsEnabled(PhysicalComponent.class, StateComponent.class)) {
-            updateDirection(physical, state);
+        if (entity.componentsEnabled(ControllerComponent.class, PhysicalComponent.class, StateComponent.class)) {
+            updateDirection(controller, physical, state);
         }
 
         if (entity.componentsEnabled(PhysicalComponent.class, StateComponent.class)) {
@@ -101,8 +102,8 @@ public class PhysicsSystem extends System {
         physicalComponent.position.add(physicalComponent.velocity);
     }
 
-    private void updateDirection(PhysicalComponent physicalComponent, StateComponent stateComponent) {
-        if (!stateComponent.inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING)) {
+    private void updateDirection(ControllerComponent controller, PhysicalComponent physicalComponent, StateComponent stateComponent) {
+        if (controller.isActivelyControlling() && !stateComponent.inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING, State.DIRECTIONAL_AIRDODGE, State.AIRDODGE)) {
             if (physicalComponent.velocity.x > 0) {
                 physicalComponent.facingRight = true;
             } else if (physicalComponent.velocity.x < 0) {

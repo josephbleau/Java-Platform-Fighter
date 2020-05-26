@@ -67,17 +67,17 @@ public class AnimationSystem extends System {
 
     private void updateFacing(PhysicalComponent physical, Skeleton skeleton) {
         if (physical.facingRight) {
-            skeleton.setScale(0.2f, skeleton.getScaleY());
+            skeleton.setScale(0.5f, skeleton.getScaleY());
         } else {
-            skeleton.setScale(-0.2f, skeleton.getScaleY());
+            skeleton.setScale(-0.5f, skeleton.getScaleY());
         }
     }
 
     private void updateCrouching(StateComponent state, Skeleton skeleton) {
         if (state.inState(State.CROUCHING)) {
-            skeleton.setScale(skeleton.getScaleX(), .2f/1.5f);
+            skeleton.setScale(skeleton.getScaleX(), .5f/1.5f);
         } else {
-            skeleton.setScale(skeleton.getScaleX(), .2f);
+            skeleton.setScale(skeleton.getScaleX(), .5f);
         }
     }
 }
