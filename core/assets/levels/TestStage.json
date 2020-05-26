@@ -24,7 +24,8 @@
 		},
 		{
 			"note": "floating platform",
-			"boundingBox": {"x": 1200, "y": 500, "width": 300, "height": 20}
+			"boundingBox": {"x": 1200, "y": 500, "width": 300, "height": 20},
+			"passThru": true
 		}
 	],
 	"blastZone": {"x": 60, "y": 60, "width": 1800, "height": 960},

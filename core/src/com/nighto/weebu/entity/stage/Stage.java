@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.component.stage.StageDataComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.stage.parts.Ledge;
+import com.nighto.weebu.entity.stage.parts.Platform;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,8 +20,8 @@ public class Stage extends Entity {
     public Stage(Stages stages) {
         setActive(true);
 
-        stageColor = Color.BLACK;
-        blastZoneColor = Color.RED;
+        stageColor = Color.DARK_GRAY;
+        blastZoneColor = Color.GRAY;
         ledgeColor = Color.BLUE;
 
         try {
@@ -36,10 +37,15 @@ public class Stage extends Entity {
         StageDataComponent stageData = getComponent(StageDataComponent.class);
 
         // Draw the platforms
-        for (Rectangle platform : stageData.getPlatformBoundingBoxes()) {
-            shapeRenderer.begin(shapeType);
+        for (Platform platform : stageData.platforms) {
+            if(!platform.passThru) {
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            } else {
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            }
+
             shapeRenderer.setColor(stageColor);
-            shapeRenderer.rect(platform.x, platform.y, platform.width, platform.height);
+            shapeRenderer.rect(platform.boundingBox.x, platform.boundingBox.y, platform.boundingBox.width, platform.boundingBox.height);
             shapeRenderer.end();
         }
 
@@ -105,6 +111,18 @@ public class Stage extends Entity {
         for (Ledge ledge : stageData.ledges) {
             if (ledge.boundingBox.equals(shape)) {
                 return ledge;
+            }
+        }
+
+        return null;
+    }
+
+    public Platform ifPlatformGetPlatform(Shape2D shape) {
+        StageDataComponent stageData = getComponent(StageDataComponent.class);
+
+        for (Platform plat : stageData.platforms) {
+            if (plat.boundingBox.equals(shape)) {
+                return plat;
             }
         }
 

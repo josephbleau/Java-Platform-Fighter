@@ -14,6 +14,7 @@ import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
+import com.nighto.weebu.entity.stage.parts.Platform;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.events.CollisionEvent;
 import com.nighto.weebu.event.events.Event;
@@ -117,8 +118,11 @@ public class CollisionEventHandler implements EventHandler {
             } else if (collidedFromBottom(r1, pr1, stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " bumped their head.");
 
-                physical.prevPosition.y = physical.position.y;
-                physical.position.y = stageRect.y - r1.height;
+                Platform platform = stage.ifPlatformGetPlatform(stageRect);
+                if (platform != null && !platform.passThru) {
+                    physical.prevPosition.y = physical.position.y;
+                    physical.position.y = stageRect.y - r1.height;
+                }
 
                 state.enterState(State.AIRBORNE);
             } else if (collidedFromRight(r1, pr1, stageRect)) {

@@ -3,6 +3,7 @@ package com.nighto.weebu.entity.character;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.esotericsoftware.spine.AnimationState;
@@ -14,6 +15,7 @@ import com.nighto.weebu.component.character.AnimationDataComponent;
 import com.nighto.weebu.component.character.CharacterDataComponent;
 import com.nighto.weebu.component.character.ControllerComponent;
 import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
@@ -121,6 +123,13 @@ public class Character extends Entity {
 
         CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
         characterData.getTimers().resetTimers();
+    }
+
+    @Override
+    public void render(ShapeRenderer shapeRenderer) {
+        if (WorldConstants.DEBUG) {
+            super.render(shapeRenderer);
+        }
     }
 
     public void updateShield(float delta) {
