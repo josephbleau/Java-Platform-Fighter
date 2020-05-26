@@ -11,5 +11,7 @@
 	"airFriction": 1.1,
 	"groundFriction": 2,
 	"knockbackModifier": 1,
-	"airDodgeVelocity": 20
+	"airDodgeVelocity": 20,
+	"renderScaleX": 0.4,
+	"renderScaleY": 0.4
 }

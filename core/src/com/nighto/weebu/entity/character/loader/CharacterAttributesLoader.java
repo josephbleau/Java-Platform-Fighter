@@ -14,12 +14,12 @@ import java.util.Map;
 public class CharacterAttributesLoader {
     private CharacterAttributesLoader() {}
 
-    public static CharacterDataComponent loadCharacterData() {
+    public static CharacterDataComponent loadCharacterData(String characterName) {
         Gson gson = new Gson();
 
         try {
-            String attributesJsonFile = new String(Files.readAllBytes(Paths.get("core/assets/characters/sunflower/attributes.json")));
-            String hurtboxesJsonFile = new String(Files.readAllBytes(Paths.get("core/assets/characters/sunflower/hurtboxes.json")));
+            String attributesJsonFile = new String(Files.readAllBytes(Paths.get("core/assets/characters/" + characterName + "/attributes.json")));
+            String hurtboxesJsonFile = new String(Files.readAllBytes(Paths.get("core/assets/characters/" + characterName + "/hurtboxes.json")));
 
             InitialCharacterAttributes initialCharacterAttributes = gson.fromJson(attributesJsonFile, InitialCharacterAttributes.class);
             Map<State, Rectangle> hurtboxes = gson.fromJson(hurtboxesJsonFile, Map.class);

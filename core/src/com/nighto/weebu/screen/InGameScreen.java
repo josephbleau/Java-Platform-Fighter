@@ -8,7 +8,9 @@ import com.nighto.weebu.component.character.ControllerComponent;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.entity.stage.TestStage;
+import com.nighto.weebu.entity.character.loader.Characters;
+import com.nighto.weebu.entity.stage.Stage;
+import com.nighto.weebu.entity.stage.Stages;
 import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.system.System;
 import com.nighto.weebu.system.*;
@@ -22,17 +24,17 @@ public class InGameScreen implements Screen {
     private final List<System> systems;
 
     public InGameScreen() {
-        Character player = new Character();
+        Character player = new Character(Characters.ROBBY);
         player.setTag("Player");
         registerControllerForPlayer(player);
 
-        Character computer = new Character();
+        Character computer = new Character(Characters.SUNFLOWER);
         computer.setTag("Computer");
 
         gameContext = new GameContext();
         gameContext.registerEntity(player);
         gameContext.registerEntity(computer);
-        gameContext.registerStage(new TestStage());
+        gameContext.registerStage(new Stage(Stages.TEST_STAGE));
 
         EventPublisher eventPublisher = new EventPublisher();
         eventPublisher.registerListeners(gameContext.getEntities());

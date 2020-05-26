@@ -6,7 +6,6 @@ import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.AnimationDataComponent;
 import com.nighto.weebu.component.character.StateComponent;
 import com.nighto.weebu.entity.Entity;
-import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.event.EventPublisher;
 
 import java.util.Arrays;
@@ -38,7 +37,6 @@ public class AnimationSystem extends System {
             // Update position, facing, and crouching status
             updatePosition(physical, skeleton);
             updateFacing(physical, skeleton);
-            updateCrouching(state, skeleton);
 
             // Progress animation
             animationState.update(gameContext.getFrameDelta());
@@ -66,18 +64,11 @@ public class AnimationSystem extends System {
     }
 
     private void updateFacing(PhysicalComponent physical, Skeleton skeleton) {
+        float leftScale = -(Math.abs(skeleton.getScaleX()));
         if (physical.facingRight) {
-            skeleton.setScale(0.5f, skeleton.getScaleY());
+            skeleton.setScale(-leftScale, skeleton.getScaleY());
         } else {
-            skeleton.setScale(-0.5f, skeleton.getScaleY());
-        }
-    }
-
-    private void updateCrouching(StateComponent state, Skeleton skeleton) {
-        if (state.inState(State.CROUCHING)) {
-            skeleton.setScale(skeleton.getScaleX(), .5f/1.5f);
-        } else {
-            skeleton.setScale(skeleton.getScaleX(), .5f);
+            skeleton.setScale(leftScale, skeleton.getScaleY());
         }
     }
 }

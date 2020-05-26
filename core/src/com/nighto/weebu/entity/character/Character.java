@@ -21,6 +21,7 @@ import com.nighto.weebu.entity.attack.Attack;
 import com.nighto.weebu.entity.character.event.CollisionEventHandler;
 import com.nighto.weebu.entity.character.event.DeathhEventHandler;
 import com.nighto.weebu.entity.character.loader.CharacterAttributesLoader;
+import com.nighto.weebu.entity.character.loader.Characters;
 import com.nighto.weebu.entity.shield.Shield;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
@@ -43,24 +44,24 @@ public class Character extends Entity {
     protected CharacterDataComponent characterDataComponent;
     protected ControllerComponent controllerComponent;
 
-    public Character() {
+    public Character(Characters character) {
         shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
         attacks = new ArrayList<>();
 
         animationDataComponent = new AnimationDataComponent();
 
         stateComponent = new StateComponent();
-        characterDataComponent = CharacterAttributesLoader.loadCharacterData();
+        characterDataComponent = CharacterAttributesLoader.loadCharacterData(character.name);
         controllerComponent =  new ControllerComponent(new GameController(new NoopGamecubeController(), false));
         controllerComponent.registerController(new GameController(new NoopGamecubeController(), true));
 
-        animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/robby/spine.atlas"));
+        animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/"+character.name+"/spine.atlas"));
         animationDataComponent.skeletonJson = new SkeletonJson(animationDataComponent.textureAtlas);
-        animationDataComponent.skeletonData = animationDataComponent.skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/robby/skeleton.json"));
+        animationDataComponent.skeletonData = animationDataComponent.skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/"+character.name+"/skeleton.json"));
         animationDataComponent.skeletonData.setFps(60);
         animationDataComponent.animationStateData = new AnimationStateData(animationDataComponent.skeletonData);
         animationDataComponent.skeleton = new Skeleton(animationDataComponent.skeletonData);
-        animationDataComponent.skeleton.setScale(.2f, .2f);
+        animationDataComponent.skeleton.setScale(characterDataComponent.getInitialAttributes().getRenderScaleX(), characterDataComponent.getInitialAttributes().getRenderScaleY());
         animationDataComponent.animationState = new AnimationState(animationDataComponent.animationStateData);
         animationDataComponent.animationState.setAnimation(0, "idle", true);
 

@@ -44,7 +44,6 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
         this.numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
     }
 
-
     public void decrementJumps() {
         this.numberOfJumps--;
     }

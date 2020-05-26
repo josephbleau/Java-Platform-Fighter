@@ -42,6 +42,10 @@ public class InitialCharacterAttributes {
     /** Number of air-dodges allowed before landing **/
     protected float numberOfAirDodges;
 
+    /** Used during rendering, determines the scale of the Spine animation, is varied by character depending on the source files. **/
+    protected float renderScaleX;
+    protected float renderScaleY;
+
     public int getNumberOfJumps() {
         return numberOfJumps;
     }
@@ -92,5 +96,13 @@ public class InitialCharacterAttributes {
 
     public float getNumberOfAirDodges() {
         return numberOfAirDodges;
+    }
+
+    public float getRenderScaleX() {
+        return renderScaleX;
+    }
+
+    public float getRenderScaleY() {
+        return renderScaleY;
     }
 }

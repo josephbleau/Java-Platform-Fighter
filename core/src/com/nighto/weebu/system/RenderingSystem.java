@@ -35,17 +35,12 @@ public class RenderingSystem extends System {
             return;
         }
 
-        if (animationData.skeleton != null) {
-            skeletonRenderer.draw(spriteBatch, animationData.skeleton);
-        }
-    }
-
-    @Override
-    public void process() {
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
 
-        super.process();
+        if (animationData.skeleton != null) {
+            skeletonRenderer.draw(spriteBatch, animationData.skeleton);
+        }
 
         spriteBatch.end();
     }

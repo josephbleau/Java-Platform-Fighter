@@ -8,19 +8,28 @@ import com.nighto.weebu.component.stage.StageDataComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 
+import java.io.IOException;
 import java.util.List;
 
-public abstract class Stage extends Entity {
+public class Stage extends Entity {
     protected Color ledgeColor;
     protected Color stageColor;
     protected Color blastZoneColor;
 
-    public Stage() {
+    public Stage(Stages stages) {
         setActive(true);
 
         stageColor = Color.BLACK;
         blastZoneColor = Color.RED;
         ledgeColor = Color.BLUE;
+
+        try {
+            registerComponent(StageDataComponent.class, StageDataComponent.loadFromJson(stages.name + ".json"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        setTag(stages.name);
     }
 
     public void render(ShapeRenderer shapeRenderer) {
@@ -47,6 +56,9 @@ public abstract class Stage extends Entity {
             shapeRenderer.end();
         }
     }
+
+    @Override
+    public void update(float delta) {}
 
     public float getGravity() {
         StageDataComponent stageData = getComponent(StageDataComponent.class);
