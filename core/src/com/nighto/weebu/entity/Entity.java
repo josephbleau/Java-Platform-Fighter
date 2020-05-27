@@ -8,8 +8,8 @@ import com.nighto.weebu.component.Component;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
-import com.nighto.weebu.event.events.CollisionEvent;
-import com.nighto.weebu.event.events.Event;
+import com.nighto.weebu.event.game.CollisionEvent;
+import com.nighto.weebu.event.game.Event;
 import com.nighto.weebu.system.GameContext;
 
 import java.util.*;

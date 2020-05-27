@@ -16,8 +16,8 @@ import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.entity.stage.parts.Platform;
 import com.nighto.weebu.event.EventHandler;
-import com.nighto.weebu.event.events.CollisionEvent;
-import com.nighto.weebu.event.events.Event;
+import com.nighto.weebu.event.game.CollisionEvent;
+import com.nighto.weebu.event.game.Event;
 
 public class CollisionEventHandler implements EventHandler {
     private Character character;

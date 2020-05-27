@@ -5,8 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.entity.Entity;
-import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.event.events.Event;
+import com.nighto.weebu.event.game.Event;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,12 +19,12 @@ public class Attack extends Entity {
     protected float xImpulse;
     protected float yImpulse;
 
-    private Character owner;
+    private Entity owner;
 
     private List<Rectangle> hitBoxes;
     private Color hitBoxColor;
 
-    protected Attack(Character owner, List<Rectangle> hitBoxes) {
+    protected Attack(Entity owner, List<Rectangle> hitBoxes) {
         setHidden(true);
 
         this.owner = owner;

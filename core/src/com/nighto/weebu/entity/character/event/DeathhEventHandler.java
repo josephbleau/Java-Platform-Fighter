@@ -2,8 +2,8 @@ package com.nighto.weebu.entity.character.event;
 
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.event.EventHandler;
-import com.nighto.weebu.event.events.DeathEvent;
-import com.nighto.weebu.event.events.Event;
+import com.nighto.weebu.event.game.DeathEvent;
+import com.nighto.weebu.event.game.Event;
 
 public class DeathhEventHandler implements EventHandler {
     private Character character;

@@ -1,4 +1,4 @@
-package com.nighto.weebu.event.events;
+package com.nighto.weebu.event.game;
 
 import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.entity.Entity;

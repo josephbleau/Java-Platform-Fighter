@@ -68,7 +68,9 @@ public class StateComponent extends Component {
 
     public void revertState() {
         state = previousState;
+    }
 
-
+    public void revertSubState() {
+        subState = previousSubState;
     }
 }

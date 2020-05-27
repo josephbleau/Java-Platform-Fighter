@@ -2,12 +2,13 @@ package com.nighto.weebu.entity.attack;
 
 
 import com.badlogic.gdx.math.Rectangle;
+import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
 
 import java.util.Collections;
 
 public class MeleeAttack extends Attack {
-    public MeleeAttack(Character owner, float hitBoxOffsetX, float hitBoxOffsetY, float knockbackInduced, float xImpulse, float yImpulse) {
+    public MeleeAttack(Entity owner, float hitBoxOffsetX, float hitBoxOffsetY, float knockbackInduced, float xImpulse, float yImpulse) {
         super(owner, Collections.singletonList(new Rectangle(hitBoxOffsetX, hitBoxOffsetY, 20, 20)));
 
         startupTime = 1f/60f;

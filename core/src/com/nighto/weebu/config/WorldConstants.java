@@ -7,5 +7,5 @@ public class WorldConstants {
     public static final float WORLD_HEIGHT = 1080;
 
     public static int LOG_LEVEL = Application.LOG_DEBUG;
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
 }

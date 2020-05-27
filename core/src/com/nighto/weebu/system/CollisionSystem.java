@@ -3,7 +3,7 @@ package com.nighto.weebu.system;
 import com.badlogic.gdx.Gdx;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.event.EventPublisher;
-import com.nighto.weebu.event.events.DeathEvent;
+import com.nighto.weebu.event.game.DeathEvent;
 
 import java.util.Collections;
 

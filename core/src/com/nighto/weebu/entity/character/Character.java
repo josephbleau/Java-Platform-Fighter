@@ -20,6 +20,7 @@ import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
+import com.nighto.weebu.entity.character.event.AttackEventListener;
 import com.nighto.weebu.entity.character.event.CollisionEventHandler;
 import com.nighto.weebu.entity.character.event.DeathhEventHandler;
 import com.nighto.weebu.entity.character.loader.CharacterAttributesLoader;
@@ -27,17 +28,15 @@ import com.nighto.weebu.entity.character.loader.Characters;
 import com.nighto.weebu.entity.shield.Shield;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
-import com.nighto.weebu.event.events.CollisionEvent;
+import com.nighto.weebu.event.game.CollisionEvent;
+import com.nighto.weebu.event.spine.AnimationEventListener;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Character extends Entity {
 
     protected GameController gameController;
 
-    protected final List<Attack> attacks;
     protected final Shield shield;
 
     // Components
@@ -48,7 +47,6 @@ public class Character extends Entity {
 
     public Character(Characters character) {
         shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
-        attacks = new ArrayList<>();
 
         animationDataComponent = new AnimationDataComponent();
 
@@ -71,12 +69,14 @@ public class Character extends Entity {
         animationDataComponent.registerAnimationForState(State.DEFAULT, "idle");
         animationDataComponent.registerAnimationForState(State.JUMPSQUAT, "jumpsquat");
         animationDataComponent.registerAnimationForState(State.EXIT_JUMPSQUAT, "jumpsquat");
-        animationDataComponent.registerAnimationForState(State.CROUCHING, "crouch");
+        animationDataComponent.registerAnimationForState(State.CROUCHING, "uptilt");
         animationDataComponent.registerAnimationForState(State.AIRBORNE, "airborne");
         animationDataComponent.registerAnimationForState(State.AIRDODGE, "airborne");
         animationDataComponent.registerAnimationForState(State.DIRECTIONAL_AIRDODGE, "airborne");
         animationDataComponent.registerAnimationForSubState(State.SUBSTATE_TUMBLE, "tumble");
         animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING, "jab");
+
+        animationDataComponent.animationState.addListener(new AnimationEventListener(this));
 
         registerComponent(CharacterDataComponent.class, characterDataComponent);
         registerComponent(StateComponent.class, stateComponent);
@@ -86,6 +86,7 @@ public class Character extends Entity {
 
         registerEventHandler(new CollisionEventHandler(this));
         registerEventHandler(new DeathhEventHandler(this));
+        registerEventHandler(new AttackEventListener(this));
 
         // TODO: Stage spawn locations
         teleport(1920/2, 400);
@@ -105,7 +106,6 @@ public class Character extends Entity {
 
     @Override
     public void update(float delta) {
-        updateAttacks(delta);
         updateShield(delta);
     }
 
@@ -142,27 +142,6 @@ public class Character extends Entity {
         }
     }
 
-    private void updateAttacks(float delta) {
-        boolean attackPlaying = false;
-
-        Iterator<Attack> attackIterator = attacks.iterator();
-
-        while (attackIterator.hasNext()) {
-            Attack attack = attackIterator.next();
-            attack.update(delta);
-            attackPlaying = attack.isPlaying();
-
-            if (!attack.isActive()) {
-                getGameContext().removeEntity(attack);
-                attackIterator.remove();
-            }
-        }
-
-        if (!attackPlaying && stateComponent.inSubState(State.SUBSTATE_ATTACKING)) {
-            stateComponent.enterSubState(State.SUBSTATE_DEFAULT);
-        }
-    }
-
     // TODO: Attack system
     public void enterKnockback(Attack attack) {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
@@ -185,19 +164,6 @@ public class Character extends Entity {
         } else {
             stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
         }
-    }
-
-    public void startAttack(Attack attack) {
-        PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
-
-        getGameContext().registerEntity(attack);
-        attack.teleport(physicalComponent.position.x, physicalComponent.position.y, true);
-
-        if (attack.isPlaying()) {
-            stateComponent.enterSubState(State.SUBSTATE_ATTACKING);
-        }
-
-        attacks.add(attack);
     }
 
     public void startShielding() {

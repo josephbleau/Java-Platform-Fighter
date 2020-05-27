@@ -1,6 +1,6 @@
 package com.nighto.weebu.event;
 
-import com.nighto.weebu.event.events.Event;
+import com.nighto.weebu.event.game.Event;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.nighto.weebu.component.character.ControllerComponent;
-import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.GamecubeController;
 import com.nighto.weebu.entity.character.Character;
@@ -48,6 +47,8 @@ public class InGameScreen implements Screen {
 
         systems.add(new PhysicsSystem(gameContext, eventPublisher));
         systems.add(new CollisionSystem(gameContext, eventPublisher));
+
+        systems.add(new AttackAnimationSystem(gameContext, eventPublisher));
 
         systems.add(new RenderingSystem(gameContext, eventPublisher));
         systems.add(new DebugRenderingSystem(gameContext, eventPublisher));

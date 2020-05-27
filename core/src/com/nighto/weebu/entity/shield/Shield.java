@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.entity.Entity;
-import com.nighto.weebu.event.events.CollisionEvent;
+import com.nighto.weebu.event.game.CollisionEvent;
 
 import java.util.ArrayList;
 import java.util.List;
