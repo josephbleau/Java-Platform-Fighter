@@ -5,8 +5,6 @@ import com.nighto.weebu.component.character.CharacterDataComponent;
 import com.nighto.weebu.component.character.ControllerComponent;
 import com.nighto.weebu.component.character.StateComponent;
 import com.nighto.weebu.controller.GameInput;
-import com.nighto.weebu.entity.attack.MeleeAttack;
-import com.nighto.weebu.entity.attack.ProjectileAttack;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.character.State;
 
@@ -19,11 +17,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
                         State.STANDING,
                         State.RUNNING
                 },
-                new State[] {
-                        State.SUBSTATE_ATTACKING,
-                        State.SUBSTATE_KNOCKBACK,
-                        State.SUBSTATE_TUMBLE
-                }
+                State.concat(State.ATTACKING_STATES, State.KNOCKBACK_STATES)
         );
     }
 
@@ -60,11 +54,11 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
         StateComponent state = character.getComponent(StateComponent.class);
 
-        if (controller.isPressed(GameInput.ControlLeftLight)) {
+        if (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard)) {
             controller.setActivelyControlling(true);
             physical.velocity.x = (-characterData.getActiveAttributes().getGroundSpeed());
             state.enterState(State.RUNNING);
-        } else if (controller.isPressed(GameInput.ControlRightLight)) {
+        } else if (controller.isPressed(GameInput.ControlRightLight) || controller.isPressed(GameInput.ControlRightHard)) {
             controller.setActivelyControlling(true);
             physical.velocity.x = (characterData.getActiveAttributes().getGroundSpeed());
             state.enterState(State.RUNNING);
@@ -110,9 +104,18 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         StateComponent state = character.getComponent(StateComponent.class);
 
-        if (!state.inSubState(State.SUBSTATE_ATTACKING)) {
+        boolean hardDirection = controller.isPressed(GameInput.ControlRightHard) || controller.isPressed(GameInput.ControlLeftHard);
+
+        if ((!state.inState(State.RUNNING) || (!hardDirection && state.inState(State.RUNNING))) && !state.inSubState(State.ATTACKING_STATES)) {
             if (controller.isPressed(GameInput.NeutralAttack)) {
-                state.enterSubState(State.SUBSTATE_ATTACKING);
+                state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_NORMAL);
+                physical.velocity.x = 0;
+            }
+        }
+
+        if (hardDirection && state.inState(State.RUNNING) && !state.inSubState(State.ATTACKING_STATES)) {
+            if (controller.isPressed(GameInput.NeutralAttack)) {
+                state.enterSubState(State.SUBSTATE_ATTACKING_DASH_ATTACK);
                 physical.velocity.x = 0;
             }
         }
@@ -125,9 +128,9 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         StateComponent state = character.getComponent(StateComponent.class);
 
-        if (!state.inSubState(State.SUBSTATE_ATTACKING)) {
+        if (!state.inSubState(State.ATTACKING_STATES)) {
             if (controller.isPressed(GameInput.NeutralSpecial)) {
-                state.enterSubState(State.SUBSTATE_ATTACKING);
+                state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_SPECIAL);
                 physical.velocity.x = 0;
             }
         }

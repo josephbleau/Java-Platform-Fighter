@@ -5,18 +5,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
-import com.esotericsoftware.spine.AnimationState;
-import com.esotericsoftware.spine.AnimationStateData;
-import com.esotericsoftware.spine.Skeleton;
-import com.esotericsoftware.spine.SkeletonJson;
+import com.esotericsoftware.spine.*;
+import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.*;
 import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
-import com.nighto.weebu.entity.attack.Attack;
 import com.nighto.weebu.entity.attack.AttackData;
 import com.nighto.weebu.entity.character.event.AttackEventListener;
 import com.nighto.weebu.entity.character.event.CollisionEventHandler;
@@ -29,6 +27,7 @@ import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.game.CollisionEvent;
 import com.nighto.weebu.event.spine.AnimationEventListener;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Character extends Entity {
@@ -74,7 +73,9 @@ public class Character extends Entity {
         animationDataComponent.registerAnimationForState(State.AIRDODGE, "airborne");
         animationDataComponent.registerAnimationForState(State.DIRECTIONAL_AIRDODGE, "airborne");
         animationDataComponent.registerAnimationForSubState(State.SUBSTATE_TUMBLE, "tumble");
-        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING, "jab");
+        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_NEUTRAL_NORMAL, "jab");
+        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_DASH_ATTACK, "dashattack");
+        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_NEUTRAL_AIR, "nair");
 
         animationDataComponent.animationState.addListener(new AnimationEventListener(this));
 
@@ -124,11 +125,31 @@ public class Character extends Entity {
 
         CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
         characterData.getTimers().resetTimers();
+        characterData.getActiveAttributes().resetValues();
     }
 
     @Override
     public void render(ShapeRenderer shapeRenderer) {
         if (WorldConstants.DEBUG) {
+            Slot collisionSlot = animationDataComponent.skeleton.findSlot("collision");
+
+            if (collisionSlot != null) {
+                BoundingBoxAttachment boundingBoxAttachment = (BoundingBoxAttachment) collisionSlot.getAttachment();
+
+                float[] bbVerts = boundingBoxAttachment.getVertices();
+                Polygon bbPoly = new Polygon(bbVerts);
+                bbPoly.translate(collisionSlot.getBone().getWorldX(), collisionSlot.getBone().getWorldY());
+                bbPoly.setScale(collisionSlot.getBone().getScaleX(), collisionSlot.getBone().getWorldScaleY());
+                Rectangle bb = bbPoly.getBoundingRectangle();
+
+                if (WorldConstants.DEBUG) {
+                    shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                    shapeRenderer.setColor(Color.PURPLE);
+                    shapeRenderer.rect(bb.x, bb.y, bb.width, bb.height);
+                    shapeRenderer.end();
+                }
+            }
+
             super.render(shapeRenderer);
         }
     }

@@ -39,7 +39,7 @@ public class AttackGenerationSystem extends System {
         AttackDataComponent attackDataComponent = entity.getComponent(AttackDataComponent.class);
         PhysicalComponent physicalComponent = entity.getComponent(PhysicalComponent.class);
 
-        if (!stateComponent.inSubState(State.SUBSTATE_ATTACKING)) {
+        if (!stateComponent.inSubState(State.ATTACKING_STATES)) {
             return;
         }
 
@@ -55,6 +55,7 @@ public class AttackGenerationSystem extends System {
             }
 
             AttackData attackData = attackDataComponent.attacks.get(hitbox.getKey());
+
             if (attackData.usesPlayerDirection) {
                 if (!physicalComponent.facingRight) {
                     attackData.knockback.x = Math.abs(attackData.knockback.x) * -1;
@@ -72,6 +73,14 @@ public class AttackGenerationSystem extends System {
 
         for (Slot slot : skeleton.getSlots()) {
             Attachment attachment = slot.getAttachment();
+
+            if (attachment == null) {
+                continue;
+            }
+
+            if (attachment.getName().contains("collidable")) {
+                continue;
+            }
 
             if (attachment instanceof BoundingBoxAttachment) {
                 Polygon polygon = new Polygon(((BoundingBoxAttachment) attachment).getVertices());

@@ -102,7 +102,7 @@ public class PhysicsSystem extends System {
     }
 
     private void updateDirection(ControllerComponent controller, PhysicalComponent physicalComponent, StateComponent stateComponent) {
-        if (controller.isActivelyControlling() && !stateComponent.inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING, State.DIRECTIONAL_AIRDODGE, State.AIRDODGE)) {
+        if (controller.isActivelyControlling() && !stateComponent.inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING, State.DIRECTIONAL_AIRDODGE, State.AIRDODGE) && !stateComponent.inSubState(State.ATTACKING_STATES)) {
             if (physicalComponent.velocity.x > 0) {
                 physicalComponent.facingRight = true;
             } else if (physicalComponent.velocity.x < 0) {

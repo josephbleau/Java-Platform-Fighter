@@ -23,4 +23,10 @@ public class AttackDataComponent extends Component {
             throw new RuntimeException(e);
         }
     }
+
+    public void clearTargets() {
+        for (AttackData attackData : attacks.values()) {
+            attackData.hasCollidedWith.clear();
+        }
+    }
 }

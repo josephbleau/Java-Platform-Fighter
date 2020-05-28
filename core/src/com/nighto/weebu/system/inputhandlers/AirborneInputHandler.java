@@ -5,7 +5,6 @@ import com.nighto.weebu.component.character.CharacterDataComponent;
 import com.nighto.weebu.component.character.ControllerComponent;
 import com.nighto.weebu.component.character.StateComponent;
 import com.nighto.weebu.controller.GameInput;
-import com.nighto.weebu.entity.attack.ProjectileAttack;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.character.State;
 
@@ -21,7 +20,7 @@ public class AirborneInputHandler extends StateBasedInputHandler {
                 handleSidestep(character) &&
                 handleDrift(character) &&
                 handleFastFall(character) &&
-                handleNeutralSpecial(character);
+                handleAttacks(character);
     }
 
     private boolean handleJump(Character character) {
@@ -118,12 +117,18 @@ public class AirborneInputHandler extends StateBasedInputHandler {
         return true;
     }
 
-    private boolean handleNeutralSpecial(Character character) {
+    private boolean handleAttacks(Character character) {
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         StateComponent state = character.getComponent(StateComponent.class);
 
-        if(!state.inSubState(State.SUBSTATE_ATTACKING)) {
+        if(!state.inSubState(State.ATTACKING_STATES)) {
             if (controller.isPressed(GameInput.NeutralSpecial)) {
+                state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_SPECIAL);
+                return false;
+            }
+
+            if (controller.isPressed(GameInput.NeutralAttack)) {
+                state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_AIR);
                 return false;
             }
         }

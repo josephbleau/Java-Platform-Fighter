@@ -2,9 +2,6 @@ package com.nighto.weebu.entity.character.event;
 
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
-import com.nighto.weebu.entity.attack.Attack;
-import com.nighto.weebu.entity.attack.AttackData;
-import com.nighto.weebu.entity.attack.MeleeAttack;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.game.AttackEvent;
@@ -41,8 +38,9 @@ public class AttackEventListener implements EventHandler {
             collided |= characterCollidables.overlaps(boundingBox);
         }
 
-        if (collided) {
+        if (collided && !attackEvent.attackData.hasCollidedWith.contains(character)) {
             handleAttackCollision(attackEvent);
+            attackEvent.attackData.hasCollidedWith.add(character);
         }
     }
 

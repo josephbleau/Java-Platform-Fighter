@@ -2,11 +2,21 @@
   "attacks": {
     "jab": {
       "damage": 5,
-      "knockback": {
-        "x": 10,
-        "y": 10
-      },
-      "usesPlayerDirection": true
+      "knockback": {"x": 10, "y": 10},
+      "usesPlayerDirection": true,
+      "animSpeed": 1
+    },
+    "dashattack": {
+      "damage": 5,
+      "knockback": {"x": 15, "y": 40},
+      "usesPlayerDirection": true,
+      "animSpeed": 3
+    },
+    "nair": {
+      "damage": 10,
+      "knockback": {"x": 20, "y": 20},
+      "usesPlayerDirection": true,
+      "animSpeed": 0.5
     }
   }
 }
