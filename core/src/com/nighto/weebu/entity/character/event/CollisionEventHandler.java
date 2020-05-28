@@ -62,16 +62,6 @@ public class CollisionEventHandler implements EventHandler {
             if (them instanceof Stage) {
                 handleCollisionWithStage(us, (Stage) them, theirShape);
             }
-
-            if (them instanceof Attack) {
-                Attack attack = (Attack) them;
-                Character character = (Character) us;
-
-                if (!attack.getOwner().equals(character)) {
-                    Gdx.app.debug("Attack", character.getTag() + " was struck by an attack.");
-                    character.enterKnockback(attack);
-                }
-            }
         }
     }
 

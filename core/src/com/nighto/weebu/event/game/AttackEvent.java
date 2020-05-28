@@ -9,9 +9,9 @@ public class AttackEvent extends Event {
     public Polygon hitbox;
     public AttackData attackData;
 
-    public AttackEvent(Entity owner, Polygon hitbox) {
+    public AttackEvent(Entity owner, Polygon hitbox, AttackData attackData) {
         this.owner = owner;
         this.hitbox = hitbox;
-//        this.attackData = attackData;
+        this.attackData = attackData;
     }
 }

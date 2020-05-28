@@ -10,25 +10,25 @@ import com.esotericsoftware.spine.attachments.Attachment;
 import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.AnimationDataComponent;
+import com.nighto.weebu.component.character.AttackDataComponent;
 import com.nighto.weebu.component.character.StateComponent;
 import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.entity.Entity;
+import com.nighto.weebu.entity.attack.AttackData;
 import com.nighto.weebu.entity.character.State;
 import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.event.game.AttackEvent;
-import javafx.geometry.BoundingBox;
 import javafx.util.Pair;
 
-import javax.naming.ldap.HasControls;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AttackAnimationSystem extends System {
+public class AttackGenerationSystem extends System {
     private final ShapeRenderer debugShapeRenderer;
 
-    public AttackAnimationSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher, Arrays.asList(AnimationDataComponent.class, StateComponent.class));
+    public AttackGenerationSystem(GameContext gameContext, EventPublisher eventPublisher) {
+        super(gameContext, eventPublisher, Arrays.asList(AnimationDataComponent.class, StateComponent.class, AttackDataComponent.class, PhysicalComponent.class));
         debugShapeRenderer = new ShapeRenderer();
     }
 
@@ -36,9 +36,10 @@ public class AttackAnimationSystem extends System {
     void process(Entity entity) {
         StateComponent stateComponent = entity.getComponent(StateComponent.class);
         AnimationDataComponent animationDataComponent = entity.getComponent(AnimationDataComponent.class);
+        AttackDataComponent attackDataComponent = entity.getComponent(AttackDataComponent.class);
         PhysicalComponent physicalComponent = entity.getComponent(PhysicalComponent.class);
 
-        if (!stateComponent.inSubState(State.SUBSTATE_ATTACKING) || !entity.getTag().equals("Player")) {
+        if (!stateComponent.inSubState(State.SUBSTATE_ATTACKING)) {
             return;
         }
 
@@ -53,7 +54,15 @@ public class AttackAnimationSystem extends System {
                 debugShapeRenderer.end();
             }
 
-            AttackEvent attackEvent = new AttackEvent(entity, attackPoly);
+            AttackData attackData = attackDataComponent.attacks.get(hitbox.getKey());
+            if (attackData.usesPlayerDirection) {
+                if (!physicalComponent.facingRight) {
+                    attackData.knockback.x = Math.abs(attackData.knockback.x) * -1;
+                }
+            }
+
+            AttackEvent attackEvent = new AttackEvent(entity, attackPoly, attackData);
+
             eventPublisher.publish(attackEvent);
         }
     }

@@ -5,8 +5,7 @@
       "knockback": {
         "x": 10,
         "y": 10
-      },
-      "usesPlayerDirection": true
+      }
     }
   }
 }

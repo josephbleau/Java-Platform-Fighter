@@ -11,15 +11,13 @@ import com.esotericsoftware.spine.AnimationStateData;
 import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonJson;
 import com.nighto.weebu.component.PhysicalComponent;
-import com.nighto.weebu.component.character.AnimationDataComponent;
-import com.nighto.weebu.component.character.CharacterDataComponent;
-import com.nighto.weebu.component.character.ControllerComponent;
-import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.component.character.*;
 import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.Attack;
+import com.nighto.weebu.entity.attack.AttackData;
 import com.nighto.weebu.entity.character.event.AttackEventListener;
 import com.nighto.weebu.entity.character.event.CollisionEventHandler;
 import com.nighto.weebu.entity.character.event.DeathhEventHandler;
@@ -44,6 +42,7 @@ public class Character extends Entity {
     protected AnimationDataComponent animationDataComponent;
     protected CharacterDataComponent characterDataComponent;
     protected ControllerComponent controllerComponent;
+    protected AttackDataComponent attackDataComponent;
 
     public Character(Characters character) {
         shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
@@ -54,6 +53,7 @@ public class Character extends Entity {
         characterDataComponent = CharacterAttributesLoader.loadCharacterData(character.name);
         controllerComponent =  new ControllerComponent(new GameController(new NoopGamecubeController(), false));
         controllerComponent.registerController(new GameController(new NoopGamecubeController(), true));
+        attackDataComponent = AttackDataComponent.loadAttackDataComponent(character);
 
         animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/"+character.name+"/spine.atlas"));
         animationDataComponent.skeletonJson = new SkeletonJson(animationDataComponent.textureAtlas);
@@ -83,6 +83,7 @@ public class Character extends Entity {
         registerComponent(ControllerComponent.class, new ControllerComponent(gameController));
         registerComponent(AnimationDataComponent.class, animationDataComponent);
         registerComponent(ControllerComponent.class, controllerComponent);
+        registerComponent(AttackDataComponent.class, attackDataComponent);
 
         registerEventHandler(new CollisionEventHandler(this));
         registerEventHandler(new DeathhEventHandler(this));
@@ -143,27 +144,22 @@ public class Character extends Entity {
     }
 
     // TODO: Attack system
-    public void enterKnockback(Attack attack) {
+    public void enterKnockback(AttackData attackData) {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
         CharacterDataComponent characterDataComponent = getComponent(CharacterDataComponent.class);
 
-        float knockbackModifier = characterDataComponent.getActiveAttributes().getKnockbackModifier() + attack.getKnockbackModifierIncrease();
+        float knockbackModifier = characterDataComponent.getActiveAttributes().getKnockbackModifier() + attackData.damage;
         characterDataComponent.getActiveAttributes().setKnockbackModifier(knockbackModifier);
 
         physicalComponent.prevVelocity.x = physicalComponent.velocity.x;
         physicalComponent.prevVelocity.y = physicalComponent.velocity.y;
-        physicalComponent.velocity.x = attack.getxImpulse() + (attack.getxImpulse() * knockbackModifier / 50f);
-        physicalComponent.velocity.y = attack.getyImpulse() + (attack.getyImpulse() * knockbackModifier / 100f);
+        physicalComponent.velocity.x = attackData.knockback.x + (attackData.knockback.x * knockbackModifier / 50f);
+        physicalComponent.velocity.y = attackData.knockback.y + (attackData.knockback.y * knockbackModifier / 100f);
 
-        characterDataComponent.getTimers().setKnockbackTimeRemaining(attack.getKnockbackInduced());
+        characterDataComponent.getTimers().setKnockbackTimeRemaining(1);
 
         stateComponent.enterState(State.AIRBORNE);
-
-        if (attack.getKnockbackInduced() >= 30f/60f) {
-            stateComponent.enterSubState(State.SUBSTATE_TUMBLE);
-        } else {
-            stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
-        }
+        stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
     }
 
     public void startShielding() {

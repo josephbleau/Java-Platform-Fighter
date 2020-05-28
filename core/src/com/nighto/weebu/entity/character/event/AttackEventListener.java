@@ -47,9 +47,6 @@ public class AttackEventListener implements EventHandler {
     }
 
     private void handleAttackCollision(AttackEvent attackEvent) {
-        AttackData attackData = attackEvent.attackData;
-        Attack testAttack = new MeleeAttack(attackEvent.owner, 0, 0, 10, 20, 30);
-
-        character.enterKnockback(testAttack);
+        character.enterKnockback(attackEvent.attackData);
     }
 }

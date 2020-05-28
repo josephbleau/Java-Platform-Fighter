@@ -48,7 +48,7 @@ public class InGameScreen implements Screen {
         systems.add(new PhysicsSystem(gameContext, eventPublisher));
         systems.add(new CollisionSystem(gameContext, eventPublisher));
 
-        systems.add(new AttackAnimationSystem(gameContext, eventPublisher));
+        systems.add(new AttackGenerationSystem(gameContext, eventPublisher));
 
         systems.add(new RenderingSystem(gameContext, eventPublisher));
         systems.add(new DebugRenderingSystem(gameContext, eventPublisher));
