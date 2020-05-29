@@ -2,14 +2,18 @@ package com.nighto.weebu.component.character;
 
 public class ActiveCharacterAttributes extends InitialCharacterAttributes {
     private boolean fastFalling;
-    private final InitialCharacterAttributes initialCharacterAttributes;
+    private InitialCharacterAttributes initialCharacterAttributes;
+
+    public ActiveCharacterAttributes() {
+
+    }
 
     public ActiveCharacterAttributes(InitialCharacterAttributes initialCharacterAttributes) {
         this.initialCharacterAttributes = initialCharacterAttributes;
-        resetValues();
+        resetValues(initialCharacterAttributes);
     }
 
-    public void resetValues() {
+    public void resetValues(InitialCharacterAttributes initialCharacterAttributes) {
         numberOfJumps = initialCharacterAttributes.getNumberOfJumps();
         numberOfAirDodges = initialCharacterAttributes.getNumberOfAirDodges();
         fallSpeed = initialCharacterAttributes.getFallSpeed();
@@ -26,6 +30,10 @@ public class ActiveCharacterAttributes extends InitialCharacterAttributes {
         numberOfAirDodges = initialCharacterAttributes.numberOfAirDodges;
 
         fastFalling = false;
+    }
+
+    public void resetValues() {
+        resetValues(this.initialCharacterAttributes);
     }
 
     public boolean isFastFalling() {

@@ -2,8 +2,10 @@ package com.nighto.weebu.component.character;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.component.Component;
+import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.character.State;
 
+import javax.print.DocFlavor;
 import java.util.Map;
 
 /**
@@ -37,5 +39,24 @@ public class CharacterDataComponent extends Component {
 
     public Map<State, Rectangle> getHurtboxes() {
         return hurtboxes;
+    }
+
+    @Override
+    public CharacterDataComponent save() {
+        CharacterDataComponent characterDataComponent = new CharacterDataComponent(initialAttributes, hurtboxes);
+        characterDataComponent.activeAttributes.resetValues(activeAttributes);
+        characterDataComponent.initialAttributes = initialAttributes;
+        return characterDataComponent;
+    }
+
+    @Override
+    public void load(Component component) {
+        this.activeAttributes = new ActiveCharacterAttributes(((CharacterDataComponent) component).activeAttributes);
+
+        CharacterTimers characterTimers = new CharacterTimers(this);
+        characterTimers.setSidestepTimeRemaining(((CharacterDataComponent) component).getTimers().getSidestepTimeRemaining());
+        characterTimers.setKnockbackTimeRemaining(((CharacterDataComponent) component).getTimers().getKnockbackTimeRemaining());
+
+        this.timers = characterTimers;
     }
 }

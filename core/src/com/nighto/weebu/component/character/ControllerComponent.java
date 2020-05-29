@@ -40,4 +40,14 @@ public class ControllerComponent extends Component {
     public void setActivelyControlling(boolean activelyControlling) {
         this.activelyControlling = activelyControlling;
     }
+
+    @Override
+    public Component save() {
+        return this;
+    }
+
+    @Override
+    public void load(Component component) {
+        // No-op
+    }
 }

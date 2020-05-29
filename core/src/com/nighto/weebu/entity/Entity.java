@@ -20,7 +20,7 @@ import java.util.*;
  */
 public abstract class Entity implements EventListener {
 
-    private Map<Class<?>, Component> components;
+    private Map<Class<? extends Component>, Component> components;
 
     /** Color that the shape is rendered as by default **/
     protected Color defaultColor;
@@ -87,11 +87,11 @@ public abstract class Entity implements EventListener {
         }
     }
 
-    public void registerComponent(Class<?> componentType, Component component) {
+    public void registerComponent(Class<? extends Component> componentType, Component component) {
         components.put(componentType, component);
     }
 
-    public <T extends Component> T getComponent(Class<?> componentType) {
+    public <T extends Component> T getComponent(Class<? extends Component> componentType) {
         return (T) components.get(componentType);
     }
 
@@ -212,5 +212,9 @@ public abstract class Entity implements EventListener {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public Map<Class<? extends Component>, Component> getComponents() {
+        return components;
     }
 }

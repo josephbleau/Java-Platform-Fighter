@@ -3,7 +3,7 @@ package com.nighto.weebu.component.character;
 import com.nighto.weebu.component.Component;
 import com.nighto.weebu.entity.character.State;
 
-public class StateComponent extends Component {
+public class StateComponent extends Component{
     private State state;
     private State previousState;
     private State subState;
@@ -72,5 +72,26 @@ public class StateComponent extends Component {
 
     public void revertSubState() {
         subState = previousSubState;
+    }
+
+    @Override
+    public Component save() {
+        StateComponent stateComponent = new StateComponent();
+
+        stateComponent.state = this.state;
+        stateComponent.previousState = this.previousState;
+        stateComponent.subState = this.subState;
+        stateComponent.previousSubState = this.previousSubState;
+
+        return stateComponent;
+    }
+
+    @Override
+    public void load(Component component) {
+        StateComponent stateComponent = (StateComponent) component;
+        this.state = stateComponent.state;
+        this.previousState = stateComponent.previousState;
+        this.subState = stateComponent.subState;
+        this.previousSubState = stateComponent.previousSubState;
     }
 }

@@ -53,6 +53,7 @@ public class InGameScreen implements Screen {
         systems.add(new RenderingSystem(gameContext, eventPublisher));
         systems.add(new DebugRenderingSystem(gameContext, eventPublisher));
         systems.add(new DebugPrinterSystem(gameContext, eventPublisher));
+        systems.add(new DebugStateLoadingSystem(gameContext, eventPublisher));
     }
 
     @Override

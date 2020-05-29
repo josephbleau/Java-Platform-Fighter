@@ -27,7 +27,6 @@ import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.event.game.CollisionEvent;
 import com.nighto.weebu.event.spine.AnimationEventListener;
 
-import java.util.Collections;
 import java.util.List;
 
 public class Character extends Entity {

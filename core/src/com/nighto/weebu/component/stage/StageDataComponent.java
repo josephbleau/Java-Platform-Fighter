@@ -50,4 +50,14 @@ public class StageDataComponent extends Component {
         String jsonFile = new String(Files.readAllBytes(Paths.get(stageDirectoryPath + fileName)));
         return new Gson().fromJson(jsonFile, StageDataComponent.class);
     }
+
+    @Override
+    public Component save() {
+        return null;
+    }
+
+    @Override
+    public void load(Component component) {
+
+    }
 }

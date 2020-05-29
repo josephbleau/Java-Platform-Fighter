@@ -28,9 +28,11 @@ public abstract class System {
             if (entity.isActive()) {
                 boolean componentsPresentAndEnabled = true;
 
-                for (Class<? extends Component> requiredComponent : requiredComponents) {
-                    Component component = entity.getComponent(requiredComponent);
-                    componentsPresentAndEnabled &= component != null && component.isEnabled();
+                if (requiredComponents != null) {
+                    for (Class<? extends Component> requiredComponent : requiredComponents) {
+                        Component component = entity.getComponent(requiredComponent);
+                        componentsPresentAndEnabled &= component != null && component.isEnabled();
+                    }
                 }
 
                 if (componentsPresentAndEnabled) {

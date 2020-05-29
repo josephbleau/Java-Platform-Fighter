@@ -56,7 +56,6 @@ public class AnimationEventListener extends AnimationState.AnimationStateAdapter
         }
 
         if (TRANSLATE_PLAYER_Y_POS.equals(evtName)) {
-            physicalComponent.position.y = animationDataComponent.skeleton.getBones().get(0).getWorldY();
             animationDataComponent.forceUpdateAnimation(stateComponent);
         }
     }

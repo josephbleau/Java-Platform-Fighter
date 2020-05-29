@@ -29,4 +29,14 @@ public class AttackDataComponent extends Component {
             attackData.hasCollidedWith.clear();
         }
     }
+
+    @Override
+    public AttackDataComponent save() {
+        return null;
+    }
+
+    @Override
+    public void load(Component component) {
+
+    }
 }

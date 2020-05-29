@@ -69,4 +69,14 @@ public class AnimationDataComponent extends Component {
         animationState.apply(skeleton);
         animationState.update(0);
     }
+
+    @Override
+    public Component save() {
+        return null;
+    }
+
+    @Override
+    public void load(Component component) {
+
+    }
 }
