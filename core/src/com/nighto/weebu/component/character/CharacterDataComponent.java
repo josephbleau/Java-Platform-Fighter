@@ -45,7 +45,12 @@ public class CharacterDataComponent extends Component {
     public CharacterDataComponent save() {
         CharacterDataComponent characterDataComponent = new CharacterDataComponent(initialAttributes, hurtboxes);
         characterDataComponent.activeAttributes.resetValues(activeAttributes);
-        characterDataComponent.initialAttributes = initialAttributes;
+
+        CharacterTimers characterTimers = new CharacterTimers(characterDataComponent);
+        characterTimers.setKnockbackTimeRemaining(this.timers.getKnockbackTimeRemaining());
+        characterTimers.setSidestepTimeRemaining(this.timers.getSidestepTimeRemaining());
+        characterDataComponent.timers = characterTimers;
+
         return characterDataComponent;
     }
 

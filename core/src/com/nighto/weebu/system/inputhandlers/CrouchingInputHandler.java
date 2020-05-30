@@ -19,8 +19,12 @@ public class CrouchingInputHandler extends StateBasedInputHandler {
 
         if(!controller.isPressed(GameInput.Crouch)) {
             state.enterState(State.STANDING);
-
-            return false;
+        } else {
+            if (controller.isPressed(GameInput.NeutralAttack)) {
+                state.enterState(State.STANDING);
+                state.enterSubState(State.SUBSTATE_ATTACKING_DOWN_TILT);
+                return true;
+            }
         }
 
         return true;

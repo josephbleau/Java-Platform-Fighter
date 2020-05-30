@@ -10,5 +10,6 @@ public enum GameInput {
     ControlLeftLight,
     ControlLeftHard,
     ControlRightLight,
-    ControlRightHard
+    ControlRightHard,
+    ControlUp
 }

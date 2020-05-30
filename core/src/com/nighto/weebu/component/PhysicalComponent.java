@@ -68,5 +68,7 @@ public class PhysicalComponent extends Component {
 
         this.wallSlidingOn = physicalComponent.wallSlidingOn;
         this.floorStandingOn = physicalComponent.floorStandingOn;
+
+        this.facingRight = physicalComponent.facingRight;
     }
 }

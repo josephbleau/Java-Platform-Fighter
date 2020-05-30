@@ -69,8 +69,13 @@ public class GameController {
                 GameInput.Jump,
                 controller.buttonPressed(GamecubeController.Button.X) ||
                         controller.buttonPressed(GamecubeController.Button.Y) ||
-                        controller.getControlStick().y < -GamecubeController.HARD_DIRECTION_THRESHOLD ||
-                        Gdx.input.isKeyPressed(Input.Keys.SPACE) ||
+                        Gdx.input.isKeyPressed(Input.Keys.SPACE)
+        );
+
+        // Light Up
+        currentFrame.put(
+                GameInput.ControlUp,
+                        controller.getControlStick().y <= -GamecubeController.LIGHT_DIRECTION_THRESHOLD ||
                         Gdx.input.isKeyPressed(Input.Keys.UP)
         );
 

@@ -28,7 +28,8 @@ public class GroundedInputHandler extends StateBasedInputHandler {
                 handleCrouch(character) &&
                 handleJump(character) &&
                 handleNeutralSpecial(character) &&
-                handleNeutralAttack(character);
+                handleStandingAttacks(character) &&
+                handleRunningAttacks(character);
     }
 
     private boolean handleShield(Character character) {
@@ -99,28 +100,55 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         return true;
     }
 
-    private boolean handleNeutralAttack(Character character) {
+    private boolean handleStandingAttacks(Character character) {
         PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         StateComponent state = character.getComponent(StateComponent.class);
 
-        boolean hardDirection = controller.isPressed(GameInput.ControlRightHard) || controller.isPressed(GameInput.ControlLeftHard);
-
-        if ((!state.inState(State.RUNNING) || (!hardDirection && state.inState(State.RUNNING))) && !state.inSubState(State.ATTACKING_STATES)) {
-            if (controller.isPressed(GameInput.NeutralAttack)) {
-                state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_NORMAL);
-                physical.velocity.x = 0;
-            }
+        if(state.inSubState(State.ATTACKING_STATES)) {
+           return true;
         }
 
-        if (hardDirection && state.inState(State.RUNNING) && !state.inSubState(State.ATTACKING_STATES)) {
-            if (controller.isPressed(GameInput.NeutralAttack)) {
-                state.enterSubState(State.SUBSTATE_ATTACKING_DASH_ATTACK);
-                physical.velocity.x = 0;
-            }
+        if (state.inState(State.RUNNING)) {
+            return true;
         }
 
-        return true;
+        if (!controller.isPressed(GameInput.NeutralAttack)) {
+            return true;
+        }
+
+        if (controller.isPressed(GameInput.ControlUp)) {
+            state.enterSubState(State.SUBSTATE_ATTACKING_UP_TILT);
+        } else {
+            state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_NORMAL);
+        }
+
+        physical.velocity.x = 0;
+
+        return false;
+    }
+
+    private boolean handleRunningAttacks(Character character) {
+        PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
+        ControllerComponent controller = character.getComponent(ControllerComponent.class);
+        StateComponent state = character.getComponent(StateComponent.class);
+
+        if(state.inSubState(State.ATTACKING_STATES)) {
+            return true;
+        }
+
+        if (!state.inState(State.RUNNING)) {
+            return true;
+        }
+
+        if (!controller.isPressed(GameInput.NeutralAttack)) {
+            return true;
+        }
+
+        state.enterSubState(State.SUBSTATE_ATTACKING_DASH_ATTACK);
+        physical.velocity.x = 0;
+
+        return false;
     }
 
     private boolean handleNeutralSpecial(Character character) {

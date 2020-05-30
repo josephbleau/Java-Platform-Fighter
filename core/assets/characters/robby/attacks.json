@@ -17,6 +17,12 @@
       "knockback": {"x": 20, "y": 20},
       "usesPlayerDirection": true,
       "animSpeed": 0.5
+    },
+    "uptilt": {
+      "damage": 15,
+      "knockback": {"x":  5, "y":  40},
+      "usePlayerDirection": true,
+      "animSpeed": 2.0
     }
   }
 }

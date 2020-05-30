@@ -47,9 +47,6 @@ public class AnimationSystem extends System {
 
             // Apply animation to skeleton
             animationState.apply(skeleton);
-            if (entity.getTag().equals("Player")) {
-                Gdx.app.log("Animation", "" + skeleton.getX());
-            }
         }
     }
 

@@ -56,7 +56,6 @@ public class Character extends Entity {
         animationDataComponent.textureAtlas = new TextureAtlas(Gdx.files.internal("core/assets/characters/"+character.name+"/spine.atlas"));
         animationDataComponent.skeletonJson = new SkeletonJson(animationDataComponent.textureAtlas);
         animationDataComponent.skeletonData = animationDataComponent.skeletonJson.readSkeletonData(Gdx.files.internal("core/assets/characters/"+character.name+"/skeleton.json"));
-        animationDataComponent.skeletonData.setFps(60);
         animationDataComponent.animationStateData = new AnimationStateData(animationDataComponent.skeletonData);
         animationDataComponent.skeleton = new Skeleton(animationDataComponent.skeletonData);
         animationDataComponent.skeleton.setScale(characterDataComponent.getInitialAttributes().getRenderScaleX(), characterDataComponent.getInitialAttributes().getRenderScaleY());
@@ -67,7 +66,7 @@ public class Character extends Entity {
         animationDataComponent.registerAnimationForState(State.DEFAULT, "idle");
         animationDataComponent.registerAnimationForState(State.JUMPSQUAT, "jumpsquat");
         animationDataComponent.registerAnimationForState(State.EXIT_JUMPSQUAT, "jumpsquat");
-        animationDataComponent.registerAnimationForState(State.CROUCHING, "uptilt");
+        animationDataComponent.registerAnimationForState(State.CROUCHING, "crouch");
         animationDataComponent.registerAnimationForState(State.AIRBORNE, "airborne");
         animationDataComponent.registerAnimationForState(State.AIRDODGE, "airborne");
         animationDataComponent.registerAnimationForState(State.DIRECTIONAL_AIRDODGE, "airborne");
@@ -75,6 +74,8 @@ public class Character extends Entity {
         animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_NEUTRAL_NORMAL, "jab");
         animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_DASH_ATTACK, "dashattack");
         animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_NEUTRAL_AIR, "nair");
+        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_UP_TILT, "uptilt");
+        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_DOWN_TILT, "downtilt");
 
         animationDataComponent.animationState.addListener(new AnimationEventListener(this));
 

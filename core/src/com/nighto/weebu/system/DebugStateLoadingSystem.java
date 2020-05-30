@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DebugStateLoadingSystem extends System {
-    Map<UUID, Map<Class<? extends Component>, Component>> savedComponents;
+    Map<UUID, Map<Class<? extends Component>, Component>> savedState;
 
     public DebugStateLoadingSystem(GameContext gameContext, EventPublisher eventPublisher) {
         super(gameContext, eventPublisher, null);
-        savedComponents = new HashMap<>();
+        savedState = new HashMap<>();
     }
 
     @Override
@@ -37,15 +37,15 @@ public class DebugStateLoadingSystem extends System {
 
     public void saveCurrentState() {
         for (Entity entity : gameContext.getEntities()) {
-            Map<Class<? extends Component>, Component> savedComponent = new HashMap<>();
-            savedComponents.put(entity.getUuid(), savedComponent);
+            Map<Class<? extends Component>, Component> savedComponentsByName = new HashMap<>();
+            savedState.put(entity.getUuid(), savedComponentsByName);
 
-            for (Class<? extends Component> componentClass : entity.getComponents().keySet()) {
-                Component component = entity.getComponent(componentClass);
+            for (Class<? extends Component> componentName : entity.getComponents().keySet()) {
+                Component component = entity.getComponent(componentName);
                 Component newComponentCopy = component.save();
 
                 if  (newComponentCopy != null) {
-                    savedComponent.put(componentClass, newComponentCopy);
+                    savedComponentsByName.put(componentName, newComponentCopy);
                 }
             }
         }
@@ -53,12 +53,11 @@ public class DebugStateLoadingSystem extends System {
 
     public void loadCurrentState() {
         for (Entity entity : gameContext.getEntities()) {
-            Map<Class<? extends Component>, Component> componentsForEntity = savedComponents.get(entity.getUuid());
+            Map<Class<? extends Component>, Component> componentsForEntity = savedState.get(entity.getUuid());
 
             if (componentsForEntity != null) {
                 for (Class<? extends Component> componentClass : componentsForEntity.keySet()) {
-                    Component componentForEntity = componentsForEntity.get(componentClass);
-                    entity.registerComponent(componentClass, componentForEntity);
+                    entity.getComponent(componentClass).load(componentsForEntity.get(componentClass));
                 }
             }
         }
