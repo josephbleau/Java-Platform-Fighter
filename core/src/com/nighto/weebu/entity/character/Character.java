@@ -11,6 +11,7 @@ import com.esotericsoftware.spine.*;
 import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.*;
+import com.nighto.weebu.component.stage.StageDataComponent;
 import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.NoopGamecubeController;
@@ -91,17 +92,17 @@ public class Character extends Entity {
         registerEventHandler(new AttackEventListener(this));
 
         // TODO: Stage spawn locations
-        teleport(1920/2, 400);
+        teleport(10, 10);
 
         // TODO: Hurtboxes need to be formalized (part of spine?)
         ((StateComponent) getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
         Rectangle boundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).boundingBox;
         Rectangle prevBoundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).prevBoundingBox;
 
-        boundingBox.width = 20;
-        boundingBox.height = 150;
-        prevBoundingBox.width = 20;
-        prevBoundingBox.height = 150;
+        boundingBox.width = 1;
+        boundingBox.height = 2;
+        prevBoundingBox.width = 1;
+        prevBoundingBox.height = 2;
 
         getRects().add(boundingBox);
     }
@@ -138,16 +139,18 @@ public class Character extends Entity {
 
                 float[] bbVerts = boundingBoxAttachment.getVertices();
                 Polygon bbPoly = new Polygon(bbVerts);
-                bbPoly.translate(collisionSlot.getBone().getWorldX(), collisionSlot.getBone().getWorldY());
-                bbPoly.setScale(collisionSlot.getBone().getScaleX(), collisionSlot.getBone().getWorldScaleY());
+                bbPoly.translate(collisionSlot.getBone().getWorldX() * WorldConstants.PX_TO_UNIT, collisionSlot.getBone().getWorldY() * WorldConstants.PX_TO_UNIT);
+                bbPoly.setScale(collisionSlot.getBone().getScaleX() * WorldConstants.PX_TO_UNIT, collisionSlot.getBone().getWorldScaleY() * WorldConstants.PX_TO_UNIT);
                 Rectangle bb = bbPoly.getBoundingRectangle();
 
-                if (WorldConstants.DEBUG) {
-                    shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-                    shapeRenderer.setColor(Color.PURPLE);
-                    shapeRenderer.rect(bb.x, bb.y, bb.width, bb.height);
-                    shapeRenderer.end();
-                }
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(Color.PURPLE);
+                shapeRenderer.rect(
+                        WorldConstants.UNIT_TO_PX * bb.x,
+                        WorldConstants.UNIT_TO_PX * bb.y,
+                        WorldConstants.UNIT_TO_PX * bb.width,
+                        WorldConstants.UNIT_TO_PX * bb.height);
+                shapeRenderer.end();
             }
 
             super.render(shapeRenderer);
@@ -174,8 +177,8 @@ public class Character extends Entity {
 
         physicalComponent.prevVelocity.x = physicalComponent.velocity.x;
         physicalComponent.prevVelocity.y = physicalComponent.velocity.y;
-        physicalComponent.velocity.x = attackData.knockback.x + (attackData.knockback.x * knockbackModifier / 50f);
-        physicalComponent.velocity.y = attackData.knockback.y + (attackData.knockback.y * knockbackModifier / 100f);
+        physicalComponent.velocity.x = attackData.knockback.x + attackData.knockback.x;
+        physicalComponent.velocity.y = attackData.knockback.y + attackData.knockback.y;
 
         characterDataComponent.getTimers().setKnockbackTimeRemaining(1);
 

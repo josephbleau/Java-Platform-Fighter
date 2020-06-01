@@ -2,25 +2,31 @@
   "attacks": {
     "jab": {
       "damage": 5,
-      "knockback": {"x": 10, "y": 10},
+      "knockback": {"x": 50, "y": 20},
       "usesPlayerDirection": true,
-      "animSpeed": 1
+      "animSpeed": 2
     },
     "dashattack": {
       "damage": 5,
-      "knockback": {"x": 15, "y": 40},
+      "knockback": {"x": 50, "y": 20},
       "usesPlayerDirection": true,
       "animSpeed": 3
     },
     "nair": {
       "damage": 10,
-      "knockback": {"x": 20, "y": 20},
+      "knockback": {"x": 50, "y": 20},
       "usesPlayerDirection": true,
       "animSpeed": 0.5
     },
     "uptilt": {
       "damage": 15,
-      "knockback": {"x":  5, "y":  40},
+      "knockback": {"x": 50, "y": 20},
+      "usePlayerDirection": true,
+      "animSpeed": 2.0
+    },
+    "downtilt": {
+      "damage": 15,
+      "knockback": {"x": 50, "y": 20},
       "usePlayerDirection": true,
       "animSpeed": 2.0
     }

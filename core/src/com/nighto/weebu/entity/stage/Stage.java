@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.component.stage.StageDataComponent;
+import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.entity.stage.parts.Platform;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class Stage extends Entity {
+
     protected Color ledgeColor;
     protected Color stageColor;
     protected Color blastZoneColor;
@@ -45,20 +47,33 @@ public class Stage extends Entity {
             }
 
             shapeRenderer.setColor(stageColor);
-            shapeRenderer.rect(platform.boundingBox.x, platform.boundingBox.y, platform.boundingBox.width, platform.boundingBox.height);
+            shapeRenderer.rect(
+                    WorldConstants.UNIT_TO_PX * platform.boundingBox.x,
+                    WorldConstants.UNIT_TO_PX * platform.boundingBox.y,
+                    WorldConstants.UNIT_TO_PX * platform.boundingBox.width,
+                    WorldConstants.UNIT_TO_PX * platform.boundingBox.height
+            );
             shapeRenderer.end();
         }
 
         // Draw the blast zone in red.
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(blastZoneColor);
-        shapeRenderer.rect(stageData.blastZone.x, stageData.blastZone.y, stageData.blastZone.width, stageData.blastZone.height);
+        shapeRenderer.rect(
+                WorldConstants.UNIT_TO_PX * stageData.blastZone.x,
+                WorldConstants.UNIT_TO_PX * stageData.blastZone.y,
+                WorldConstants.UNIT_TO_PX * stageData.blastZone.width,
+                WorldConstants.UNIT_TO_PX * stageData.blastZone.height);
         shapeRenderer.end();
 
         for (Ledge ledge : stageData.ledges) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(ledgeColor);
-            shapeRenderer.rect(ledge.boundingBox.x, ledge.boundingBox.y, ledge.boundingBox.width, ledge.boundingBox.height);
+            shapeRenderer.rect(
+                    WorldConstants.UNIT_TO_PX * ledge.boundingBox.x,
+                    WorldConstants.UNIT_TO_PX * ledge.boundingBox.y,
+                    WorldConstants.UNIT_TO_PX * ledge.boundingBox.width,
+                    WorldConstants.UNIT_TO_PX * ledge.boundingBox.height);
             shapeRenderer.end();
         }
     }

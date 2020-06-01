@@ -27,6 +27,12 @@ public class StageDataComponent extends Component {
 
     public Rectangle blastZone;
 
+    /** Width of the stage in units. **/
+    public float width;
+
+    /** Height of the stage in untis. **/
+    public float height;
+
     private StageDataComponent() {}
 
     public List<Rectangle> getAllBoundingBoxes() {

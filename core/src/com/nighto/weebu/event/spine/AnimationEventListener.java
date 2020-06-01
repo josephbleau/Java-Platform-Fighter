@@ -6,6 +6,7 @@ import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.AnimationDataComponent;
 import com.nighto.weebu.component.character.AttackDataComponent;
 import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.entity.character.Character;
 
 public class AnimationEventListener extends AnimationState.AnimationStateAdapter {
@@ -38,6 +39,10 @@ public class AnimationEventListener extends AnimationState.AnimationStateAdapter
             // Jank-ass tracking of which players have been hit by hitboxes already, clear when the anim ends.
             // TODO: Smarten up, do something better
             attackDataComponent.clearTargets();
+
+            // If I didn't force the update here we were seeing 1-frame of the wrong animation, presumably because it was rendering
+            // the current state's anim before checking to see if a new one should be applied? Need to look into it.
+            animationDataComponent.forceUpdateAnimation(stateComponent);
         }
 
         // When an animation completes we will generally make sure the player skeleton is back in the same spot
@@ -48,11 +53,7 @@ public class AnimationEventListener extends AnimationState.AnimationStateAdapter
             physicalComponent.prevPosition.x = physicalComponent.position.x;
 
             // Set X position to root bones new world X position
-            physicalComponent.position.x = animationDataComponent.skeleton.getBones().get(0).getWorldX();
-
-            // If I didn't force the update here we were seeing 1-frame of the wrong animation, presumably because it was rendering
-            // the current state's anim before checking to see if a new one should be applied? Need to look into it.
-            animationDataComponent.forceUpdateAnimation(stateComponent);
+            physicalComponent.position.x = animationDataComponent.skeleton.getBones().get(0).getWorldX() * WorldConstants.PX_TO_UNIT;
         }
 
         if (TRANSLATE_PLAYER_Y_POS.equals(evtName)) {

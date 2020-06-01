@@ -1,12 +1,12 @@
 package com.nighto.weebu.system;
 
-import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.Skeleton;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.AnimationDataComponent;
 import com.nighto.weebu.component.character.AttackDataComponent;
 import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.AttackData;
 import com.nighto.weebu.event.EventPublisher;
@@ -31,6 +31,7 @@ public class AnimationSystem extends System {
         PhysicalComponent physical = entity.getComponent(PhysicalComponent.class);
         StateComponent state = entity.getComponent(StateComponent.class);
         AttackDataComponent attackData = entity.getComponent(AttackDataComponent.class);
+
 
         if (entity.componentsEnabled(AnimationDataComponent.class, PhysicalComponent.class, StateComponent.class)) {
             Skeleton skeleton = animationData.skeleton;
@@ -65,6 +66,11 @@ public class AnimationSystem extends System {
             }
         }
 
+        // TODO: Tie this to ground speed
+        if ("run".equals(animName)) {
+            animSpeed = 2.3f;
+        }
+
         if (!animName.equals(currentAnimName)) {
             animationState.setTimeScale(animSpeed);
             animationState.setAnimation(0, animName,true);
@@ -72,8 +78,9 @@ public class AnimationSystem extends System {
     }
 
     private void updatePosition(PhysicalComponent physical, Skeleton skeleton) {
-        skeleton.setX(Math.round(physical.position.x));
-        skeleton.setY(Math.round(physical.position.y));
+        skeleton.setX(WorldConstants.UNIT_TO_PX * physical.position.x);
+        skeleton.setY(WorldConstants.UNIT_TO_PX * physical.position.y);
+
         skeleton.updateWorldTransform();
     }
 

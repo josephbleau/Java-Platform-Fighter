@@ -1,33 +1,26 @@
 {
 	"tag": "Test Stage",
-	"gravity": 4.5,
+	"gravity": 3.5,
+	"width": 40,
+	"height": 20,
 	"ledges": [
 		{
 			"note": "left ledge",
 			"side": "left",
-			"boundingBox":  {"x":450, "y":240, "width":5, "height":10}
+			"boundingBox":  {"x":9.75, "y":6.25, "width":0.25, "height":0.25}
 		},
 		{
 			"note": "right ledge",
 			"side": "right",
-			"boundingBox":  {"x":1455, "y":240, "width":5, "height":10}
+			"boundingBox":  {"x":30, "y":6.25, "width":0.25, "height":0.25}
 		}
 	],
 	"platforms": [
 		{
 			"note": "main platform",
-			"boundingBox": {"x": 455, "y": 200, "width": 1000, "height": 50}
-		},
-		{
-			"note": "wallslide testing platform",
-			"boundingBox": {"x": 200, "y": 200, "width": 20, "height": 300}
-		},
-		{
-			"note": "floating platform",
-			"boundingBox": {"x": 1200, "y": 500, "width": 300, "height": 20},
-			"passThru": true
+			"boundingBox": {"x":10, "y": 6, "width": 20, "height": 0.5}
 		}
 	],
-	"blastZone": {"x": 60, "y": 60, "width": 1800, "height": 960},
-	"spawns": [{"x": 100, "y": 100}, {"x": 200,"y": 100}]
+	"blastZone": {"x": 1, "y": 1, "width": 38, "height": 28},
+	"spawns": [{"x": 5, "y": 5}, {"x": 5,"y": 5}]
 }

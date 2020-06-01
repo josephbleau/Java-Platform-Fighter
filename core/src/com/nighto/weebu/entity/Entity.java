@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.nighto.weebu.component.Component;
 import com.nighto.weebu.component.PhysicalComponent;
+import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.event.EventHandler;
 import com.nighto.weebu.event.EventListener;
 import com.nighto.weebu.event.game.CollisionEvent;
@@ -82,7 +83,12 @@ public abstract class Entity implements EventListener {
         for (Rectangle rect : rects) {
             shapeRenderer.begin(shapeType);
             shapeRenderer.setColor(currentColor);
-            shapeRenderer.rect(physicalComponent.position.x + rect.x, physicalComponent.position.y + rect.y, rect.width, rect.height);
+            shapeRenderer.rect(
+                    WorldConstants.UNIT_TO_PX * physicalComponent.position.x + rect.x,
+                    WorldConstants.UNIT_TO_PX * physicalComponent.position.y + rect.y,
+                    WorldConstants.UNIT_TO_PX * rect.width,
+                    WorldConstants.UNIT_TO_PX * rect.height
+            );
             shapeRenderer.end();
         }
     }

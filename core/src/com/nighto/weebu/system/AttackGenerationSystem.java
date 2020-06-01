@@ -45,12 +45,19 @@ public class AttackGenerationSystem extends System {
 
         for (Pair<String, Polygon> hitbox : findActiveHitboxes(animationDataComponent.skeleton)) {
             Polygon attackPoly = hitbox.getValue();
+            attackPoly.translate(physicalComponent.position.x, physicalComponent.position.y);
 
             if (WorldConstants.DEBUG) {
                 Rectangle r = attackPoly.getBoundingRectangle();
+
                 debugShapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 debugShapeRenderer.setColor(Color.GREEN);
-                debugShapeRenderer.rect(r.x, r.y, r.width, r.height);
+                debugShapeRenderer.rect(
+                        WorldConstants.UNIT_TO_PX * r.x,
+                        WorldConstants.UNIT_TO_PX * r.y,
+                        WorldConstants.UNIT_TO_PX * r.width,
+                        WorldConstants.UNIT_TO_PX * r.height
+                );
                 debugShapeRenderer.end();
             }
 
@@ -66,6 +73,12 @@ public class AttackGenerationSystem extends System {
 
             eventPublisher.publish(attackEvent);
         }
+    }
+
+    @Override
+    public void process() {
+        debugShapeRenderer.setProjectionMatrix(gameContext.getCamera().combined);
+        super.process();
     }
 
     private List<Pair<String, Polygon>> findActiveHitboxes(Skeleton skeleton) {
@@ -84,9 +97,13 @@ public class AttackGenerationSystem extends System {
 
             if (attachment instanceof BoundingBoxAttachment) {
                 Polygon polygon = new Polygon(((BoundingBoxAttachment) attachment).getVertices());
-                polygon.setPosition(slot.getBone().getWorldX(), slot.getBone().getWorldY());
+
                 polygon.setRotation(slot.getBone().getWorldRotationX());
-                polygon.setScale(slot.getBone().getWorldScaleX(), slot.getBone().getWorldScaleY());
+
+                polygon.setScale(
+                        slot.getBone().getWorldScaleX() * WorldConstants.PX_TO_UNIT,
+                        slot.getBone().getWorldScaleY() * WorldConstants.PX_TO_UNIT
+                );
 
                 activeHitBoxes.add(new Pair<>(attachment.getName(), polygon));
             }

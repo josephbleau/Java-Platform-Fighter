@@ -1,17 +1,17 @@
 {
 	"numberOfJumps": 2,
 	"numberOfAirDodges": 1,
-	"fallSpeed": -10,
-	"groundSpeed": 10,
-	"airSpeed": 4.5,
+	"fallSpeed": -25,
+	"groundSpeed": 18,
+	"airSpeed": 20,
 	"shortHopSpeed": 35,
-	"fullHopSpeed": 50,
+	"fullHopSpeed": 45,
 	"jumpSquatDuration": 0.05,
 	"sidestepDuration": 0.8,
-	"airFriction": 1.1,
-	"groundFriction": 2,
+	"airFriction": 5,
+	"groundFriction": 5,
 	"knockbackModifier": 1,
-	"airDodgeVelocity": 20,
-	"renderScaleX": 0.4,
-	"renderScaleY": 0.4
+	"airDodgeVelocity": 60,
+	"renderScaleX": 0.38,
+	"renderScaleY": 0.38
 }

@@ -98,7 +98,8 @@ public class PhysicsSystem extends System {
 
         physicalComponent.prevPosition = new Vector2(physicalComponent.position);
         physicalComponent.prevVelocity = new Vector2(physicalComponent.velocity);
-        physicalComponent.position.add(physicalComponent.velocity);
+
+        physicalComponent.position.mulAdd(physicalComponent.velocity, gameContext.getFrameDelta());
     }
 
     private void updateDirection(ControllerComponent controller, PhysicalComponent physicalComponent, StateComponent stateComponent) {

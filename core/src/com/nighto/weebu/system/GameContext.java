@@ -1,9 +1,13 @@
 package com.nighto.weebu.system;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.stage.Stage;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 public class GameContext {
     private Stage stage;
@@ -13,6 +17,7 @@ public class GameContext {
     private ListIterator<Entity> entityIterator;
 
     private float frameDelta;
+    private Camera camera;
 
     public GameContext() {
         entities = new LinkedList<>();
@@ -63,5 +68,13 @@ public class GameContext {
         }
 
         return null;
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public void setCamera(Camera camera) {
+        this.camera = camera;
     }
 }
