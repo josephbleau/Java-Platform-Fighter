@@ -17,7 +17,8 @@ public class CameraSystem extends System{
         if (entity.getTag().equals("Player")) {
             AnimationDataComponent animationDataComponent = entity.getComponent(AnimationDataComponent.class);
 
-            gameContext.getCamera().position.x = animationDataComponent.skeleton.getX();;
+
+            gameContext.getCamera().position.x = animationDataComponent.skeleton.getRootBone().getWorldX();
             gameContext.getCamera().position.y = animationDataComponent.skeleton.getY();
             gameContext.getCamera().position.y = WorldConstants.VIEWPORT_HEIGHT * 3f/4f;
 

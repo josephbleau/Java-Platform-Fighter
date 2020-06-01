@@ -6,7 +6,7 @@
 	"airSpeed": 20,
 	"shortHopSpeed": 35,
 	"fullHopSpeed": 45,
-	"jumpSquatDuration": 0.05,
+	"jumpSquatDuration": 0.08,
 	"sidestepDuration": 0.8,
 	"airFriction": 5,
 	"groundFriction": 5,

@@ -43,15 +43,14 @@ public class AttackGenerationSystem extends System {
             return;
         }
 
-        for (Pair<String, Polygon> hitbox : findActiveHitboxes(animationDataComponent.skeleton)) {
+        for (Pair<String, Polygon> hitbox : findActiveHitboxes(animationDataComponent.skeleton, physicalComponent.facingRight)) {
             Polygon attackPoly = hitbox.getValue();
-            attackPoly.translate(physicalComponent.position.x, physicalComponent.position.y);
 
             if (WorldConstants.DEBUG) {
                 Rectangle r = attackPoly.getBoundingRectangle();
 
                 debugShapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-                debugShapeRenderer.setColor(Color.GREEN);
+                debugShapeRenderer.setColor(Color.RED);
                 debugShapeRenderer.rect(
                         WorldConstants.UNIT_TO_PX * r.x,
                         WorldConstants.UNIT_TO_PX * r.y,
@@ -81,7 +80,7 @@ public class AttackGenerationSystem extends System {
         super.process();
     }
 
-    private List<Pair<String, Polygon>> findActiveHitboxes(Skeleton skeleton) {
+    private List<Pair<String, Polygon>> findActiveHitboxes(Skeleton skeleton, boolean facingRight) {
         List<Pair<String, Polygon>> activeHitBoxes = new ArrayList<>();
 
         for (Slot slot : skeleton.getSlots()) {
@@ -98,8 +97,14 @@ public class AttackGenerationSystem extends System {
             if (attachment instanceof BoundingBoxAttachment) {
                 Polygon polygon = new Polygon(((BoundingBoxAttachment) attachment).getVertices());
 
-                polygon.setRotation(slot.getBone().getWorldRotationX());
+                float facing = (facingRight) ? 0 : -180;
 
+                float boneWorldX = slot.getBone().getWorldX() * WorldConstants.PX_TO_UNIT;
+                float boneWorldY = slot.getBone().getWorldY() * WorldConstants.PX_TO_UNIT;
+                float rotation = slot.getBone().getData().getRotation();
+
+                polygon.setPosition(boneWorldX, boneWorldY);
+                polygon.setRotation(rotation+facing);
                 polygon.setScale(
                         slot.getBone().getWorldScaleX() * WorldConstants.PX_TO_UNIT,
                         slot.getBone().getWorldScaleY() * WorldConstants.PX_TO_UNIT

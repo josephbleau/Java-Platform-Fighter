@@ -51,12 +51,12 @@ public class PhysicsSystem extends System {
             }
         }
 
-        if (entity.componentsEnabled(PhysicalComponent.class)) {
-            updatePosition(entity);
-        }
-
         if (entity.componentsEnabled(ControllerComponent.class, PhysicalComponent.class, StateComponent.class)) {
             updateDirection(controller, physical, state);
+        }
+
+        if (entity.componentsEnabled(PhysicalComponent.class)) {
+            updatePosition(entity);
         }
 
         if (entity.componentsEnabled(PhysicalComponent.class, StateComponent.class)) {

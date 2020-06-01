@@ -92,16 +92,16 @@ public class Character extends Entity {
         registerEventHandler(new AttackEventListener(this));
 
         // TODO: Stage spawn locations
-        teleport(10, 10);
+        teleport(15, 10);
 
         // TODO: Hurtboxes need to be formalized (part of spine?)
         ((StateComponent) getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
         Rectangle boundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).boundingBox;
         Rectangle prevBoundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).prevBoundingBox;
 
-        boundingBox.width = 1;
+        boundingBox.width = 0.5f;
         boundingBox.height = 2;
-        prevBoundingBox.width = 1;
+        prevBoundingBox.width = 0.5f;
         prevBoundingBox.height = 2;
 
         getRects().add(boundingBox);
