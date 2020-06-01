@@ -19,8 +19,8 @@ public class CameraSystem extends System{
 
 
             gameContext.getCamera().position.x = animationDataComponent.skeleton.getRootBone().getWorldX();
-            gameContext.getCamera().position.y = animationDataComponent.skeleton.getY();
-            gameContext.getCamera().position.y = WorldConstants.VIEWPORT_HEIGHT * 3f/4f;
+            gameContext.getCamera().position.y = WorldConstants.VIEWPORT_HEIGHT * 1f/3f;
+            gameContext.getCamera().position.y += animationDataComponent.skeleton.getY();
 
             gameContext.getCamera().update();
         }

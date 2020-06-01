@@ -55,7 +55,7 @@ public class StateBasedInputSystem extends System {
 
             if (entity.getTag().equals("Player")) {
                 StateComponent stateComponent = entity.getComponent(StateComponent.class);
-                Gdx.app.log("State", "" + (stateComponent.getSubState()));
+                Gdx.app.log("State", "" + (stateComponent.getState()) + ", " + (stateComponent.getSubState()));
             }
         }
     }

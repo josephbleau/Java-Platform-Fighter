@@ -55,9 +55,5 @@ public class AnimationEventListener extends AnimationState.AnimationStateAdapter
             // Set X position to root bones new world X position
             physicalComponent.position.x = animationDataComponent.skeleton.getBones().get(0).getWorldX() * WorldConstants.PX_TO_UNIT;
         }
-
-        if (TRANSLATE_PLAYER_Y_POS.equals(evtName)) {
-            animationDataComponent.forceUpdateAnimation(stateComponent);
-        }
     }
 }

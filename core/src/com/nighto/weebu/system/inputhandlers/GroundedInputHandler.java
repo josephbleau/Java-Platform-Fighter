@@ -79,6 +79,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         if (controller.isPressed(GameInput.Crouch)) {
             physical.velocity.x = 0;
             state.enterState(State.CROUCHING);
+            return false;
         }
 
         return true;
@@ -105,8 +106,12 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         StateComponent state = character.getComponent(StateComponent.class);
 
+        if (character.getTag().equals("Player")) {
+            int x = 5;
+        }
+
         if(state.inSubState(State.ATTACKING_STATES)) {
-           return true;
+           return false;
         }
 
         if (state.inState(State.RUNNING)) {
@@ -134,7 +139,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         StateComponent state = character.getComponent(StateComponent.class);
 
         if(state.inSubState(State.ATTACKING_STATES)) {
-            return true;
+            return false;
         }
 
         if (!state.inState(State.RUNNING)) {

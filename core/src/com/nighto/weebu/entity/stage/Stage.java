@@ -23,7 +23,7 @@ public class Stage extends Entity {
         setActive(true);
 
         stageColor = Color.DARK_GRAY;
-        blastZoneColor = Color.GRAY;
+        blastZoneColor = Color.RED;
         ledgeColor = Color.BLUE;
 
         try {
