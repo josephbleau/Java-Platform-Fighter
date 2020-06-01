@@ -40,6 +40,7 @@ public class InGameScreen implements Screen {
         eventPublisher.registerListeners(gameContext.getEntities());
 
         systems = new ArrayList<>();
+
         systems.add(new StateBasedInputSystem(gameContext, eventPublisher));
         systems.add(new CharacterTimerSystem(gameContext, eventPublisher));
 
@@ -51,17 +52,39 @@ public class InGameScreen implements Screen {
 
         systems.add(new RenderingSystem(gameContext, eventPublisher));
         systems.add(new DebugRenderingSystem(gameContext, eventPublisher));
-        systems.add(new DebugStateLoadingSystem(gameContext, eventPublisher));
+        systems.add(new DebugSystem(gameContext, eventPublisher));
 
         systems.add(new CameraSystem(gameContext, eventPublisher));
     }
 
     @Override
     public void render(float delta) {
-        gameContext.setFrameDelta(delta);
+        if (gameContext.frameAdvanceMode) {
+            gameContext.setFrameDelta(1/60f);
+        } else {
+            gameContext.setFrameDelta(delta);
+        }
 
-        for (System system : systems) {
-            system.process();
+        if (gameContext.frameAdvanceMode) {
+            if (gameContext.advanceFrame) {
+                for (System system : systems) {
+                    if (system.isTimeBased()) {
+                        system.process();
+                    }
+                }
+
+                gameContext.advanceFrame = false;
+            } else {
+                for (System system : systems) {
+                    if (!system.isTimeBased()) {
+                        system.process();
+                    }
+                }
+            }
+        } else {
+            for (System system : systems) {
+                system.process();
+            }
         }
     }
 

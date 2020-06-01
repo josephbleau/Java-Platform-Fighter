@@ -22,6 +22,7 @@ public class StateBasedInputSystem extends System {
 
     public StateBasedInputSystem(GameContext gameContext, EventPublisher eventPublisher) {
         super(gameContext, eventPublisher, Collections.singletonList(ControllerComponent.class));
+        timeBased = true;
 
         stateBasedInputHandlers = new ArrayList<>();
 

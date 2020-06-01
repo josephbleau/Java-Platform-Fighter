@@ -17,7 +17,11 @@ public class GameContext {
     private ListIterator<Entity> entityIterator;
 
     private float frameDelta;
+
     private Camera camera;
+
+    public boolean frameAdvanceMode = false;
+    public boolean advanceFrame = true;
 
     public GameContext() {
         entities = new LinkedList<>();

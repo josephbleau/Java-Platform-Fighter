@@ -19,6 +19,7 @@ import java.util.Arrays;
 public class CharacterTimerSystem extends System{
     public CharacterTimerSystem(GameContext gameContext, EventPublisher eventPublisher) {
         super(gameContext, eventPublisher, Arrays.asList(CharacterDataComponent.class, StateComponent.class));
+        timeBased = true;
     }
 
     @Override

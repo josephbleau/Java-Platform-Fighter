@@ -23,6 +23,7 @@ import java.util.Arrays;
 public class AnimationSystem extends System {
     public AnimationSystem(GameContext gameContext, EventPublisher eventPublisher) {
         super(gameContext, eventPublisher, Arrays.asList(AnimationDataComponent.class, PhysicalComponent.class, StateComponent.class));
+        timeBased = true;
     }
 
     @Override

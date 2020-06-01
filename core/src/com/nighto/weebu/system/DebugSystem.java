@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class DebugStateLoadingSystem extends System {
+public class DebugSystem extends System {
     Map<UUID, Map<Class<? extends Component>, Component>> savedState;
 
-    public DebugStateLoadingSystem(GameContext gameContext, EventPublisher eventPublisher) {
+    public DebugSystem(GameContext gameContext, EventPublisher eventPublisher) {
         super(gameContext, eventPublisher, null);
         savedState = new HashMap<>();
     }
@@ -30,6 +30,14 @@ public class DebugStateLoadingSystem extends System {
 
         if (Gdx.input.isKeyPressed(Input.Keys.F2)) {
             loadCurrentState();
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
+            gameContext.frameAdvanceMode = !gameContext.frameAdvanceMode;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
+            gameContext.advanceFrame = true;
         }
 
         super.process();

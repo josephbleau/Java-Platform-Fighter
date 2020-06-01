@@ -14,6 +14,7 @@ import java.util.Collections;
 public class PhysicsSystem extends System {
     public PhysicsSystem(GameContext gameContext, EventPublisher eventPublisher) {
         super(gameContext, eventPublisher, Collections.singletonList(PhysicalComponent.class));
+        timeBased = true;
     }
 
     @Override

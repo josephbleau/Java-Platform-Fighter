@@ -13,6 +13,8 @@ public abstract class System {
 
     protected List<Class<? extends Component>> requiredComponents;
 
+    protected boolean timeBased;
+
     protected System(GameContext gameContext, EventPublisher eventPublisher, List<Class<? extends Component>> requiredComponents) {
         this.gameContext = gameContext;
         this.eventPublisher = eventPublisher;
@@ -43,4 +45,8 @@ public abstract class System {
     }
 
     abstract void process(Entity entity);
+
+    public boolean isTimeBased() {
+        return timeBased;
+    }
 }
