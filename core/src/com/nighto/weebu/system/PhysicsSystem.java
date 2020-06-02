@@ -28,7 +28,7 @@ public class PhysicsSystem extends System {
             if (physical.floorStandingOn != null) {
                 float stageRight = physical.floorStandingOn.x + physical.floorStandingOn.width;
                 float stageLeft = physical.floorStandingOn.x;
-                float playerRight = physical.position.x + physical.boundingBox.width;
+                float playerRight = physical.position.x + physical.dimensions.x;
                 float playerLeft = physical.position.x;
 
                 boolean standingOnSurface =
@@ -93,8 +93,6 @@ public class PhysicsSystem extends System {
     }
 
     private void updatePosition(Entity entity) {
-        entity.update(gameContext.getFrameDelta());
-
         PhysicalComponent physicalComponent = entity.getComponent(PhysicalComponent.class);
 
         physicalComponent.prevPosition = new Vector2(physicalComponent.position);

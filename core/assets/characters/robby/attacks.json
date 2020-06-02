@@ -10,7 +10,7 @@
       "damage": 5,
       "knockback": {"x": 50, "y": 20},
       "usesPlayerDirection": true,
-      "animSpeed": 3
+      "animSpeed": 2
     },
     "nair": {
       "damage": 10,

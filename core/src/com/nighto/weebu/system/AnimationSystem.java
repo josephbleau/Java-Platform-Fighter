@@ -79,7 +79,7 @@ public class AnimationSystem extends System {
     }
 
     private void updatePosition(PhysicalComponent physical, Skeleton skeleton) {
-        skeleton.setX(WorldConstants.UNIT_TO_PX * (physical.position.x + physical.boundingBox.width/2));
+        skeleton.setX(WorldConstants.UNIT_TO_PX * (physical.position.x + physical.dimensions.x/2));
         skeleton.setY(WorldConstants.UNIT_TO_PX * physical.position.y);
 
         skeleton.updateWorldTransform();

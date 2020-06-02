@@ -1,18 +1,12 @@
 package com.nighto.weebu.entity.character;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.spine.*;
-import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.*;
-import com.nighto.weebu.component.stage.StageDataComponent;
-import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.controller.GameController;
 import com.nighto.weebu.controller.NoopGamecubeController;
 import com.nighto.weebu.entity.Entity;
@@ -22,19 +16,16 @@ import com.nighto.weebu.entity.character.event.CollisionEventHandler;
 import com.nighto.weebu.entity.character.event.DeathhEventHandler;
 import com.nighto.weebu.entity.character.loader.CharacterAttributesLoader;
 import com.nighto.weebu.entity.character.loader.Characters;
-import com.nighto.weebu.entity.shield.Shield;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
-import com.nighto.weebu.event.game.CollisionEvent;
 import com.nighto.weebu.event.spine.AnimationEventListener;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Character extends Entity {
 
     protected GameController gameController;
-
-    protected final Shield shield;
 
     // Components
     protected StateComponent stateComponent;
@@ -44,10 +35,7 @@ public class Character extends Entity {
     protected AttackDataComponent attackDataComponent;
 
     public Character(Characters character) {
-        shield = new Shield(new Circle(10, 30, 30), new Color(Color.PINK.r, Color.PINK.g, Color.PINK.b, .7f));
-
         animationDataComponent = new AnimationDataComponent();
-
         stateComponent = new StateComponent();
         characterDataComponent = CharacterAttributesLoader.loadCharacterData(character.name);
         controllerComponent =  new ControllerComponent(new GameController(new NoopGamecubeController(), false));
@@ -92,82 +80,25 @@ public class Character extends Entity {
         registerEventHandler(new AttackEventListener(this));
 
         // TODO: Stage spawn locations
-        teleport(15, 10);
+        spawn(15, 10);
 
-        // TODO: Hurtboxes need to be formalized (part of spine?)
-        ((StateComponent) getComponent(StateComponent.class)).enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
-        Rectangle boundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).boundingBox;
-        Rectangle prevBoundingBox = ((PhysicalComponent) getComponent(PhysicalComponent.class)).prevBoundingBox;
+        physicalComponent.dimensions = new Vector2(1, 2);
+        physicalComponent.prevDimensions = new Vector2(1, 2);
 
-        boundingBox.width = 0.5f;
-        boundingBox.height = 2;
-        prevBoundingBox.width = 0.5f;
-        prevBoundingBox.height = 2;
-
-        getRects().add(boundingBox);
+        stateComponent.enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
     }
 
     @Override
-    public void update(float delta) {
-        updateShield(delta);
+    public List<Rectangle> getCollidables() {
+        return Collections.singletonList(physicalComponent.getBoundingBox());
     }
 
-    @Override
-    public List<CollisionEvent> intersects(Entity otherEntity) {
-        List<CollisionEvent> collisionEvents = shield.intersects(otherEntity);
-        collisionEvents.addAll(super.intersects(otherEntity));
-
-        return collisionEvents;
+    public void spawn(float x, float y) {
+        physicalComponent.move(x, y, false);
+        characterDataComponent.getTimers().resetTimers();
+        characterDataComponent.getActiveAttributes().resetValues();
     }
 
-    @Override
-    public void teleport(float x, float y) {
-        super.teleport(x, y);
-
-        CharacterDataComponent characterData = getComponent(CharacterDataComponent.class);
-        characterData.getTimers().resetTimers();
-        characterData.getActiveAttributes().resetValues();
-    }
-
-    @Override
-    public void render(ShapeRenderer shapeRenderer) {
-        if (WorldConstants.DEBUG) {
-            Slot collisionSlot = animationDataComponent.skeleton.findSlot("collision");
-
-            if (collisionSlot != null) {
-                BoundingBoxAttachment boundingBoxAttachment = (BoundingBoxAttachment) collisionSlot.getAttachment();
-
-                float[] bbVerts = boundingBoxAttachment.getVertices();
-                Polygon bbPoly = new Polygon(bbVerts);
-                bbPoly.translate(collisionSlot.getBone().getWorldX() * WorldConstants.PX_TO_UNIT, collisionSlot.getBone().getWorldY() * WorldConstants.PX_TO_UNIT);
-                bbPoly.setScale(collisionSlot.getBone().getScaleX() * WorldConstants.PX_TO_UNIT, collisionSlot.getBone().getWorldScaleY() * WorldConstants.PX_TO_UNIT);
-                Rectangle bb = bbPoly.getBoundingRectangle();
-
-                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-                shapeRenderer.setColor(Color.PURPLE);
-                shapeRenderer.rect(
-                        WorldConstants.UNIT_TO_PX * bb.x,
-                        WorldConstants.UNIT_TO_PX * bb.y,
-                        WorldConstants.UNIT_TO_PX * bb.width,
-                        WorldConstants.UNIT_TO_PX * bb.height);
-                shapeRenderer.end();
-            }
-
-            super.render(shapeRenderer);
-        }
-    }
-
-    public void updateShield(float delta) {
-        shield.update(delta);
-
-        if (stateComponent.inState(State.SHIELDING)) {
-            shield.setActive(true);
-        } else {
-            shield.setActive(false);
-        }
-    }
-
-    // TODO: Attack system
     public void enterKnockback(AttackData attackData) {
         PhysicalComponent physicalComponent = getComponent(PhysicalComponent.class);
         CharacterDataComponent characterDataComponent = getComponent(CharacterDataComponent.class);
@@ -186,24 +117,24 @@ public class Character extends Entity {
         stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
     }
 
-    public void startShielding() {
-        PhysicalComponent physical = getComponent(PhysicalComponent.class);
-        getGameContext().registerEntity(shield);
-        shield.teleport(physical.position.x, physical.position.y);
-    }
-
     public void snapToLedge(Ledge ledge) {
         stateComponent.enterState(State.HANGING);
-
-        Rectangle playerRect = getRects().get(0);
-        characterDataComponent.getActiveAttributes().setNumberOfJumps(characterDataComponent.getInitialAttributes().getNumberOfJumps());
+        characterDataComponent.getActiveAttributes().decrementJumps();
 
         if (ledge.isHangLeft()) {
             stateComponent.enterSubState(State.SUBSTATE_HANGING_LEFT);
-            teleport(ledge.boundingBox.x - playerRect.width + ledge.boundingBox.width, ledge.boundingBox.y + ledge.boundingBox.height - playerRect.height, false);
+
+            float x = ledge.boundingBox.x - physicalComponent.dimensions.x + ledge.boundingBox.width;
+            float y = ledge.boundingBox.y + ledge.boundingBox.height - physicalComponent.dimensions.y;
+
+            spawn(x, y);
         } else {
             stateComponent.enterSubState(State.SUBSTATE_HANGING_RIGHT);
-            teleport(ledge.boundingBox.x, ledge.boundingBox.y + ledge.boundingBox.height - playerRect.height, false);
+
+            float x = ledge.boundingBox.x;
+            float y = ledge.boundingBox.y + ledge.boundingBox.height - physicalComponent.dimensions.y;
+
+            spawn(x, y);
         }
     }
 

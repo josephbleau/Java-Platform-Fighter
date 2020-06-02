@@ -73,48 +73,36 @@ public class CollisionEventHandler implements EventHandler {
         /* Determine which direction we were heading so that we can set our position correctly. */
         boolean falling = physical.velocity.y < 0;
 
-        Rectangle r1 = new Rectangle(physical.position.x, physical.position.y, physical.boundingBox.width, physical.boundingBox.height);
-        Rectangle pr1 = new Rectangle(physical.prevPosition.x, physical.prevPosition.y, physical.prevBoundingBox.width, physical.prevBoundingBox.height);
-
         Rectangle stageRect = ((Rectangle) stageShape);
 
         /* Collide with the stage from the top */
         if (stage.isGround(stageShape)) {
-            if (collidedFromTop(r1, pr1, stageRect)) {
+            if (collidedFromTop(physical.getBoundingBox(), physical.getPrevBoundingBox(), stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " landed on the stage.");
-
-                physical.prevPosition.y = physical.position.y;
-                physical.position.y = (stageRect.y + stageRect.height);
-
-                characterData.getActiveAttributes().resetJumps();
-                characterData.getActiveAttributes().resetAirDodges();
 
                 if (state.inState(State.AIRBORNE)) {
                     state.enterState(State.STANDING);
                     state.enterSubState(State.SUBSTATE_DEFAULT);
                 }
 
-                physical.prevVelocity.y = physical.velocity.y;
-                physical.velocity.y = Math.max(0, physical.velocity.y);
-                physical.floorStandingOn = stageRect;
+                physical.move(physical.position.x, stageRect.y + stageRect.height);
+                physical.setVelocity(physical.velocity.x,  Math.max(0, physical.velocity.y));
 
-                // Reduce sidestep timer additionally when touching ground
-                // TODO: Change to separate timer?
-                if (state.inState(State.DIRECTIONAL_AIRDODGE)) {
-                    float t = characterData.getTimers().getSidestepTimeRemaining();
-                    characterData.getTimers().setSidestepTimeRemaining(t/4f);
-                }
-            } else if (collidedFromBottom(r1, pr1, stageRect)) {
+                characterData.getActiveAttributes().resetJumps();
+                characterData.getActiveAttributes().resetAirDodges();
+
+                physical.floorStandingOn = stageRect;
+            } else if (collidedFromBottom(physical.getBoundingBox(), physical.getPrevBoundingBox(), stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " bumped their head.");
 
                 Platform platform = stage.ifPlatformGetPlatform(stageRect);
                 if (platform != null && !platform.passThru) {
                     physical.prevPosition.y = physical.position.y;
-                    physical.position.y = stageRect.y - r1.height;
+                    physical.position.y = stageRect.y - physical.getPrevBoundingBox().height;
                 }
 
                 state.enterState(State.AIRBORNE);
-            } else if (collidedFromRight(r1, pr1, stageRect)) {
+            } else if (collidedFromRight(physical.getBoundingBox(), physical.getPrevBoundingBox(), stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
                 if (falling && (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard))) {
@@ -127,11 +115,11 @@ public class CollisionEventHandler implements EventHandler {
                 physical.position.x = (stageRect.x + stageRect.width);
                 physical.wallSlidingOn = stageRect;
                 characterData.getActiveAttributes().incrementJumps();
-            } else if (collidedFromLeft(r1, pr1, stageRect)) {
+            } else if (collidedFromLeft(physical.getBoundingBox(), physical.getPrevBoundingBox(), stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
                 // Move character out of the wall
-                float characterWidth = physical.boundingBox.width;
+                float characterWidth = physical.dimensions.x;
                 float difference = Math.abs((physical.position.x + characterWidth) - stageRect.x);
 
                 physical.position.x -= difference;

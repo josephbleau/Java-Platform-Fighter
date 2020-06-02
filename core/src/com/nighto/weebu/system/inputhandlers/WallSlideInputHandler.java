@@ -37,7 +37,7 @@ public class WallSlideInputHandler extends StateBasedInputHandler {
         // top and bottom.
         float stageTop = physical.wallSlidingOn.y + physical.wallSlidingOn.height;
         float stageBottom = physical.wallSlidingOn.y;
-        float playerTop = physical.position.y + physical.boundingBox.height;
+        float playerTop = physical.position.y + physical.dimensions.y;
         float playerBottom = physical.position.y;
 
         boolean riding =

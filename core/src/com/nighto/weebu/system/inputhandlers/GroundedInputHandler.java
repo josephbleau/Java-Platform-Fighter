@@ -23,30 +23,12 @@ public class GroundedInputHandler extends StateBasedInputHandler {
 
     @Override
     protected boolean doHandleInput(Character character) {
-        return handleShield(character) &&
-                handleRun(character) &&
+        return handleRun(character) &&
                 handleCrouch(character) &&
                 handleJump(character) &&
                 handleNeutralSpecial(character) &&
                 handleStandingAttacks(character) &&
                 handleRunningAttacks(character);
-    }
-
-    private boolean handleShield(Character character) {
-        PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
-        ControllerComponent controller = character.getComponent(ControllerComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
-
-        if (controller.isPressed(GameInput.Shield)) {
-            character.startShielding();
-            physical.velocity.x = 0;
-
-            state.enterState(State.SHIELDING);
-
-            return false;
-        }
-
-        return true;
     }
 
     private boolean handleRun(Character character) {
