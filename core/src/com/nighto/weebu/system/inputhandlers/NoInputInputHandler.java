@@ -6,7 +6,7 @@ import com.nighto.weebu.entity.character.State;
 public class NoInputInputHandler extends StateBasedInputHandler {
 
     public NoInputInputHandler() {
-        super(new State[]{State.SIDESTEPPING, State.JUMPSQUAT});
+        super(new State[]{State.STATE_SIDESTEPPING, State.STATE_JUMPSQUAT});
     }
 
     @Override

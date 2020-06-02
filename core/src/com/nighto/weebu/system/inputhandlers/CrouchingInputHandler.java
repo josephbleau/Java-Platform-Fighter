@@ -9,7 +9,7 @@ import com.nighto.weebu.entity.character.State;
 public class CrouchingInputHandler extends StateBasedInputHandler {
 
     public CrouchingInputHandler() {
-        super(new State[]{State.CROUCHING}, State.concat(State.ATTACKING_STATES, new State[]{State.SUBSTATE_KNOCKBACK, State.SUBSTATE_TUMBLE}));
+        super(new State[]{State.STATE_CROUCHING}, State.concat(State.ATTACKING_STATES, new State[]{State.SUBSTATE_KNOCKBACK, State.SUBSTATE_TUMBLE}));
     }
 
     @Override
@@ -18,7 +18,7 @@ public class CrouchingInputHandler extends StateBasedInputHandler {
         StateComponent state = character.getComponent(StateComponent.class);
 
         if(!controller.isPressed(GameInput.Crouch) && !state.inSubState(State.ATTACKING_STATES)) {
-            state.enterState(State.STANDING);
+            state.enterState(State.STATE_STANDING);
         } else {
             if (controller.isPressed(GameInput.NeutralAttack)) {
                 state.enterSubState(State.SUBSTATE_ATTACKING_DOWN_TILT);

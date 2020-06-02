@@ -30,31 +30,31 @@ public class CharacterTimerSystem extends System{
         CharacterTimers characterTimers = characterData.getTimers();
         characterTimers.tickTimers(gameContext.getFrameDelta());
 
-        if (state.inState(State.JUMPSQUAT)) {
+        if (state.inState(State.STATE_JUMPSQUAT)) {
             if (characterTimers.getJumpSquatTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
-                state.enterState(State.EXIT_JUMPSQUAT);
+                state.enterState(State.STATE_EXIT_JUMPSQUAT);
             }
         }
 
-        if (state.inState(State.SIDESTEPPING)) {
+        if (state.inState(State.STATE_SIDESTEPPING)) {
             if (characterTimers.getSidestepTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
-                state.enterState(State.STANDING);
+                state.enterState(State.STATE_STANDING);
             }
         }
 
-        if (state.inState(State.AIRDODGE, State.DIRECTIONAL_AIRDODGE)) {
+        if (state.inState(State.STATE_AIRDODGE, State.STATE_DIRECTIONAL_AIRDODGE)) {
             if (characterTimers.getSidestepTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
-                state.enterState(State.AIRBORNE);
+                state.enterState(State.STATE_AIRBORNE);
             }
         }
 
         if (state.inSubState(State.SUBSTATE_KNOCKBACK, State.SUBSTATE_TUMBLE)) {
             if (characterTimers.getKnockbackTimeRemaining() <= 0) {
                 characterTimers.resetTimers();
-                state.enterSubState(State.DEFAULT);
+                state.enterSubState(State.STATE_DEFAULT);
             }
         }
     }

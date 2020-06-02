@@ -39,7 +39,7 @@ public class PhysicsSystem extends System {
 
                 if (!standingOnSurface) {
                     physical.floorStandingOn = null;
-                    state.enterState(State.AIRBORNE);
+                    state.enterState(State.STATE_AIRBORNE);
 
                     characterData.getActiveAttributes().decrementJumps();
                 }
@@ -47,7 +47,7 @@ public class PhysicsSystem extends System {
         }
 
         if (entity.componentsEnabled(CharacterDataComponent.class, PhysicalComponent.class, StateComponent.class, ControllerComponent.class)) {
-            if (state.inState(State.AIRBORNE, State.WALLSLIDING)) {
+            if (state.inState(State.STATE_AIRBORNE, State.STATE_WALLSLIDING)) {
                 applyGravity(characterData, physical, state, controller);
             }
         }
@@ -64,12 +64,12 @@ public class PhysicsSystem extends System {
             // If a player is actively controlling (holding left or right) then do not apply air friction, velocity
             // will be limited by air speed in those instances.
             if (controller == null || !controller.isActivelyControlling()) {
-                if (state.inState(State.DIRECTIONAL_AIRDODGE)) {
+                if (state.inState(State.STATE_DIRECTIONAL_AIRDODGE)) {
                     physical.velocity.x /= characterData.getActiveAttributes().getAirFriction();
                     physical.velocity.y /= characterData.getActiveAttributes().getAirFriction();
-                } else if (state.inState(State.AIRBORNE)) {
+                } else if (state.inState(State.STATE_AIRBORNE)) {
                     physical.velocity.x /= characterData.getActiveAttributes().getAirFriction();
-                } else if (state.inState(State.STANDING)) {
+                } else if (state.inState(State.STATE_STANDING)) {
                     physical.velocity.x /= characterData.getActiveAttributes().getGroundFriction();
                 }
             }
@@ -83,7 +83,7 @@ public class PhysicsSystem extends System {
             physical.velocity.y = proposedyVel;
         }
 
-        if (state.inState(State.WALLSLIDING)) {
+        if (state.inState(State.STATE_WALLSLIDING)) {
             physical.velocity.y = proposedyVel/3;
         }
 
@@ -102,7 +102,7 @@ public class PhysicsSystem extends System {
     }
 
     private void updateDirection(ControllerComponent controller, PhysicalComponent physicalComponent, StateComponent stateComponent) {
-        if (controller.isActivelyControlling() && !stateComponent.inState(State.HANGING, State.JUMPSQUAT, State.AIRBORNE, State.SIDESTEPPING, State.DIRECTIONAL_AIRDODGE, State.AIRDODGE) && !stateComponent.inSubState(State.ATTACKING_STATES)) {
+        if (controller.isActivelyControlling() && !stateComponent.inState(State.STATE_HANGING, State.STATE_JUMPSQUAT, State.STATE_AIRBORNE, State.STATE_SIDESTEPPING, State.STATE_DIRECTIONAL_AIRDODGE, State.STATE_AIRDODGE) && !stateComponent.inSubState(State.ATTACKING_STATES)) {
             if (physicalComponent.velocity.x > 0) {
                 physicalComponent.facingRight = true;
             } else if (physicalComponent.velocity.x < 0) {

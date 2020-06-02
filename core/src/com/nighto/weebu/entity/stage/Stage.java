@@ -26,8 +26,7 @@ public class Stage extends Entity {
     }
 
     public float getGravity() {
-        StageDataComponent stageData = getComponent(StageDataComponent.class);
-        return stageData.gravity;
+        return stageDataComponent.gravity;
     }
 
     @Override

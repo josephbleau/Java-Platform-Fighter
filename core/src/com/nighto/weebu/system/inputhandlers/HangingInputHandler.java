@@ -11,7 +11,7 @@ import com.nighto.weebu.entity.character.State;
 public class HangingInputHandler extends StateBasedInputHandler {
 
     public HangingInputHandler() {
-        super(new State[]{State.HANGING});
+        super(new State[]{State.STATE_HANGING});
     }
 
     @Override
@@ -24,7 +24,7 @@ public class HangingInputHandler extends StateBasedInputHandler {
         if (controller.isPressed(GameInput.Jump)) {
             physical.velocity.y = (characterData.getActiveAttributes().getFullHopSpeed());
 
-            state.enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+            state.enterState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
         }
 
         return true;

@@ -4,20 +4,20 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public enum State {
-    DEFAULT,                            // Neutral state. State is cleared to this at the beginning of each input loop.
+    STATE_DEFAULT,                            // Neutral state. State is cleared to this at the beginning of each input loop.
+    STATE_RUNNING,                            // Moving on the ground
+    STATE_CROUCHING,                          // Player is crouched
+    STATE_JUMPSQUAT,                          // Preparing to jump (enter this state when jumping from the ground, leave it when jump happens)
+    STATE_EXIT_JUMPSQUAT,                     // Player is exiting jumpsquat, next input poll pass will determine short or full hop
+    STATE_AIRBORNE,                           // In the air
+    STATE_SHIELDING,                          // Still, in shield
+    STATE_HANGING,                            // Hanging from a ledge
+    STATE_WALLSLIDING,                        // Sliding down a wall
+    STATE_SIDESTEPPING,                       // Player is invincible during a sidestep (dodge)
+    STATE_AIRDODGE,                           // Player sidestepped in the air
+    STATE_DIRECTIONAL_AIRDODGE,               // Player sidestepped in the air while holding a direction
+    STATE_STANDING,                           // Standing still on the level
     SUBSTATE_DEFAULT,
-    STANDING,                           // Standing still on the level
-    RUNNING,                            // Moving on the ground
-    CROUCHING,                          // Player is crouched
-    JUMPSQUAT,                          // Preparing to jump (enter this state when jumping from the ground, leave it when jump happens)
-    EXIT_JUMPSQUAT,                     // Player is exiting jumpsquat, next input poll pass will determine short or full hop
-    AIRBORNE,                           // In the air
-    SHIELDING,                          // Still, in shield
-    HANGING,                            // Hanging from a ledge
-    WALLSLIDING,                        // Sliding down a wall
-    SIDESTEPPING,                       // Player is invincible during a sidestep (dodge)
-    AIRDODGE,                           // Player sidestepped in the air
-    DIRECTIONAL_AIRDODGE,               // Player sidestepped in the air while holding a direction
     SUBSTATE_HANGING_LEFT,              // Player is hanging from a ledge on the left
     SUBSTATE_HANGING_RIGHT,             // Player is hanging from a ledge on the right
     SUBSTATE_KNOCKBACK,                 // Player cannot act while in knockback, exit knockback on landing (for now)

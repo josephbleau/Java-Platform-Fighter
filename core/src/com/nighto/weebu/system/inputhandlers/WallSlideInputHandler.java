@@ -10,7 +10,7 @@ import com.nighto.weebu.entity.character.State;
 
 public class WallSlideInputHandler extends StateBasedInputHandler {
     public WallSlideInputHandler() {
-        super(new State[]{State.WALLSLIDING});
+        super(new State[]{State.STATE_WALLSLIDING});
     }
 
     @Override
@@ -23,12 +23,12 @@ public class WallSlideInputHandler extends StateBasedInputHandler {
         characterData.getActiveAttributes().setNumberOfJumps(characterData.getInitialAttributes().getNumberOfJumps());
 
         if (controller.isPressed(GameInput.Jump)) {
-            state.enterState(State.JUMPSQUAT);
+            state.enterState(State.STATE_JUMPSQUAT);
             return true;
         }
 
         if (physical.wallSlidingOn == null) {
-            state.enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+            state.enterState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
             return true;
         }
 
@@ -52,7 +52,7 @@ public class WallSlideInputHandler extends StateBasedInputHandler {
 
             if (state.inSubState(State.SUBSTATE_WALLSLIDING_RIGHT)) {
                 if (holdingLeft) {
-                    state.enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+                    state.enterState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
                     return true;
                 }
 
@@ -63,7 +63,7 @@ public class WallSlideInputHandler extends StateBasedInputHandler {
 
             if (state.inSubState(State.SUBSTATE_WALLSLIDING_LEFT)) {
                 if (holdingRight) {
-                    state.enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+                    state.enterState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
                     return true;
                 }
 
@@ -73,7 +73,7 @@ public class WallSlideInputHandler extends StateBasedInputHandler {
             }
         }
 
-        state.enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+        state.enterState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
         return true;
     }
 }

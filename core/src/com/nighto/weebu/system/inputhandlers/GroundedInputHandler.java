@@ -13,9 +13,9 @@ public class GroundedInputHandler extends StateBasedInputHandler {
     public GroundedInputHandler() {
         super(
                 new State[] {
-                        State.DEFAULT,
-                        State.STANDING,
-                        State.RUNNING
+                        State.STATE_DEFAULT,
+                        State.STATE_STANDING,
+                        State.STATE_RUNNING
                 },
                 State.concat(State.ATTACKING_STATES, State.KNOCKBACK_STATES)
         );
@@ -40,14 +40,14 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         if (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard)) {
             controller.setActivelyControlling(true);
             physical.velocity.x = (-characterData.getActiveAttributes().getGroundSpeed());
-            state.enterState(State.RUNNING);
+            state.enterState(State.STATE_RUNNING);
         } else if (controller.isPressed(GameInput.ControlRightLight) || controller.isPressed(GameInput.ControlRightHard)) {
             controller.setActivelyControlling(true);
             physical.velocity.x = (characterData.getActiveAttributes().getGroundSpeed());
-            state.enterState(State.RUNNING);
+            state.enterState(State.STATE_RUNNING);
         } else {
             controller.setActivelyControlling(false);
-            state.enterState(State.STANDING);
+            state.enterState(State.STATE_STANDING);
         }
 
         return true;
@@ -60,7 +60,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
 
         if (controller.isPressed(GameInput.Crouch)) {
             physical.velocity.x = 0;
-            state.enterState(State.CROUCHING);
+            state.enterState(State.STATE_CROUCHING);
             return false;
         }
 
@@ -75,7 +75,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         if (controller.hasChangedSinceLastFrame(GameInput.Jump) && controller.isPressed(GameInput.Jump)) {
             characterData.getActiveAttributes().setNumberOfJumps(1);
             characterData.getTimers().resetTimers();
-            state.enterState(State.JUMPSQUAT);
+            state.enterState(State.STATE_JUMPSQUAT);
 
             return false;
         }
@@ -92,7 +92,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
            return false;
         }
 
-        if (state.inState(State.RUNNING)) {
+        if (state.inState(State.STATE_RUNNING)) {
             return true;
         }
 
@@ -120,7 +120,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
             return false;
         }
 
-        if (!state.inState(State.RUNNING)) {
+        if (!state.inState(State.STATE_RUNNING)) {
             return true;
         }
 

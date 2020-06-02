@@ -11,7 +11,7 @@ import com.nighto.weebu.entity.character.State;
 public class AirborneInputHandler extends StateBasedInputHandler {
 
     public AirborneInputHandler() {
-        super(new State[]{State.AIRBORNE}, new State[]{State.SUBSTATE_KNOCKBACK, State.SUBSTATE_TUMBLE, State.AIRDODGE});
+        super(new State[]{State.STATE_AIRBORNE}, new State[]{State.SUBSTATE_KNOCKBACK, State.SUBSTATE_TUMBLE, State.STATE_AIRDODGE});
     }
 
     @Override
@@ -34,7 +34,7 @@ public class AirborneInputHandler extends StateBasedInputHandler {
         if (jumpChanged && jumpCount > 0) {
             if (controller.isPressed(GameInput.Jump)) {
                 characterData.getActiveAttributes().decrementJumps();
-                state.enterState(State.JUMPSQUAT);
+                state.enterState(State.STATE_JUMPSQUAT);
             }
         }
 
@@ -51,7 +51,7 @@ public class AirborneInputHandler extends StateBasedInputHandler {
                 characterData.getActiveAttributes().getNumberOfAirDodges() > 0;
 
         if (performedAirDodge) {
-            state.enterState(State.AIRDODGE);
+            state.enterState(State.STATE_AIRDODGE);
             characterData.getActiveAttributes().decrementAirDodges();
             characterData.getActiveAttributes().setNumberOfJumps(0);
 
@@ -60,22 +60,22 @@ public class AirborneInputHandler extends StateBasedInputHandler {
 
             // TODO: Compute stick-axis velocity vector, for now just do axis aligned directional air-dodges
             if (controller.isPressed(GameInput.ControlLeftHard) || controller.isPressed(GameInput.ControlLeftLight)) {
-                state.enterState(State.DIRECTIONAL_AIRDODGE);
+                state.enterState(State.STATE_DIRECTIONAL_AIRDODGE);
                 physical.velocity.x = -characterData.getActiveAttributes().getAirDodgeVelocity();
             }
 
             if (controller.isPressed(GameInput.ControlRightHard) || controller.isPressed(GameInput.ControlRightLight)) {
-                state.enterState(State.DIRECTIONAL_AIRDODGE);
+                state.enterState(State.STATE_DIRECTIONAL_AIRDODGE);
                 physical.velocity.x = characterData.getActiveAttributes().getAirDodgeVelocity();
             }
 
             if (controller.isPressed(GameInput.Jump)) {
-                state.enterState(State.DIRECTIONAL_AIRDODGE);
+                state.enterState(State.STATE_DIRECTIONAL_AIRDODGE);
                 physical.velocity.y = characterData.getActiveAttributes().getAirDodgeVelocity();
             }
 
             if (controller.isPressed(GameInput.Crouch)) {
-                state.enterState(State.DIRECTIONAL_AIRDODGE);
+                state.enterState(State.STATE_DIRECTIONAL_AIRDODGE);
                 physical.velocity.y = -characterData.getActiveAttributes().getAirDodgeVelocity();
             }
 
@@ -92,7 +92,7 @@ public class AirborneInputHandler extends StateBasedInputHandler {
         CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
         StateComponent stateComponent = character.getComponent(StateComponent.class);
 
-        if (stateComponent.inState(State.DIRECTIONAL_AIRDODGE)) {
+        if (stateComponent.inState(State.STATE_DIRECTIONAL_AIRDODGE)) {
             return false;
         }
 

@@ -4,7 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.esotericsoftware.spine.*;
+import com.esotericsoftware.spine.AnimationState;
+import com.esotericsoftware.spine.AnimationStateData;
+import com.esotericsoftware.spine.Skeleton;
+import com.esotericsoftware.spine.SkeletonJson;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.*;
 import com.nighto.weebu.controller.GameController;
@@ -51,14 +54,14 @@ public class Character extends Entity {
         animationDataComponent.animationState = new AnimationState(animationDataComponent.animationStateData);
         animationDataComponent.animationState.setAnimation(0, "idle", true);
 
-        animationDataComponent.registerAnimationForState(State.RUNNING, "run");
-        animationDataComponent.registerAnimationForState(State.DEFAULT, "idle");
-        animationDataComponent.registerAnimationForState(State.JUMPSQUAT, "jumpsquat");
-        animationDataComponent.registerAnimationForState(State.EXIT_JUMPSQUAT, "jumpsquat");
-        animationDataComponent.registerAnimationForState(State.CROUCHING, "crouch");
-        animationDataComponent.registerAnimationForState(State.AIRBORNE, "airborne");
-        animationDataComponent.registerAnimationForState(State.AIRDODGE, "airborne");
-        animationDataComponent.registerAnimationForState(State.DIRECTIONAL_AIRDODGE, "airborne");
+        animationDataComponent.registerAnimationForState(State.STATE_RUNNING, "run");
+        animationDataComponent.registerAnimationForState(State.STATE_DEFAULT, "idle");
+        animationDataComponent.registerAnimationForState(State.STATE_JUMPSQUAT, "jumpsquat");
+        animationDataComponent.registerAnimationForState(State.STATE_EXIT_JUMPSQUAT, "jumpsquat");
+        animationDataComponent.registerAnimationForState(State.STATE_CROUCHING, "crouch");
+        animationDataComponent.registerAnimationForState(State.STATE_AIRBORNE, "airborne");
+        animationDataComponent.registerAnimationForState(State.STATE_AIRDODGE, "airborne");
+        animationDataComponent.registerAnimationForState(State.STATE_DIRECTIONAL_AIRDODGE, "airborne");
         animationDataComponent.registerAnimationForSubState(State.SUBSTATE_TUMBLE, "tumble");
         animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_NEUTRAL_NORMAL, "jab");
         animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_DASH_ATTACK, "dashattack");
@@ -85,7 +88,7 @@ public class Character extends Entity {
         physicalComponent.dimensions = new Vector2(1, 2);
         physicalComponent.prevDimensions = new Vector2(1, 2);
 
-        stateComponent.enterState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+        stateComponent.enterState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
     }
 
     @Override
@@ -113,12 +116,12 @@ public class Character extends Entity {
 
         characterDataComponent.getTimers().setKnockbackTimeRemaining(1);
 
-        stateComponent.enterState(State.AIRBORNE);
+        stateComponent.enterState(State.STATE_AIRBORNE);
         stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
     }
 
     public void snapToLedge(Ledge ledge) {
-        stateComponent.enterState(State.HANGING);
+        stateComponent.enterState(State.STATE_HANGING);
         characterDataComponent.getActiveAttributes().decrementJumps();
 
         if (ledge.isHangLeft()) {

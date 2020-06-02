@@ -42,7 +42,7 @@ public class AnimationDataComponent extends Component {
         String subStateAnimName = animationSubStateMap.get(subState);
 
         // Substate anims take priority
-        return (subStateAnimName != null) ? subStateAnimName : (stateAnimName != null) ? stateAnimName : animationStateMap.get(State.DEFAULT);
+        return (subStateAnimName != null) ? subStateAnimName : (stateAnimName != null) ? stateAnimName : animationStateMap.get(State.STATE_DEFAULT);
     }
 
     public Rectangle getWorldCollisionBoundingBox() {

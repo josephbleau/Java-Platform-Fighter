@@ -9,7 +9,7 @@ import com.nighto.weebu.entity.character.State;
 public class ShieldStateInputHandler extends StateBasedInputHandler {
 
     public ShieldStateInputHandler() {
-        super(new State[]{State.SHIELDING});
+        super(new State[]{State.STATE_SHIELDING});
     }
 
     @Override
@@ -18,11 +18,11 @@ public class ShieldStateInputHandler extends StateBasedInputHandler {
         StateComponent state = character.getComponent(StateComponent.class);
 
         if (controller.isPressed(GameInput.Sidestep)) {
-            state.enterState(State.SIDESTEPPING);
+            state.enterState(State.STATE_SIDESTEPPING);
         } else if (controller.isPressed(GameInput.Jump)) {
-            state.enterState(State.JUMPSQUAT);
+            state.enterState(State.STATE_JUMPSQUAT);
         } else if (!controller.isPressed(GameInput.Shield)) {
-            state.enterState(State.STANDING);
+            state.enterState(State.STATE_STANDING);
         }
 
         return false;

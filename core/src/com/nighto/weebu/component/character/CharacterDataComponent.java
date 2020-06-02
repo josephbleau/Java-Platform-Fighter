@@ -2,10 +2,8 @@ package com.nighto.weebu.component.character;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.nighto.weebu.component.Component;
-import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.character.State;
 
-import javax.print.DocFlavor;
 import java.util.Map;
 
 /**

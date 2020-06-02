@@ -11,7 +11,7 @@ import com.nighto.weebu.entity.character.State;
 public class JumpSquatExitInputHandler extends StateBasedInputHandler {
 
     public JumpSquatExitInputHandler() {
-        super(new State[]{State.EXIT_JUMPSQUAT});
+        super(new State[]{State.STATE_EXIT_JUMPSQUAT});
     }
 
     @Override
@@ -21,7 +21,7 @@ public class JumpSquatExitInputHandler extends StateBasedInputHandler {
         CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
         StateComponent state = character.getComponent(StateComponent.class);
 
-        state.enterState(State.AIRBORNE);
+        state.enterState(State.STATE_AIRBORNE);
 
         if (characterData.getActiveAttributes().getNumberOfJumps() >= 0){
             physical.floorStandingOn = null;

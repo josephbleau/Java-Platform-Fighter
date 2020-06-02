@@ -80,8 +80,8 @@ public class CollisionEventHandler implements EventHandler {
             if (collidedFromTop(physical.getBoundingBox(), physical.getPrevBoundingBox(), stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " landed on the stage.");
 
-                if (state.inState(State.AIRBORNE)) {
-                    state.enterState(State.STANDING);
+                if (state.inState(State.STATE_AIRBORNE)) {
+                    state.enterState(State.STATE_STANDING);
                     state.enterSubState(State.SUBSTATE_DEFAULT);
                 }
 
@@ -101,14 +101,14 @@ public class CollisionEventHandler implements EventHandler {
                     physical.position.y = stageRect.y - physical.getPrevBoundingBox().height;
                 }
 
-                state.enterState(State.AIRBORNE);
+                state.enterState(State.STATE_AIRBORNE);
             } else if (collidedFromRight(physical.getBoundingBox(), physical.getPrevBoundingBox(), stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
                 if (falling && (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard))) {
-                    state.enterState(State.WALLSLIDING, State.SUBSTATE_WALLSLIDING_LEFT);
+                    state.enterState(State.STATE_WALLSLIDING, State.SUBSTATE_WALLSLIDING_LEFT);
                 } else {
-                    state.inState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+                    state.inState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
                 }
 
                 physical.velocity.x = 0;
@@ -125,10 +125,10 @@ public class CollisionEventHandler implements EventHandler {
                 physical.position.x -= difference;
 
                 if (falling && (controller.isPressed(GameInput.ControlRightLight) || controller.isPressed(GameInput.ControlRightHard))) {
-                    state.enterState(State.WALLSLIDING);
+                    state.enterState(State.STATE_WALLSLIDING);
                     state.enterSubState(State.SUBSTATE_WALLSLIDING_RIGHT);
                 } else {
-                    state.inState(State.AIRBORNE, State.SUBSTATE_DEFAULT);
+                    state.inState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
                 }
 
                 physical.velocity.x = 0;
