@@ -1,68 +1,68 @@
 package com.nighto.weebu.component.character;
 
 import com.nighto.weebu.component.Component;
-import com.nighto.weebu.entity.character.State;
+import com.nighto.weebu.entity.character.CharacterState;
 
-public class StateComponent extends Component{
-    private State state;
-    private State previousState;
-    private State subState;
-    private State previousSubState;
+public class CharacterStateComponent extends Component{
+    private CharacterState state;
+    private CharacterState previousState;
+    private CharacterState subState;
+    private CharacterState previousSubState;
 
-    public boolean inState(State... states) {
+    public boolean inState(CharacterState... states) {
         boolean isInState = false;
 
-        for (State state : states) {
+        for (CharacterState state : states) {
             isInState |= (this.state == state);
         }
 
         return isInState;
     }
 
-    public boolean inSubState(State... subStates) {
+    public boolean inSubState(CharacterState... subStates) {
         boolean isInSubState = false;
 
-        for (State subState : subStates) {
+        for (CharacterState subState : subStates) {
             isInSubState |= (this.subState == subState);
         }
 
         return isInSubState;
     }
 
-    public boolean inStateAndSubState(State state, State subState) {
+    public boolean inStateAndSubState(CharacterState state, CharacterState subState) {
         return inState(state) && inSubState(subState);
     }
 
-    public void enterState(State state) {
+    public void enterState(CharacterState state) {
         previousState = this.state;
         this.state = state;
     }
 
-    public void enterSubState(State subState) {
+    public void enterSubState(CharacterState subState) {
         previousSubState = this.subState;
         this.subState = subState;
     }
 
-    public void enterState(State state, State subState) {
+    public void enterState(CharacterState state, CharacterState subState) {
         enterState(state);
 
         previousSubState = this.subState;
         this.subState = subState;
     }
 
-    public State getState() {
+    public CharacterState getState() {
         return state;
     }
 
-    public State getPreviousState() {
+    public CharacterState getPreviousState() {
         return previousState;
     }
 
-    public State getSubState() {
+    public CharacterState getSubState() {
         return subState;
     }
 
-    public State getPreviousSubState() {
+    public CharacterState getPreviousSubState() {
         return previousSubState;
     }
 
@@ -76,7 +76,7 @@ public class StateComponent extends Component{
 
     @Override
     public Component save() {
-        StateComponent stateComponent = new StateComponent();
+        CharacterStateComponent stateComponent = new CharacterStateComponent();
 
         stateComponent.state = this.state;
         stateComponent.previousState = this.previousState;
@@ -88,7 +88,7 @@ public class StateComponent extends Component{
 
     @Override
     public void load(Component component) {
-        StateComponent stateComponent = (StateComponent) component;
+        CharacterStateComponent stateComponent = (CharacterStateComponent) component;
         this.state = stateComponent.state;
         this.previousState = stateComponent.previousState;
         this.subState = stateComponent.subState;

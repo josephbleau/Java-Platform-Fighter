@@ -11,11 +11,11 @@ import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.AnimationDataComponent;
 import com.nighto.weebu.component.character.AttackDataComponent;
-import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.component.character.CharacterStateComponent;
 import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.AttackData;
-import com.nighto.weebu.entity.character.State;
+import com.nighto.weebu.entity.character.CharacterState;
 import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.event.game.AttackEvent;
 import javafx.util.Pair;
@@ -28,18 +28,18 @@ public class AttackGenerationSystem extends System {
     private final ShapeRenderer debugShapeRenderer;
 
     public AttackGenerationSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher, Arrays.asList(AnimationDataComponent.class, StateComponent.class, AttackDataComponent.class, PhysicalComponent.class));
+        super(gameContext, eventPublisher, Arrays.asList(AnimationDataComponent.class, CharacterStateComponent.class, AttackDataComponent.class, PhysicalComponent.class));
         debugShapeRenderer = new ShapeRenderer();
     }
 
     @Override
     void process(Entity entity) {
-        StateComponent stateComponent = entity.getComponent(StateComponent.class);
+        CharacterStateComponent stateComponent = entity.getComponent(CharacterStateComponent.class);
         AnimationDataComponent animationDataComponent = entity.getComponent(AnimationDataComponent.class);
         AttackDataComponent attackDataComponent = entity.getComponent(AttackDataComponent.class);
         PhysicalComponent physicalComponent = entity.getComponent(PhysicalComponent.class);
 
-        if (!stateComponent.inSubState(State.ATTACKING_STATES)) {
+        if (!stateComponent.inSubState(CharacterState.ATTACKING_STATES)) {
             return;
         }
 

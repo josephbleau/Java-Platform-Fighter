@@ -23,12 +23,15 @@ public class DebugRenderingSystem extends System {
     private final ShapeRenderer shapeRenderer;
 
     protected Color ledgeColor = Color.BLUE;
-    protected Color stageColor = Color.DARK_GRAY;
+    protected Color solidPlatformColor = Color.DARK_GRAY;
+    protected Color passThruPlatformColor = new Color(0.7f, 0.7f, 0.7f, 0f);
+    protected Color platformBorder = Color.BLACK;
     protected Color blastZoneColor = Color.RED;
 
     public DebugRenderingSystem(GameContext gameContext, EventPublisher eventPublisher) {
         super(gameContext, eventPublisher, Collections.emptyList());
         shapeRenderer = new ShapeRenderer();
+        passThruPlatformColor.a = 0.5f;
     }
 
     @Override
@@ -71,18 +74,31 @@ public class DebugRenderingSystem extends System {
         // Draw the platforms
         for (Platform platform : stageData.platforms) {
             if(!platform.passThru) {
+                shapeRenderer.setColor(solidPlatformColor);
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
             } else {
-                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(passThruPlatformColor);
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             }
 
-            shapeRenderer.setColor(stageColor);
             shapeRenderer.rect(
-                    WorldConstants.UNIT_TO_PX * platform.boundingBox.x,
-                    WorldConstants.UNIT_TO_PX * platform.boundingBox.y,
-                    WorldConstants.UNIT_TO_PX * platform.boundingBox.width,
-                    WorldConstants.UNIT_TO_PX * platform.boundingBox.height
+                    (WorldConstants.UNIT_TO_PX * platform.boundingBox.x),
+                    (WorldConstants.UNIT_TO_PX * platform.boundingBox.y),
+                    (WorldConstants.UNIT_TO_PX * platform.boundingBox.width),
+                    (WorldConstants.UNIT_TO_PX * platform.boundingBox.height)
             );
+            shapeRenderer.end();
+
+            shapeRenderer.setColor(platformBorder);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.rect(
+                    (WorldConstants.UNIT_TO_PX * platform.boundingBox.x),
+                    (WorldConstants.UNIT_TO_PX * platform.boundingBox.y),
+                    (WorldConstants.UNIT_TO_PX * platform.boundingBox.width),
+                    (WorldConstants.UNIT_TO_PX * platform.boundingBox.height)
+            );
+
             shapeRenderer.end();
         }
 

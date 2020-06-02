@@ -31,7 +31,7 @@ public class Character extends Entity {
     protected GameController gameController;
 
     // Components
-    protected StateComponent stateComponent;
+    protected CharacterStateComponent stateComponent;
     protected AnimationDataComponent animationDataComponent;
     protected CharacterDataComponent characterDataComponent;
     protected ControllerComponent controllerComponent;
@@ -39,7 +39,7 @@ public class Character extends Entity {
 
     public Character(Characters character) {
         animationDataComponent = new AnimationDataComponent();
-        stateComponent = new StateComponent();
+        stateComponent = new CharacterStateComponent();
         characterDataComponent = CharacterAttributesLoader.loadCharacterData(character.name);
         controllerComponent =  new ControllerComponent(new GameController(new NoopGamecubeController(), false));
         controllerComponent.registerController(new GameController(new NoopGamecubeController(), true));
@@ -54,25 +54,25 @@ public class Character extends Entity {
         animationDataComponent.animationState = new AnimationState(animationDataComponent.animationStateData);
         animationDataComponent.animationState.setAnimation(0, "idle", true);
 
-        animationDataComponent.registerAnimationForState(State.STATE_RUNNING, "run");
-        animationDataComponent.registerAnimationForState(State.STATE_DEFAULT, "idle");
-        animationDataComponent.registerAnimationForState(State.STATE_JUMPSQUAT, "jumpsquat");
-        animationDataComponent.registerAnimationForState(State.STATE_EXIT_JUMPSQUAT, "jumpsquat");
-        animationDataComponent.registerAnimationForState(State.STATE_CROUCHING, "crouch");
-        animationDataComponent.registerAnimationForState(State.STATE_AIRBORNE, "airborne");
-        animationDataComponent.registerAnimationForState(State.STATE_AIRDODGE, "airborne");
-        animationDataComponent.registerAnimationForState(State.STATE_DIRECTIONAL_AIRDODGE, "airborne");
-        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_TUMBLE, "tumble");
-        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_NEUTRAL_NORMAL, "jab");
-        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_DASH_ATTACK, "dashattack");
-        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_NEUTRAL_AIR, "nair");
-        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_UP_TILT, "uptilt");
-        animationDataComponent.registerAnimationForSubState(State.SUBSTATE_ATTACKING_DOWN_TILT, "downtilt");
+        animationDataComponent.registerAnimationForState(CharacterState.STATE_RUNNING, "run");
+        animationDataComponent.registerAnimationForState(CharacterState.STATE_DEFAULT, "idle");
+        animationDataComponent.registerAnimationForState(CharacterState.STATE_JUMPSQUAT, "jumpsquat");
+        animationDataComponent.registerAnimationForState(CharacterState.STATE_EXIT_JUMPSQUAT, "jumpsquat");
+        animationDataComponent.registerAnimationForState(CharacterState.STATE_CROUCHING, "crouch");
+        animationDataComponent.registerAnimationForState(CharacterState.STATE_AIRBORNE, "airborne");
+        animationDataComponent.registerAnimationForState(CharacterState.STATE_AIRDODGE, "airborne");
+        animationDataComponent.registerAnimationForState(CharacterState.STATE_DIRECTIONAL_AIRDODGE, "airborne");
+        animationDataComponent.registerAnimationForSubState(CharacterState.SUBSTATE_TUMBLE, "tumble");
+        animationDataComponent.registerAnimationForSubState(CharacterState.SUBSTATE_ATTACKING_NEUTRAL_NORMAL, "jab");
+        animationDataComponent.registerAnimationForSubState(CharacterState.SUBSTATE_ATTACKING_DASH_ATTACK, "dashattack");
+        animationDataComponent.registerAnimationForSubState(CharacterState.SUBSTATE_ATTACKING_NEUTRAL_AIR, "nair");
+        animationDataComponent.registerAnimationForSubState(CharacterState.SUBSTATE_ATTACKING_UP_TILT, "uptilt");
+        animationDataComponent.registerAnimationForSubState(CharacterState.SUBSTATE_ATTACKING_DOWN_TILT, "downtilt");
 
         animationDataComponent.animationState.addListener(new AnimationEventListener(this));
 
         registerComponent(CharacterDataComponent.class, characterDataComponent);
-        registerComponent(StateComponent.class, stateComponent);
+        registerComponent(CharacterStateComponent.class, stateComponent);
         registerComponent(ControllerComponent.class, new ControllerComponent(gameController));
         registerComponent(AnimationDataComponent.class, animationDataComponent);
         registerComponent(ControllerComponent.class, controllerComponent);
@@ -88,7 +88,7 @@ public class Character extends Entity {
         physicalComponent.dimensions = new Vector2(1, 2);
         physicalComponent.prevDimensions = new Vector2(1, 2);
 
-        stateComponent.enterState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
+        stateComponent.enterState(CharacterState.STATE_AIRBORNE, CharacterState.SUBSTATE_DEFAULT);
     }
 
     @Override
@@ -116,23 +116,23 @@ public class Character extends Entity {
 
         characterDataComponent.getTimers().setKnockbackTimeRemaining(1);
 
-        stateComponent.enterState(State.STATE_AIRBORNE);
-        stateComponent.enterSubState(State.SUBSTATE_KNOCKBACK);
+        stateComponent.enterState(CharacterState.STATE_AIRBORNE);
+        stateComponent.enterSubState(CharacterState.SUBSTATE_KNOCKBACK);
     }
 
     public void snapToLedge(Ledge ledge) {
-        stateComponent.enterState(State.STATE_HANGING);
+        stateComponent.enterState(CharacterState.STATE_HANGING);
         characterDataComponent.getActiveAttributes().decrementJumps();
 
         if (ledge.isHangLeft()) {
-            stateComponent.enterSubState(State.SUBSTATE_HANGING_LEFT);
+            stateComponent.enterSubState(CharacterState.SUBSTATE_HANGING_LEFT);
 
             float x = ledge.boundingBox.x - physicalComponent.dimensions.x + ledge.boundingBox.width;
             float y = ledge.boundingBox.y + ledge.boundingBox.height - physicalComponent.dimensions.y;
 
             spawn(x, y);
         } else {
-            stateComponent.enterSubState(State.SUBSTATE_HANGING_RIGHT);
+            stateComponent.enterSubState(CharacterState.SUBSTATE_HANGING_RIGHT);
 
             float x = ledge.boundingBox.x;
             float y = ledge.boundingBox.y + ledge.boundingBox.height - physicalComponent.dimensions.y;

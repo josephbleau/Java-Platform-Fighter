@@ -3,7 +3,7 @@ package com.nighto.weebu.entity.character;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public enum State {
+public enum CharacterState {
     STATE_DEFAULT,                            // Neutral state. State is cleared to this at the beginning of each input loop.
     STATE_RUNNING,                            // Moving on the ground
     STATE_CROUCHING,                          // Player is crouched
@@ -31,21 +31,21 @@ public enum State {
     SUBSTATE_ATTACKING_UP_TILT,
     SUBSTATE_ATTACKING_DOWN_TILT;
 
-    public static State[] ATTACKING_STATES = new State[] {
-            State.SUBSTATE_ATTACKING_NEUTRAL_NORMAL,
-            State.SUBSTATE_ATTACKING_NEUTRAL_SPECIAL,
-            State.SUBSTATE_ATTACKING_DASH_ATTACK,
-            State.SUBSTATE_ATTACKING_NEUTRAL_AIR,
-            State.SUBSTATE_ATTACKING_UP_TILT,
-            State.SUBSTATE_ATTACKING_DOWN_TILT
+    public static CharacterState[] ATTACKING_STATES = new CharacterState[] {
+            CharacterState.SUBSTATE_ATTACKING_NEUTRAL_NORMAL,
+            CharacterState.SUBSTATE_ATTACKING_NEUTRAL_SPECIAL,
+            CharacterState.SUBSTATE_ATTACKING_DASH_ATTACK,
+            CharacterState.SUBSTATE_ATTACKING_NEUTRAL_AIR,
+            CharacterState.SUBSTATE_ATTACKING_UP_TILT,
+            CharacterState.SUBSTATE_ATTACKING_DOWN_TILT
     };
 
-    public static State[] KNOCKBACK_STATES = new State[] {
-            State.SUBSTATE_KNOCKBACK,
-            State.SUBSTATE_TUMBLE
+    public static CharacterState[] KNOCKBACK_STATES = new CharacterState[] {
+            CharacterState.SUBSTATE_KNOCKBACK,
+            CharacterState.SUBSTATE_TUMBLE
     };
 
-    public static State[] concat(State[] s1, State[] s2) {
-        return Stream.concat(Arrays.stream(s1), Arrays.stream(s2)).toArray(State[]::new);
+    public static CharacterState[] concat(CharacterState[] s1, CharacterState[] s2) {
+        return Stream.concat(Arrays.stream(s1), Arrays.stream(s2)).toArray(CharacterState[]::new);
     }
 }

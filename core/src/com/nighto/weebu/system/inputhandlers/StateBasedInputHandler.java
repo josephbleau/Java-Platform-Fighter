@@ -1,27 +1,27 @@
 package com.nighto.weebu.system.inputhandlers;
 
-import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.component.character.CharacterStateComponent;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.entity.character.State;
+import com.nighto.weebu.entity.character.CharacterState;
 
 public abstract class StateBasedInputHandler {
-    private State[] supportedStates;
-    private State[] blockingSubStates;
+    private CharacterState[] supportedStates;
+    private CharacterState[] blockingSubStates;
 
-    public StateBasedInputHandler(State[] supportedStates, State[] blockingSubStates) {
+    public StateBasedInputHandler(CharacterState[] supportedStates, CharacterState[] blockingSubStates) {
         this.supportedStates = supportedStates;
         this.blockingSubStates = blockingSubStates;
     }
 
-    public StateBasedInputHandler(State[] supportedStates) {
-        this(supportedStates, new State[]{});
+    public StateBasedInputHandler(CharacterState[] supportedStates) {
+        this(supportedStates, new CharacterState[]{});
     }
 
     /**
      * Return true if the state input handler supports the given state and substate.
      */
     private boolean supports(Character character)  {
-        StateComponent stateComponent = character.getComponent(StateComponent.class);
+        CharacterStateComponent stateComponent = character.getComponent(CharacterStateComponent.class);
 
         return stateComponent != null && stateComponent.inState(supportedStates) && !stateComponent.inSubState(blockingSubStates);
     }

@@ -6,11 +6,11 @@ import com.badlogic.gdx.math.Shape2D;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.CharacterDataComponent;
 import com.nighto.weebu.component.character.ControllerComponent;
-import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.component.character.CharacterStateComponent;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.entity.character.State;
+import com.nighto.weebu.entity.character.CharacterState;
 import com.nighto.weebu.entity.stage.Stage;
 import com.nighto.weebu.entity.stage.parts.Ledge;
 import com.nighto.weebu.entity.stage.parts.Platform;
@@ -67,7 +67,7 @@ public class CollisionEventHandler implements EventHandler {
     private void handleCollisionWithStage(Entity entity, Stage stage, Shape2D stageShape) {
         PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
         CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
 
         /* Determine which direction we were heading so that we can set our position correctly. */
@@ -80,9 +80,9 @@ public class CollisionEventHandler implements EventHandler {
             if (collidedFromTop(physical.getBoundingBox(), physical.getPrevBoundingBox(), stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " landed on the stage.");
 
-                if (state.inState(State.STATE_AIRBORNE)) {
-                    state.enterState(State.STATE_STANDING);
-                    state.enterSubState(State.SUBSTATE_DEFAULT);
+                if (state.inState(CharacterState.STATE_AIRBORNE)) {
+                    state.enterState(CharacterState.STATE_STANDING);
+                    state.enterSubState(CharacterState.SUBSTATE_DEFAULT);
                 }
 
                 physical.move(physical.position.x, stageRect.y + stageRect.height);
@@ -101,14 +101,19 @@ public class CollisionEventHandler implements EventHandler {
                     physical.position.y = stageRect.y - physical.getPrevBoundingBox().height;
                 }
 
-                state.enterState(State.STATE_AIRBORNE);
+                state.enterState(CharacterState.STATE_AIRBORNE);
             } else if (collidedFromRight(physical.getBoundingBox(), physical.getPrevBoundingBox(), stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
+                Platform platform = stage.ifPlatformGetPlatform(stageRect);
+                if (platform != null && platform.passThru) {
+                    return;
+                }
+
                 if (falling && (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard))) {
-                    state.enterState(State.STATE_WALLSLIDING, State.SUBSTATE_WALLSLIDING_LEFT);
+                    state.enterState(CharacterState.STATE_WALLSLIDING, CharacterState.SUBSTATE_WALLSLIDING_LEFT);
                 } else {
-                    state.inState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
+                    state.inState(CharacterState.STATE_AIRBORNE, CharacterState.SUBSTATE_DEFAULT);
                 }
 
                 physical.velocity.x = 0;
@@ -118,6 +123,11 @@ public class CollisionEventHandler implements EventHandler {
             } else if (collidedFromLeft(physical.getBoundingBox(), physical.getPrevBoundingBox(), stageRect)) {
                 Gdx.app.debug("Collision", character.getTag() + " collided with a wall.");
 
+                Platform platform = stage.ifPlatformGetPlatform(stageRect);
+                if (platform != null && platform.passThru) {
+                    return;
+                }
+
                 // Move character out of the wall
                 float characterWidth = physical.dimensions.x;
                 float difference = Math.abs((physical.position.x + characterWidth) - stageRect.x);
@@ -125,10 +135,10 @@ public class CollisionEventHandler implements EventHandler {
                 physical.position.x -= difference;
 
                 if (falling && (controller.isPressed(GameInput.ControlRightLight) || controller.isPressed(GameInput.ControlRightHard))) {
-                    state.enterState(State.STATE_WALLSLIDING);
-                    state.enterSubState(State.SUBSTATE_WALLSLIDING_RIGHT);
+                    state.enterState(CharacterState.STATE_WALLSLIDING);
+                    state.enterSubState(CharacterState.SUBSTATE_WALLSLIDING_RIGHT);
                 } else {
-                    state.inState(State.STATE_AIRBORNE, State.SUBSTATE_DEFAULT);
+                    state.inState(CharacterState.STATE_AIRBORNE, CharacterState.SUBSTATE_DEFAULT);
                 }
 
                 physical.velocity.x = 0;

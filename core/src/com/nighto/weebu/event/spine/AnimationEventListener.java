@@ -5,7 +5,7 @@ import com.esotericsoftware.spine.Event;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.AnimationDataComponent;
 import com.nighto.weebu.component.character.AttackDataComponent;
-import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.component.character.CharacterStateComponent;
 import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.entity.character.Character;
 
@@ -26,7 +26,7 @@ public class AnimationEventListener extends AnimationState.AnimationStateAdapter
     public void event(AnimationState.TrackEntry entry, Event event) {
         String evtName = event.getData().getName();
         PhysicalComponent physicalComponent = character.getComponent(PhysicalComponent.class);
-        StateComponent stateComponent = character.getComponent(StateComponent.class);
+        CharacterStateComponent stateComponent = character.getComponent(CharacterStateComponent.class);
         AnimationDataComponent animationDataComponent = character.getComponent(AnimationDataComponent.class);
         AttackDataComponent attackDataComponent = character.getComponent(AttackDataComponent.class);
 

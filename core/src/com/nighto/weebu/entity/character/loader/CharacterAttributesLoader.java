@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.google.gson.Gson;
 import com.nighto.weebu.component.character.CharacterDataComponent;
 import com.nighto.weebu.component.character.InitialCharacterAttributes;
-import com.nighto.weebu.entity.character.State;
+import com.nighto.weebu.entity.character.CharacterState;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +22,7 @@ public class CharacterAttributesLoader {
             String hurtboxesJsonFile = new String(Files.readAllBytes(Paths.get("core/assets/characters/" + characterName + "/hurtboxes.json")));
 
             InitialCharacterAttributes initialCharacterAttributes = gson.fromJson(attributesJsonFile, InitialCharacterAttributes.class);
-            Map<State, Rectangle> hurtboxes = gson.fromJson(hurtboxesJsonFile, Map.class);
+            Map<CharacterState, Rectangle> hurtboxes = gson.fromJson(hurtboxesJsonFile, Map.class);
 
             return new CharacterDataComponent(initialCharacterAttributes, hurtboxes);
         } catch (IOException e) {

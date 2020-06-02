@@ -3,15 +3,15 @@ package com.nighto.weebu.system.inputhandlers;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.CharacterDataComponent;
 import com.nighto.weebu.component.character.ControllerComponent;
-import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.component.character.CharacterStateComponent;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.entity.character.State;
+import com.nighto.weebu.entity.character.CharacterState;
 
 public class AirborneInputHandler extends StateBasedInputHandler {
 
     public AirborneInputHandler() {
-        super(new State[]{State.STATE_AIRBORNE}, new State[]{State.SUBSTATE_KNOCKBACK, State.SUBSTATE_TUMBLE, State.STATE_AIRDODGE});
+        super(new CharacterState[]{CharacterState.STATE_AIRBORNE}, new CharacterState[]{CharacterState.SUBSTATE_KNOCKBACK, CharacterState.SUBSTATE_TUMBLE, CharacterState.STATE_AIRDODGE});
     }
 
     @Override
@@ -26,7 +26,7 @@ public class AirborneInputHandler extends StateBasedInputHandler {
     private boolean handleJump(Character character) {
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
 
         boolean jumpChanged = controller.hasChangedSinceLastFrame(GameInput.Jump);
         int jumpCount = characterData.getActiveAttributes().getNumberOfJumps();
@@ -34,7 +34,7 @@ public class AirborneInputHandler extends StateBasedInputHandler {
         if (jumpChanged && jumpCount > 0) {
             if (controller.isPressed(GameInput.Jump)) {
                 characterData.getActiveAttributes().decrementJumps();
-                state.enterState(State.STATE_JUMPSQUAT);
+                state.enterState(CharacterState.STATE_JUMPSQUAT);
             }
         }
 
@@ -44,14 +44,14 @@ public class AirborneInputHandler extends StateBasedInputHandler {
     private boolean handleSidestep(Character character) {
         PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
         CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
 
         boolean performedAirDodge = controller.isPressed(GameInput.Shield) &&
                 characterData.getActiveAttributes().getNumberOfAirDodges() > 0;
 
         if (performedAirDodge) {
-            state.enterState(State.STATE_AIRDODGE);
+            state.enterState(CharacterState.STATE_AIRDODGE);
             characterData.getActiveAttributes().decrementAirDodges();
             characterData.getActiveAttributes().setNumberOfJumps(0);
 
@@ -60,22 +60,22 @@ public class AirborneInputHandler extends StateBasedInputHandler {
 
             // TODO: Compute stick-axis velocity vector, for now just do axis aligned directional air-dodges
             if (controller.isPressed(GameInput.ControlLeftHard) || controller.isPressed(GameInput.ControlLeftLight)) {
-                state.enterState(State.STATE_DIRECTIONAL_AIRDODGE);
+                state.enterState(CharacterState.STATE_DIRECTIONAL_AIRDODGE);
                 physical.velocity.x = -characterData.getActiveAttributes().getAirDodgeVelocity();
             }
 
             if (controller.isPressed(GameInput.ControlRightHard) || controller.isPressed(GameInput.ControlRightLight)) {
-                state.enterState(State.STATE_DIRECTIONAL_AIRDODGE);
+                state.enterState(CharacterState.STATE_DIRECTIONAL_AIRDODGE);
                 physical.velocity.x = characterData.getActiveAttributes().getAirDodgeVelocity();
             }
 
             if (controller.isPressed(GameInput.Jump)) {
-                state.enterState(State.STATE_DIRECTIONAL_AIRDODGE);
+                state.enterState(CharacterState.STATE_DIRECTIONAL_AIRDODGE);
                 physical.velocity.y = characterData.getActiveAttributes().getAirDodgeVelocity();
             }
 
             if (controller.isPressed(GameInput.Crouch)) {
-                state.enterState(State.STATE_DIRECTIONAL_AIRDODGE);
+                state.enterState(CharacterState.STATE_DIRECTIONAL_AIRDODGE);
                 physical.velocity.y = -characterData.getActiveAttributes().getAirDodgeVelocity();
             }
 
@@ -90,9 +90,9 @@ public class AirborneInputHandler extends StateBasedInputHandler {
         PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
-        StateComponent stateComponent = character.getComponent(StateComponent.class);
+        CharacterStateComponent stateComponent = character.getComponent(CharacterStateComponent.class);
 
-        if (stateComponent.inState(State.STATE_DIRECTIONAL_AIRDODGE)) {
+        if (stateComponent.inState(CharacterState.STATE_DIRECTIONAL_AIRDODGE)) {
             return false;
         }
 
@@ -119,16 +119,16 @@ public class AirborneInputHandler extends StateBasedInputHandler {
 
     private boolean handleAttacks(Character character) {
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
 
-        if(!state.inSubState(State.ATTACKING_STATES)) {
+        if(!state.inSubState(CharacterState.ATTACKING_STATES)) {
             if (controller.isPressed(GameInput.NeutralSpecial)) {
-                state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_SPECIAL);
+                state.enterSubState(CharacterState.SUBSTATE_ATTACKING_NEUTRAL_SPECIAL);
                 return false;
             }
 
             if (controller.isPressed(GameInput.NeutralAttack)) {
-                state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_AIR);
+                state.enterSubState(CharacterState.SUBSTATE_ATTACKING_NEUTRAL_AIR);
                 return false;
             }
         }

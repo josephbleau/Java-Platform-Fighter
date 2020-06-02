@@ -3,21 +3,21 @@ package com.nighto.weebu.system.inputhandlers;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.CharacterDataComponent;
 import com.nighto.weebu.component.character.ControllerComponent;
-import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.component.character.CharacterStateComponent;
 import com.nighto.weebu.controller.GameInput;
 import com.nighto.weebu.entity.character.Character;
-import com.nighto.weebu.entity.character.State;
+import com.nighto.weebu.entity.character.CharacterState;
 
 public class GroundedInputHandler extends StateBasedInputHandler {
 
     public GroundedInputHandler() {
         super(
-                new State[] {
-                        State.STATE_DEFAULT,
-                        State.STATE_STANDING,
-                        State.STATE_RUNNING
+                new CharacterState[] {
+                        CharacterState.STATE_DEFAULT,
+                        CharacterState.STATE_STANDING,
+                        CharacterState.STATE_RUNNING
                 },
-                State.concat(State.ATTACKING_STATES, State.KNOCKBACK_STATES)
+                CharacterState.concat(CharacterState.ATTACKING_STATES, CharacterState.KNOCKBACK_STATES)
         );
     }
 
@@ -35,19 +35,19 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
 
         if (controller.isPressed(GameInput.ControlLeftLight) || controller.isPressed(GameInput.ControlLeftHard)) {
             controller.setActivelyControlling(true);
             physical.velocity.x = (-characterData.getActiveAttributes().getGroundSpeed());
-            state.enterState(State.STATE_RUNNING);
+            state.enterState(CharacterState.STATE_RUNNING);
         } else if (controller.isPressed(GameInput.ControlRightLight) || controller.isPressed(GameInput.ControlRightHard)) {
             controller.setActivelyControlling(true);
             physical.velocity.x = (characterData.getActiveAttributes().getGroundSpeed());
-            state.enterState(State.STATE_RUNNING);
+            state.enterState(CharacterState.STATE_RUNNING);
         } else {
             controller.setActivelyControlling(false);
-            state.enterState(State.STATE_STANDING);
+            state.enterState(CharacterState.STATE_STANDING);
         }
 
         return true;
@@ -56,11 +56,11 @@ public class GroundedInputHandler extends StateBasedInputHandler {
     private boolean handleCrouch(Character character) {
         PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
 
         if (controller.isPressed(GameInput.Crouch)) {
             physical.velocity.x = 0;
-            state.enterState(State.STATE_CROUCHING);
+            state.enterState(CharacterState.STATE_CROUCHING);
             return false;
         }
 
@@ -70,12 +70,12 @@ public class GroundedInputHandler extends StateBasedInputHandler {
     private boolean handleJump(Character character) {
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         CharacterDataComponent characterData = character.getComponent(CharacterDataComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
 
         if (controller.hasChangedSinceLastFrame(GameInput.Jump) && controller.isPressed(GameInput.Jump)) {
             characterData.getActiveAttributes().setNumberOfJumps(1);
             characterData.getTimers().resetTimers();
-            state.enterState(State.STATE_JUMPSQUAT);
+            state.enterState(CharacterState.STATE_JUMPSQUAT);
 
             return false;
         }
@@ -86,13 +86,13 @@ public class GroundedInputHandler extends StateBasedInputHandler {
     private boolean handleStandingAttacks(Character character) {
         PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
 
-        if(state.inSubState(State.ATTACKING_STATES)) {
+        if(state.inSubState(CharacterState.ATTACKING_STATES)) {
            return false;
         }
 
-        if (state.inState(State.STATE_RUNNING)) {
+        if (state.inState(CharacterState.STATE_RUNNING)) {
             return true;
         }
 
@@ -101,9 +101,9 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         }
 
         if (controller.isPressed(GameInput.ControlUp)) {
-            state.enterSubState(State.SUBSTATE_ATTACKING_UP_TILT);
+            state.enterSubState(CharacterState.SUBSTATE_ATTACKING_UP_TILT);
         } else {
-            state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_NORMAL);
+            state.enterSubState(CharacterState.SUBSTATE_ATTACKING_NEUTRAL_NORMAL);
         }
 
         physical.velocity.x = 0;
@@ -114,13 +114,13 @@ public class GroundedInputHandler extends StateBasedInputHandler {
     private boolean handleRunningAttacks(Character character) {
         PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
 
-        if(state.inSubState(State.ATTACKING_STATES)) {
+        if(state.inSubState(CharacterState.ATTACKING_STATES)) {
             return false;
         }
 
-        if (!state.inState(State.STATE_RUNNING)) {
+        if (!state.inState(CharacterState.STATE_RUNNING)) {
             return true;
         }
 
@@ -128,7 +128,7 @@ public class GroundedInputHandler extends StateBasedInputHandler {
             return true;
         }
 
-        state.enterSubState(State.SUBSTATE_ATTACKING_DASH_ATTACK);
+        state.enterSubState(CharacterState.SUBSTATE_ATTACKING_DASH_ATTACK);
         physical.velocity.x = 0;
 
         return false;
@@ -137,11 +137,11 @@ public class GroundedInputHandler extends StateBasedInputHandler {
     private boolean handleNeutralSpecial(Character character) {
         PhysicalComponent physical = character.getComponent(PhysicalComponent.class);
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
-        StateComponent state = character.getComponent(StateComponent.class);
+        CharacterStateComponent state = character.getComponent(CharacterStateComponent.class);
 
-        if (!state.inSubState(State.ATTACKING_STATES)) {
+        if (!state.inSubState(CharacterState.ATTACKING_STATES)) {
             if (controller.isPressed(GameInput.NeutralSpecial)) {
-                state.enterSubState(State.SUBSTATE_ATTACKING_NEUTRAL_SPECIAL);
+                state.enterSubState(CharacterState.SUBSTATE_ATTACKING_NEUTRAL_SPECIAL);
                 physical.velocity.x = 0;
             }
         }

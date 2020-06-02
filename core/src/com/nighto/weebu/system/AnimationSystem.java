@@ -5,7 +5,7 @@ import com.esotericsoftware.spine.Skeleton;
 import com.nighto.weebu.component.PhysicalComponent;
 import com.nighto.weebu.component.character.AnimationDataComponent;
 import com.nighto.weebu.component.character.AttackDataComponent;
-import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.component.character.CharacterStateComponent;
 import com.nighto.weebu.config.WorldConstants;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.attack.AttackData;
@@ -22,7 +22,7 @@ import java.util.Arrays;
  */
 public class AnimationSystem extends System {
     public AnimationSystem(GameContext gameContext, EventPublisher eventPublisher) {
-        super(gameContext, eventPublisher, Arrays.asList(AnimationDataComponent.class, PhysicalComponent.class, StateComponent.class));
+        super(gameContext, eventPublisher, Arrays.asList(AnimationDataComponent.class, PhysicalComponent.class, CharacterStateComponent.class));
         timeBased = true;
     }
 
@@ -30,11 +30,11 @@ public class AnimationSystem extends System {
     void process(Entity entity) {
         AnimationDataComponent animationData = entity.getComponent(AnimationDataComponent.class);
         PhysicalComponent physical = entity.getComponent(PhysicalComponent.class);
-        StateComponent state = entity.getComponent(StateComponent.class);
+        CharacterStateComponent state = entity.getComponent(CharacterStateComponent.class);
         AttackDataComponent attackData = entity.getComponent(AttackDataComponent.class);
 
 
-        if (entity.componentsEnabled(AnimationDataComponent.class, PhysicalComponent.class, StateComponent.class)) {
+        if (entity.componentsEnabled(AnimationDataComponent.class, PhysicalComponent.class, CharacterStateComponent.class)) {
             Skeleton skeleton = animationData.skeleton;
             AnimationState animationState = animationData.animationState;
 
@@ -52,7 +52,7 @@ public class AnimationSystem extends System {
         }
     }
 
-    private void setCurrentAnimation(AnimationDataComponent animationData, StateComponent state, AttackDataComponent attackDataComponent) {
+    private void setCurrentAnimation(AnimationDataComponent animationData, CharacterStateComponent state, AttackDataComponent attackDataComponent) {
         AnimationState animationState = animationData.animationState;
 
         String animName = animationData.getAnimationForState(state.getState(), state.getSubState());

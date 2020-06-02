@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.esotericsoftware.spine.*;
 import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
 import com.nighto.weebu.component.Component;
-import com.nighto.weebu.entity.character.State;
+import com.nighto.weebu.entity.character.CharacterState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,28 +21,28 @@ public class AnimationDataComponent extends Component {
     public AnimationStateData animationStateData;
     public AnimationState animationState;
 
-    private final Map<State, String> animationStateMap;
-    private final Map<State, String> animationSubStateMap;
+    private final Map<CharacterState, String> animationStateMap;
+    private final Map<CharacterState, String> animationSubStateMap;
 
     public AnimationDataComponent() {
         animationStateMap = new HashMap<>();
         animationSubStateMap = new HashMap<>();
     }
 
-    public void registerAnimationForState(State state, String animationName) {
+    public void registerAnimationForState(CharacterState state, String animationName) {
         animationStateMap.put(state, animationName);
     }
 
-    public void registerAnimationForSubState(State state, String animationName) {
+    public void registerAnimationForSubState(CharacterState state, String animationName) {
         animationSubStateMap.put(state, animationName);
     }
 
-    public String getAnimationForState(State state, State subState) {
+    public String getAnimationForState(CharacterState state, CharacterState subState) {
         String stateAnimName = animationStateMap.get(state);
         String subStateAnimName = animationSubStateMap.get(subState);
 
         // Substate anims take priority
-        return (subStateAnimName != null) ? subStateAnimName : (stateAnimName != null) ? stateAnimName : animationStateMap.get(State.STATE_DEFAULT);
+        return (subStateAnimName != null) ? subStateAnimName : (stateAnimName != null) ? stateAnimName : animationStateMap.get(CharacterState.STATE_DEFAULT);
     }
 
     public Rectangle getWorldCollisionBoundingBox() {
@@ -63,7 +63,7 @@ public class AnimationDataComponent extends Component {
         return bbPoly.getBoundingRectangle();
     }
 
-    public void forceUpdateAnimation(StateComponent stateComponent) {
+    public void forceUpdateAnimation(CharacterStateComponent stateComponent) {
         String animName = getAnimationForState(stateComponent.getState(), stateComponent.getSubState());
         animationState.setAnimation(0, animName, true);
         animationState.apply(skeleton);

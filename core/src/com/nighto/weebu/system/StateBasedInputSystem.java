@@ -2,7 +2,7 @@ package com.nighto.weebu.system;
 
 import com.badlogic.gdx.Gdx;
 import com.nighto.weebu.component.character.ControllerComponent;
-import com.nighto.weebu.component.character.StateComponent;
+import com.nighto.weebu.component.character.CharacterStateComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.event.EventPublisher;
@@ -55,7 +55,7 @@ public class StateBasedInputSystem extends System {
             }
 
             if (entity.getTag().equals("Player")) {
-                StateComponent stateComponent = entity.getComponent(StateComponent.class);
+                CharacterStateComponent stateComponent = entity.getComponent(CharacterStateComponent.class);
                 Gdx.app.log("State", "" + (stateComponent.getState()) + ", " + (stateComponent.getSubState()));
             }
         }
