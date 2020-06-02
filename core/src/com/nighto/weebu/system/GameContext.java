@@ -1,13 +1,16 @@
 package com.nighto.weebu.system;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.nighto.weebu.entity.Entity;
+import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.entity.stage.Stage;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 public class GameContext {
     private Stage stage;
@@ -18,7 +21,7 @@ public class GameContext {
 
     private float frameDelta;
 
-    private Camera camera;
+    private OrthographicCamera camera;
 
     public boolean frameAdvanceMode = false;
     public boolean advanceFrame = true;
@@ -74,11 +77,18 @@ public class GameContext {
         return null;
     }
 
-    public Camera getCamera() {
+    public List<Character> getCharacterEntities() {
+        return getEntities().stream()
+                .filter(e->e instanceof Character)
+                .map(e->(Character) e)
+                .collect(Collectors.toList());
+    }
+
+    public OrthographicCamera getCamera() {
         return camera;
     }
 
-    public void setCamera(Camera camera) {
+    public void setCamera(OrthographicCamera camera) {
         this.camera = camera;
     }
 }

@@ -1,5 +1,5 @@
 {
-	"numberOfJumps": 2,
+	"numberOfJumps": 200,
 	"numberOfAirDodges": 1,
 	"fallSpeed": -25,
 	"groundSpeed": 18,

@@ -106,10 +106,6 @@ public class GroundedInputHandler extends StateBasedInputHandler {
         ControllerComponent controller = character.getComponent(ControllerComponent.class);
         StateComponent state = character.getComponent(StateComponent.class);
 
-        if (character.getTag().equals("Player")) {
-            int x = 5;
-        }
-
         if(state.inSubState(State.ATTACKING_STATES)) {
            return false;
         }
