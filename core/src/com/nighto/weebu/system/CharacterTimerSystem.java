@@ -1,8 +1,8 @@
 package com.nighto.weebu.system;
 
 import com.nighto.weebu.component.character.CharacterDataComponent;
-import com.nighto.weebu.component.character.CharacterTimers;
 import com.nighto.weebu.component.character.CharacterStateComponent;
+import com.nighto.weebu.component.character.CharacterTimers;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.CharacterState;
 import com.nighto.weebu.event.EventPublisher;

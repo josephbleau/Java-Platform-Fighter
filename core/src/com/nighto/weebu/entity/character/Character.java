@@ -28,8 +28,6 @@ import java.util.List;
 
 public class Character extends Entity {
 
-    protected GameController gameController;
-
     // Components
     protected CharacterStateComponent stateComponent;
     protected AnimationDataComponent animationDataComponent;
@@ -73,7 +71,6 @@ public class Character extends Entity {
 
         registerComponent(CharacterDataComponent.class, characterDataComponent);
         registerComponent(CharacterStateComponent.class, stateComponent);
-        registerComponent(ControllerComponent.class, new ControllerComponent(gameController));
         registerComponent(AnimationDataComponent.class, animationDataComponent);
         registerComponent(ControllerComponent.class, controllerComponent);
         registerComponent(AttackDataComponent.class, attackDataComponent);

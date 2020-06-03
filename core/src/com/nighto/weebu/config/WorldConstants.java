@@ -12,6 +12,6 @@ public class WorldConstants {
     public static float UNIT_TO_PX = 96f;
     public static float PX_TO_UNIT = 1f/96.0f;
 
-    public static int LOG_LEVEL = Application.LOG_DEBUG;
+    public static int LOG_LEVEL = Application.LOG_INFO;
     public static boolean DEBUG = true;
 }

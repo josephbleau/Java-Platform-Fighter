@@ -10,7 +10,7 @@ import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.event.EventPublisher;
 import com.nighto.weebu.junkdrawer.CameraHelper;
 
-import java.util.Collections;
+import java.util.*;
 
 public class CameraSystem extends System{
 
@@ -27,6 +27,9 @@ public class CameraSystem extends System{
     private float zoomTarget;
     private float zoomSource;
 
+    private Map<UUID, Vector2> characterPositions;
+    private UUID causedZoom;
+
     public CameraSystem(GameContext gameContext, EventPublisher eventPublisher) {
         super(gameContext, eventPublisher, Collections.emptyList());
 
@@ -41,8 +44,10 @@ public class CameraSystem extends System{
 
         zoomSource = 1f;
         zoomTarget = 1.5f;
-        timeToZoomLerp = 1f;
-        timeInCurrentZoomLerp = 2/60f;
+        timeToZoomLerp = 0.3f;
+        timeInCurrentZoomLerp = 0f;
+
+        characterPositions = new HashMap<>();
     }
 
     @Override
@@ -97,38 +102,32 @@ public class CameraSystem extends System{
      * The goal of this is to keep all of the action visible and to keep players on screen.
      */
     private void zoomCameraWhenCharactersNearEdgeOfScreen() {
-        float cameraLeftBound = gameContext.getCamera().position.x - WorldConstants.VIEWPORT_WIDTH/2;
-        float cameraRightBound = gameContext.getCamera().position.x + WorldConstants.VIEWPORT_WIDTH/2;
-        float cameraBottomBound = gameContext.getCamera().position.y - WorldConstants.VIEWPORT_HEIGHT/2;
-        float cameraUpperBound = gameContext.getCamera().position.y + WorldConstants.VIEWPORT_HEIGHT/2;
+        double maxDst = 0;
 
-        for (Character character : gameContext.getCharacterEntities()) {
-            PhysicalComponent physicalComponent = character.getComponent(PhysicalComponent.class);
+        List<Character> characters = gameContext.getCharacterEntities();
 
-            float cameraZoom = gameContext.getCamera().zoom;
+        for (int i = 0; i < characters.size(); ++i) {
+            for (int j = i; j < characters.size(); ++j) {
+                Character c1 = characters.get(i);
+                Character c2 = characters.get(j);
+                PhysicalComponent p1 = c1.getComponent(PhysicalComponent.class);
+                PhysicalComponent p2 = c2.getComponent(PhysicalComponent.class);
 
-            float leftRightPct = .1f;
-            float upDownPct = leftRightPct * (WorldConstants.VIEWPORT_WIDTH/WorldConstants.VIEWPORT_HEIGHT);
+                double x1 = p1.position.x;
+                double x2 = p2.position.x;
+                double y1 = p1.position.y;
+                double y2 = p2.position.y;
 
-            float rightBound = (cameraRightBound - (leftRightPct * WorldConstants.VIEWPORT_WIDTH)) * cameraZoom;
-            float leftBound = (cameraLeftBound +  (leftRightPct * WorldConstants.VIEWPORT_WIDTH)) / cameraZoom;
-            float upperBound = (cameraUpperBound - (upDownPct * WorldConstants.VIEWPORT_HEIGHT)) * cameraZoom;
-            float bottomBound = (cameraBottomBound + (upDownPct * WorldConstants.VIEWPORT_HEIGHT)) / cameraZoom;
-
-            float xInPx = physicalComponent.position.x * WorldConstants.UNIT_TO_PX;
-            float yInPx = physicalComponent.position.y * WorldConstants.UNIT_TO_PX;
-
-
-            float diff = Math.abs(zoomSource - zoomTarget);
-
-//            // TODO: Fix upper/lower bounds
-//            if (zoomTarget != 1.5f && (xInPx >= rightBound || xInPx <= leftBound)) {
-//                zoomSource = cameraZoom;
-//                zoomTarget = 1.5f;
-//                timeInCurrentZoomLerp = 0;
-//            }
-
-            java.lang.System.out.println("diff: " + diff + ", zt: " + zoomTarget + ", zs: " + zoomSource);
+                double dst = Math.sqrt(Math.pow((x1-x2),2) + Math.pow((y1-y2),2));
+                maxDst = Math.max(dst, maxDst);
+            }
         }
+
+        zoomSource = gameContext.getCamera().zoom;
+        zoomTarget = (float) (maxDst*WorldConstants.UNIT_TO_PX) / WorldConstants.VIEWPORT_WIDTH*3;
+        zoomTarget = Math.max(zoomTarget, 1);
+        java.lang.System.out.println("zt: " + zoomTarget + " md: " + maxDst);
+
+        timeInCurrentZoomLerp = 0;
     }
 }

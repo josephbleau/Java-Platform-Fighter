@@ -26,10 +26,11 @@ public class InGameScreen implements Screen {
     public InGameScreen() {
         Character player = new Character(Characters.ROBBY);
         player.setTag("Player");
-        registerControllerForPlayer(player);
 
-        Character computer = new Character(Characters.SUNFLOWER);
+        Character computer = new Character(Characters.ROBBY);
         computer.setTag("Computer");
+
+        registerControllerForPlayer(player, computer);
 
         gameContext = new GameContext();
         gameContext.registerEntity(player);
@@ -90,23 +91,31 @@ public class InGameScreen implements Screen {
 
     // TODO: Eventually move this to a much more robust controller system that supports port
     // TODO: swapping/key mapping/etc. For now we just find the adapter and assign one of it's ports.
-    private void registerControllerForPlayer(Character player) {
+    private void registerControllerForPlayer(Character player, Character player2) {
         // Register controllers
         List<GamecubeController> controllers = new ArrayList<>();
 
-        for(Controller controller : Controllers.getControllers()) {
+        for (Controller controller : Controllers.getControllers()) {
             if (controller.getName().equals(GamecubeController.MAYFLASH_ADAPTER_ID)) {
                 controllers.add(new GamecubeController(controller));
             }
         }
 
         GamecubeController gamecubeController = null;
+        GamecubeController gamecubeController2 = null;
 
         if (controllers.size() > 0) {
             gamecubeController = controllers.get(0);
+            gamecubeController2 = controllers.get(3);
         }
 
-        ((ControllerComponent)player.getComponent(ControllerComponent.class)).registerController(new GameController(gamecubeController, false));
+        GameController gameController = new GameController(gamecubeController, false);
+        ControllerComponent controllerComponent = new ControllerComponent(gameController);
+        player.registerComponent(ControllerComponent.class, controllerComponent);
+
+        GameController gameController2 = new GameController(gamecubeController2, false);
+        ControllerComponent controllerComponent2 = new ControllerComponent(gameController2);
+        player2.registerComponent(ControllerComponent.class, controllerComponent2);
     }
 
     @Override

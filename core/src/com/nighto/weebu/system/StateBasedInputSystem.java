@@ -1,8 +1,8 @@
 package com.nighto.weebu.system;
 
 import com.badlogic.gdx.Gdx;
-import com.nighto.weebu.component.character.ControllerComponent;
 import com.nighto.weebu.component.character.CharacterStateComponent;
+import com.nighto.weebu.component.character.ControllerComponent;
 import com.nighto.weebu.entity.Entity;
 import com.nighto.weebu.entity.character.Character;
 import com.nighto.weebu.event.EventPublisher;
