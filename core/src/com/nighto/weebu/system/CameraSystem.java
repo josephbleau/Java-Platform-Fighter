@@ -15,20 +15,17 @@ import java.util.*;
 public class CameraSystem extends System{
 
     // Camera translate lerp
-    private float timeToMovementLerp;
+    private final float timeToMovementLerp;
     private float timeInCurrentMovementLerp;
-    private Vector2 cameraSourceLocation;
-    private Vector2 cameraTargetLocation;
+    private final Vector2 cameraSourceLocation;
+    private final Vector2 cameraTargetLocation;
 
 
     // Camera zoom lerp
-    private float timeToZoomLerp;
+    private final float timeToZoomLerp;
     private float timeInCurrentZoomLerp;
     private float zoomTarget;
     private float zoomSource;
-
-    private Map<UUID, Vector2> characterPositions;
-    private UUID causedZoom;
 
     public CameraSystem(GameContext gameContext, EventPublisher eventPublisher) {
         super(gameContext, eventPublisher, Collections.emptyList());
@@ -39,15 +36,13 @@ public class CameraSystem extends System{
 
         cameraTargetLocation = new Vector2(gameContext.getCamera().position.x, gameContext.getCamera().position.y);
         cameraSourceLocation = new Vector2(gameContext.getCamera().position.x, gameContext.getCamera().position.y);
-        timeToMovementLerp = 0.3f;
+        timeToMovementLerp = 15/60f;
         timeInCurrentMovementLerp = 0.1f;
 
         zoomSource = 1f;
         zoomTarget = 1.5f;
-        timeToZoomLerp = 0.3f;
+        timeToZoomLerp = 15/60f;
         timeInCurrentZoomLerp = 0f;
-
-        characterPositions = new HashMap<>();
     }
 
     @Override
@@ -73,7 +68,7 @@ public class CameraSystem extends System{
 
         zoomCameraUsingCharacterDistance();
         if (zoomLerpProgress < 1) {
-            camera.zoom = Interpolation.linear.apply(zoomSource, zoomTarget, zoomLerpProgress);
+            camera.zoom = Interpolation.sineIn.apply(zoomSource, zoomTarget, zoomLerpProgress);
         }
 
         gameContext.getCamera().update();
@@ -125,7 +120,11 @@ public class CameraSystem extends System{
 
         zoomSource = gameContext.getCamera().zoom;
         zoomTarget = (float) (maxDst*WorldConstants.UNIT_TO_PX) / WorldConstants.VIEWPORT_WIDTH*3;
-        zoomTarget = Math.max(zoomTarget, 1);
+        zoomTarget = Math.max(zoomTarget, 2f);
+
+        if (maxDst * WorldConstants.UNIT_TO_PX < WorldConstants.VIEWPORT_WIDTH/2) {
+            zoomTarget = Math.min(zoomTarget, 1f);
+        }
 
         timeInCurrentZoomLerp = 0;
     }
