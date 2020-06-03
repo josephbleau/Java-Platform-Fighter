@@ -35,14 +35,10 @@ public class AnimationEventListener extends AnimationState.AnimationStateAdapter
         // scenario would be inherently handled by switching our animation before it ended).
         if (ATTACK_ANIMATION_END.equals(evtName)) {
             stateComponent.revertSubState();
-
-            // Jank-ass tracking of which players have been hit by hitboxes already, clear when the anim ends.
-            // TODO: Smarten up, do something better
             attackDataComponent.clearTargets();
 
             // If I didn't force the update here we were seeing 1-frame of the wrong animation, presumably because it was rendering
             // the current state's anim before checking to see if a new one should be applied? Need to look into it.
-            animationDataComponent.forceUpdateAnimation(stateComponent);
         }
 
         // When an animation completes we will generally make sure the player skeleton is back in the same spot
@@ -50,10 +46,9 @@ public class AnimationEventListener extends AnimationState.AnimationStateAdapter
         // new location (such as in a dash attack, or up-b type recovery. In these instances we need a way to inform
         // the engine to update the players in-world location to be offset by the distance traveled in the animation.
         if (TRANSLATE_PLAYER_X_POS.equals(evtName)) {
-            physicalComponent.prevPosition.x = physicalComponent.position.x;
-
-            // Set X position to root bones new world X position
-            physicalComponent.position.x = animationDataComponent.skeleton.getBones().get(0).getWorldX() * WorldConstants.PX_TO_UNIT;
+            float animX = animationDataComponent.skeleton.getBones().get(0).getWorldX() * WorldConstants.PX_TO_UNIT;
+            physicalComponent.move(animX, physicalComponent.position.y, false);
+            animationDataComponent.forceUpdateAnimation(stateComponent);
         }
     }
 }

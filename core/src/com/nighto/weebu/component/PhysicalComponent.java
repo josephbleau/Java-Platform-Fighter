@@ -101,4 +101,8 @@ public class PhysicalComponent extends Component {
 
         this.facingRight = physicalComponent.facingRight;
     }
+
+    public float getFacingModifier() {
+        return facingRight ? 1f : -1f;
+    }
 }
