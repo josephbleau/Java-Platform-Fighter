@@ -71,7 +71,7 @@ public class CameraSystem extends System{
             camera.position.y = Interpolation.linear.apply(cameraSourceLocation.y, cameraTargetLocation.y, translateLerpProgress);
         }
 
-        zoomCameraWhenCharactersNearEdgeOfScreen();
+        zoomCameraUsingCharacterDistance();
         if (zoomLerpProgress < 1) {
             camera.zoom = Interpolation.linear.apply(zoomSource, zoomTarget, zoomLerpProgress);
         }
@@ -96,12 +96,12 @@ public class CameraSystem extends System{
         timeInCurrentMovementLerp = 0;
     }
 
+
     /**
-     * Determine if a player is within 20% of the total screen width and height of the sides and top/bottom respectively.
-     * If they are, zoom the camera so they no longer occupy that zone. Zoom the camera back in when they leave that zone.
-     * The goal of this is to keep all of the action visible and to keep players on screen.
+     * Determine the camera zoom by taking the largest distance between two players (this should keep all players
+     * on screen in most situations).
      */
-    private void zoomCameraWhenCharactersNearEdgeOfScreen() {
+    private void zoomCameraUsingCharacterDistance() {
         double maxDst = 0;
 
         List<Character> characters = gameContext.getCharacterEntities();
@@ -126,7 +126,6 @@ public class CameraSystem extends System{
         zoomSource = gameContext.getCamera().zoom;
         zoomTarget = (float) (maxDst*WorldConstants.UNIT_TO_PX) / WorldConstants.VIEWPORT_WIDTH*3;
         zoomTarget = Math.max(zoomTarget, 1);
-        java.lang.System.out.println("zt: " + zoomTarget + " md: " + maxDst);
 
         timeInCurrentZoomLerp = 0;
     }
